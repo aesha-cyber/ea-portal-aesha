@@ -1,0 +1,276 @@
+/* ============================================================
+   Extension Architecture — Colors & Type tokens
+   Source: /uploads/Brand Guidelines Presentation.pdf + EA Final Dev File (Figma)
+   ============================================================ */
+
+/* Montserrat — brand font, loaded from local variable TTF files in /fonts/. */
+@font-face {
+  font-family: 'Montserrat';
+  src: url('fonts/Montserrat-VariableFont_wght.ttf') format('truetype-variations'),
+       url('fonts/Montserrat-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Montserrat';
+  src: url('fonts/Montserrat-Italic-VariableFont_wght.ttf') format('truetype-variations'),
+       url('fonts/Montserrat-Italic-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Fraunces — serif display face, loaded from local variable TTF files in /fonts/.
+   Candidate for the "Cedora" header role the PDF specified but never licensed.
+   Now the display face for the NEW PORTAL surface (pairs with Montserrat for
+   body & dense UI). Exposed as --font-serif. Marketing site headings stay
+   Montserrat (--font-display) unchanged. */
+@font-face {
+  font-family: 'Fraunces';
+  src: url('fonts/Fraunces-VariableFont_SOFT_WONK_opsz_wght.ttf') format('truetype-variations'),
+       url('fonts/Fraunces-VariableFont_SOFT_WONK_opsz_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Fraunces';
+  src: url('fonts/Fraunces-Italic-VariableFont_SOFT_WONK_opsz_wght.ttf') format('truetype-variations'),
+       url('fonts/Fraunces-Italic-VariableFont_SOFT_WONK_opsz_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+:root {
+  /* ────────────────────────────────────────────────────────
+     PRIMARY PALETTE (PDF §06)
+     ──────────────────────────────────────────────────────── */
+  --ea-noir:       #191919;   /* Noir Black   — primary text, dark surfaces */
+  --ea-white:      #FFFFFF;   /* Frosty White — surfaces, inverse text */
+  --ea-frosty:     #FEFEFE;   /* Near-white used for text on dark (Figma) */
+  --ea-crimson:    #8E1B18;   /* Crimson Red  — the brand. CTAs, accents */
+  --ea-bisque:     #EBC6A3;   /* Bisque       — warm neutral accent */
+
+  /* ────────────────────────────────────────────────────────
+     SECONDARY / ACCENT (PDF §08 — use for vegetation / illustrations)
+     ──────────────────────────────────────────────────────── */
+  --ea-grove:      #1E4D25;   /* Grove  — deep green */
+  --ea-sprout:     #688F3D;   /* Sprout — olive green */
+  --ea-sea:        #188B8E;   /* Sea Blue — teal */
+  --ea-surge:      #FFC554;   /* Surge — warm yellow */
+
+  /* ────────────────────────────────────────────────────────
+     CRIMSON SCALE (generated tints/shades — PDF §07 "Primary Color Scale")
+     ──────────────────────────────────────────────────────── */
+  --ea-crimson-50:  #FFEDED;  /* pale pink surface — seen in button section */
+  --ea-crimson-100: #F8D7D6;
+  --ea-crimson-200: #EEA6A4;
+  --ea-crimson-300: #DD6B68;
+  --ea-crimson-400: #B93935;
+  --ea-crimson-500: #8E1B18;  /* = --ea-crimson */
+  --ea-crimson-600: #7A1714;
+  --ea-crimson-700: #5F1210;
+  --ea-crimson-800: #430D0B;
+  --ea-crimson-900: #2B0807;
+
+  /* ────────────────────────────────────────────────────────
+     NEUTRAL SCALE
+     ──────────────────────────────────────────────────────── */
+  --ea-black:      #000000;
+  --ea-ink:        #191919;   /* same as noir — canonical text color */
+  --ea-graphite:   #2D2D2D;   /* dark surface (button grid bg in Figma) */
+  --ea-slate:      #474747;
+  --ea-stone:      #8C8C8C;
+  --ea-ash:        #A3A3A3;
+  --ea-silver:     #BABABA;
+  --ea-mist:       #D1D1D1;   /* hairlines / dividers */
+  --ea-fog:        #EAEAEA;
+  --ea-bone:       #F3F3F3;   /* light surface (muted cards) */
+  --ea-paper:      #FBFBFB;
+
+  /* ────────────────────────────────────────────────────────
+     SEMANTIC TOKENS
+     ──────────────────────────────────────────────────────── */
+  --fg-1:          var(--ea-noir);       /* primary text */
+  --fg-2:          #474747;              /* secondary text */
+  --fg-3:          #8C8C8C;              /* tertiary / captions */
+  --fg-on-dark:    var(--ea-frosty);     /* text on noir surfaces */
+  --fg-inverse:    var(--ea-frosty);
+  --fg-brand:      var(--ea-crimson);
+
+  --bg-1:          var(--ea-white);      /* canvas */
+  --bg-2:          var(--ea-paper);      /* raised card on white */
+  --bg-3:          var(--ea-bone);       /* muted section */
+  --bg-dark:       var(--ea-noir);       /* dark section */
+  --bg-brand:      var(--ea-crimson);    /* brand section */
+  --bg-brand-soft: var(--ea-crimson-50); /* pale brand surface */
+
+  --border-1:      var(--ea-mist);       /* hairline */
+  --border-2:      var(--ea-fog);
+  --border-strong: var(--ea-noir);
+  --border-brand:  var(--ea-crimson);
+
+  --focus-ring:    var(--ea-crimson);
+
+  --warning-ink:    #7A5A00;              /* deep amber — bold banner text, icon, dismiss */
+  --warning-accent: #B8860B;              /* left border / icon stroke accent */
+  --warning-wash:   #F0D48A;              /* hairline border */
+  --warning-bg:     #FEF6E7;              /* pale amber banner surface */
+
+  --info-ink:       var(--ea-crimson);    /* bold banner text, icon */
+  --info-accent:    var(--ea-crimson);    /* left border / icon stroke accent */
+  --info-wash:      var(--ea-bisque);     /* hairline border */
+  --info-bg:        var(--ea-crimson-50); /* pale crimson banner surface */
+
+  /* ────────────────────────────────────────────────────────
+     TYPE — FAMILIES
+     Brand is single-family: Montserrat for everything.
+     (PDF §13 also lists "Cedora" for headers — not licensed here;
+     we use Montserrat SemiBold/Bold as the header weight instead.)
+     ──────────────────────────────────────────────────────── */
+  --font-sans:     'Montserrat', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+  --font-display:  'Montserrat', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+  --font-serif:    'Fraunces', ui-serif, Georgia, 'Times New Roman', serif;  /* portal display face — pairs with Montserrat for body/UI */
+
+  --fw-regular:    400;    /* @kind font */
+  --fw-medium:     500;    /* @kind font */
+  --fw-semibold:   600;    /* @kind font */
+  --fw-bold:       700;    /* @kind font */
+
+  /* ────────────────────────────────────────────────────────
+     TYPE — SCALE (from Figma style names, desktop)
+     D-scale = display; h-scale = headings; p-scale = paragraph.
+     Leading/letter-spacing encoded below in semantic roles.
+     ──────────────────────────────────────────────────────── */
+  --fs-d1: 300px; --lh-d1: 100%; /* @kind font */ --ls-d1: 0.016em; /* @kind font */
+  --fs-d2: 150px; --lh-d2: 100%; /* @kind font */ --ls-d2: 0.016em; /* @kind font */
+  --fs-d3: 126px; --lh-d3: 100%; /* @kind font */ --ls-d3: 0.016em; /* @kind font */
+  --fs-d4: 105px; --lh-d4: 100%; /* @kind font */ --ls-d4: 0.016em; /* @kind font */
+  --fs-d5: 90px;  --lh-d5: 100%; /* @kind font */ --ls-d5: 0.016em; /* @kind font */
+  --fs-d6: 72px;  --lh-d6: 100%; /* @kind font */ --ls-d6: 0.016em; /* @kind font */
+
+  --fs-h1-desktop: 60px; --fs-h1-mobile: 38px;  --lh-h: 1.4; /* @kind font */  --ls-h: -0.01em; /* @kind font */
+  --fs-h2: 50px;
+  --fs-h3: 42px;
+  --fs-h4: 35px;
+  --fs-h5: 30px;
+  --fs-h6: 24px;
+
+  --fs-p-xl: 20px; --lh-p-xl: 1.7; /* @kind font */
+  --fs-p-l:  17px; --lh-p-l:  1.7; /* @kind font */
+  --fs-p-m:  16px; --lh-p-m:  1.7; /* @kind font */
+  --fs-p-s:  15px; --lh-p-s:  1.4; /* @kind font */
+  --fs-p-xs: 14px; --lh-p-xs: 1.4; /* @kind font */
+
+  /* ────────────────────────────────────────────────────────
+     SPACING + RADII + ELEVATION
+     ──────────────────────────────────────────────────────── */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+  --space-32: 128px;
+
+  --radius-xs: 4px;
+  --radius-sm: 6px;    /* most common — inputs, small cards */
+  --radius-md: 8px;
+  --radius-lg: 10px;   /* large surfaces, hero cards */
+  --radius-pill: 100px;/* buttons, badges */
+  --radius-full: 9999px;
+
+  --shadow-1: 0 1px 2px rgba(25,25,25,0.06), 0 1px 1px rgba(25,25,25,0.04);
+  --shadow-2: 0 4px 12px rgba(25,25,25,0.08);
+  --shadow-3: 0 12px 32px rgba(25,25,25,0.12);
+  --shadow-focus: 0 0 0 3px rgba(142,27,24,0.25);
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1); /* @kind other */
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1); /* @kind other */
+  --dur-fast: 150ms; /* @kind other */
+  --dur-med:  240ms; /* @kind other */
+  --dur-slow: 400ms; /* @kind other */
+
+  /* Layout */
+  --container-max: 1320px;
+  --container-pad: clamp(20px, 4vw, 64px);
+}
+
+/* ============================================================
+   SEMANTIC ROLES — ready to use on raw HTML
+   ============================================================ */
+
+html { color: var(--fg-1); background: var(--bg-1); }
+body {
+  font-family: var(--font-sans);
+  font-weight: var(--fw-medium);
+  font-size: var(--fs-p-l);
+  line-height: var(--lh-p-l);
+  letter-spacing: 0.010em;
+  color: var(--fg-1);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: var(--fw-semibold);
+  color: var(--fg-1);
+  letter-spacing: var(--ls-h);
+  line-height: var(--lh-h);
+  margin: 0 0 0.5em;
+  text-wrap: balance;
+}
+h1 { font-size: var(--fs-h1-desktop); line-height: 1.1; }
+h2 { font-size: var(--fs-h2); line-height: 1.15; }
+h3 { font-size: var(--fs-h3); }
+h4 { font-size: var(--fs-h4); }
+h5 { font-size: var(--fs-h5); }
+h6 { font-size: var(--fs-h6); }
+
+@media (max-width: 768px) {
+  h1 { font-size: var(--fs-h1-mobile); }
+  h2 { font-size: 36px; }
+  h3 { font-size: 28px; }
+  h4 { font-size: 24px; }
+  h5 { font-size: 22px; }
+  h6 { font-size: 20px; }
+}
+
+p { margin: 0 0 1em; text-wrap: pretty; }
+
+small { font-size: var(--fs-p-xs); color: var(--fg-2); }
+
+a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1.5px solid currentColor;
+  padding-bottom: 2px;
+  transition: color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out);
+}
+a:hover { color: var(--ea-crimson); border-color: var(--ea-crimson); }
+
+/* Utility: eyebrow label (all-caps wayfinder above headings) */
+.ea-eyebrow {
+  font-family: var(--font-sans);
+  font-weight: var(--fw-semibold);
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ea-crimson);
+}
+
+/* Utility: display sizes for big stats / hero numerals */
+.ea-display    { font-size: var(--fs-d6); line-height: 1; letter-spacing: var(--ls-d1); font-weight: var(--fw-semibold); }
+.ea-display-lg { font-size: var(--fs-d4); line-height: 1; letter-spacing: var(--ls-d1); font-weight: var(--fw-semibold); }

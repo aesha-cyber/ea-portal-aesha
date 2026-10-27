@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/extension-architecture-design-system-0124207d-8759-4968-8e99-e143fec3b79f/colors_and_type.css">
+  <link rel="stylesheet" href="_ds/extension-architecture-design-system-0124207d-8759-4968-8e99-e143fec3b79f/styles.css">
+  <script src="_ds/extension-architecture-design-system-0124207d-8759-4968-8e99-e143fec3b79f/_ds_bundle.js"></script>
+  <style>
+    @font-face { font-family: 'Montserrat'; src: url('./fonts/Montserrat-VariableFont_wght.ttf') format('truetype-variations'); font-weight: 100 900; }
+    @font-face { font-family: 'Fraunces'; src: url('./fonts/Fraunces-VariableFont_SOFT_WONK_opsz_wght.ttf') format('truetype-variations'); font-weight: 100 900; }
+    html, body { margin: 0; padding: 0; font-family: 'Montserrat', ui-sans-serif, system-ui, sans-serif; background:#FFFFFF; }
+    * { box-sizing: border-box; }
+    .ea-tabs-row::-webkit-scrollbar { display: none; }
+    *::-webkit-scrollbar { width:8px; height:8px; }
+    *::-webkit-scrollbar-track { background:transparent; }
+    *::-webkit-scrollbar-thumb { background:#D1D1D1; border-radius:100px; }
+    *::-webkit-scrollbar-thumb:hover { background:#B8B8B8; }
+    * { scrollbar-width:thin; scrollbar-color:#D1D1D1 transparent; }
+    ::selection { background:#8E1B18; color:#FFFFFF; }
+    ::-moz-selection { background:#8E1B18; color:#FFFFFF; }
+    [role="button"]:focus-visible, a:focus-visible, button:focus-visible { outline: 2px solid #8E1B18; outline-offset: 2px; }
+      @media (max-width:640px){.ea-persona-text{display:none}header{gap:8px !important}}
+  </style>
+</helmet>
+
+<div style="min-height:100vh;background:#FFFFFF;color:#191919;">
+  <sc-if value="{{ messagesOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:50;background:#FFFFFF;">
+      <dc-import name="EAPortalMessages" persona="admin" on-back="{{ closeMessages }}" hint-size="100%,100%"></dc-import>
+    </div>
+  </sc-if>
+  <sc-if value="{{ anyDropdownOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeDropdowns }}" style="position:fixed;inset:0;z-index:15;background:transparent;"></div>
+  </sc-if>
+  <sc-if value="{{ confirmDeactivateUser }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:60;background:rgba(25,25,25,0.6);display:flex;align-items:center;justify-content:center;padding:20px;">
+      <div style="background:#FFFFFF;border-radius:10px;border-top:3px solid #8E1B18;max-width:440px;width:100%;padding:28px;position:relative;">
+        <span aria-hidden="true" style="position:absolute;top:24px;right:24px;width:52px;height:52px;border-radius:100px;background:rgba(142,27,24,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 9v4 M12 17h.01 M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z" stroke="#8E1B18" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        </span>
+        <h3 style="margin:0 0 10px;padding-right:64px;font-family:'Fraunces', ui-serif, Georgia, serif;font-optical-sizing:auto;font-weight:500;font-size:22px;color:#191919;">Remove access</h3>
+        <p style="margin:0 0 14px;font-size:14.5px;font-weight:600;color:#191919;">Deactivate {{ confirmDeactivateUserName }}?</p>
+        <p style="margin:0 0 14px;font-size:13.5px;color:#474747;line-height:1.6;">This closes the portal for {{ confirmDeactivateUserName }} straight away. Every page, drawing, invoice and identity document is refused from that moment, and they cannot sign in again.</p>
+        <p style="margin:0 0 24px;font-size:13.5px;color:#474747;line-height:1.6;">Nothing they wrote is deleted. Their messages, uploads and verifications stay on the projects they belong to, with their name on them. You can restore access at any time.</p>
+        <div style="display:flex;justify-content:flex-end;gap:10px;">
+          <span onClick="{{ cancelDeactivate }}" role="button" tabindex="0" style="padding:8px 18px;border-radius:100px;font-size:13px;font-weight:500;color:#191919;border:1px solid #D1D1D1;cursor:pointer;">Cancel</span>
+          <span onClick="{{ confirmDeactivate }}" role="button" tabindex="0" style="padding:8px 18px;border-radius:100px;font-size:13px;font-weight:500;color:#FFFFFF;background:#8E1B18;cursor:pointer;">Remove access</span>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ confirmArchiveUser }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:60;background:rgba(25,25,25,0.6);display:flex;align-items:center;justify-content:center;padding:20px;">
+      <div style="background:#FFFFFF;border-radius:10px;border-top:3px solid #8E1B18;max-width:440px;width:100%;padding:28px;position:relative;">
+        <h3 style="margin:0 0 10px;font-family:'Fraunces', ui-serif, Georgia, serif;font-optical-sizing:auto;font-weight:500;font-size:22px;color:#191919;">Archive access</h3>
+        <p style="margin:0 0 14px;font-size:14.5px;font-weight:600;color:#191919;">Archive {{ confirmArchiveUserName }}?</p>
+        <p style="margin:0 0 14px;font-size:13.5px;color:#474747;line-height:1.6;">{{ confirmArchiveUserName }} is moved out of the active list and can no longer sign in. Nothing is deleted — their messages, uploads and project history stay exactly where they are.</p>
+        <p style="margin:0 0 24px;font-size:13.5px;color:#474747;line-height:1.6;">You can restore them from the Archived tab at any time.</p>
+        <div style="display:flex;justify-content:flex-end;gap:10px;">
+          <span onClick="{{ cancelArchive }}" role="button" tabindex="0" style="padding:8px 18px;border-radius:100px;font-size:13px;font-weight:500;color:#191919;border:1px solid #D1D1D1;cursor:pointer;">Cancel</span>
+          <span onClick="{{ confirmArchive }}" role="button" tabindex="0" style="padding:8px 18px;border-radius:100px;font-size:13px;font-weight:500;color:#FFFFFF;background:#8E1B18;cursor:pointer;">Archive</span>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ confirmDeleteUser }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:60;background:rgba(25,25,25,0.6);display:flex;align-items:center;justify-content:center;padding:20px;">
+      <div style="background:#FFFFFF;border-radius:10px;border-top:3px solid #8E1B18;max-width:440px;width:100%;padding:28px;position:relative;">
+        <h3 style="margin:0 0 10px;font-family:'Fraunces', ui-serif, Georgia, serif;font-optical-sizing:auto;font-weight:500;font-size:22px;color:#191919;">Delete user</h3>
+        <p style="margin:0 0 14px;font-size:14.5px;font-weight:600;color:#191919;">Delete {{ confirmDeleteUserName }}?</p>
+        <p style="margin:0 0 14px;font-size:13.5px;color:#474747;line-height:1.6;">This permanently removes {{ confirmDeleteUserName }}'s account and login. It cannot be undone.</p>
+        <p style="margin:0 0 24px;font-size:13.5px;color:#474747;line-height:1.6;">Messages, uploads and verifications they added stay on the project record, but their profile and access are gone for good.</p>
+        <div style="display:flex;justify-content:flex-end;gap:10px;">
+          <span onClick="{{ cancelDelete }}" role="button" tabindex="0" style="padding:8px 18px;border-radius:100px;font-size:13px;font-weight:500;color:#191919;border:1px solid #D1D1D1;cursor:pointer;">Cancel</span>
+          <span onClick="{{ confirmDelete }}" role="button" tabindex="0" style="padding:8px 18px;border-radius:100px;font-size:13px;font-weight:500;color:#FFFFFF;background:#8E1B18;cursor:pointer;">Delete</span>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <script src="./image-slot.js"></script><script src="./hero-picker.js"></script>
+  <div style="position:relative;min-height:52vh;display:flex;flex-direction:column;">
+    <div style="position:absolute;inset:0;z-index:0;">
+      <image-slot id="admin-header-bg" shape="rect" src="./assets/email-hero-opt.jpg" placeholder="Drop a header background image"></image-slot>
+    </div>
+    <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(25,25,25,0.35) 0%,rgba(25,25,25,0.45) 45%,rgba(25,25,25,0.75) 100%);z-index:0;pointer-events:none;"></div>
+    <header style="{{ menuHeaderStyle }}" style-hover="background:rgba(25,25,25,0.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);">
+      <div style="display:flex;align-items:center;gap:13px;flex-shrink:0;">
+        <img src="./assets/logo-white.png" alt="Extension Architecture - back to dashboard" onClick="{{ goHome }}" role="button" tabindex="0" style="height:40px;width:auto;cursor:pointer;">
+      </div>
+      <div style="flex:1;"></div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:nowrap;flex-shrink:0;">
+        <span onClick="{{ messagesClick }}" onKeyDown="{{ messagesKeyDown }}" role="button" tabindex="0" title="Messages" aria-label="Messages" style="width:34px;height:34px;border-radius:100px;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 20l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5Z" stroke="rgba(255,255,255,0.85)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          <span aria-hidden="true" style="position:absolute;top:-2px;right:-2px;width:9px;height:9px;border-radius:100px;background:#8E1B18;"></span>
+        </span>
+        <div style="position:relative;">
+          <span onClick="{{ toggleNotif }}" onKeyDown="{{ notifKeyDown }}" role="button" tabindex="0" aria-haspopup="true" aria-expanded="{{ notifOpen }}" aria-label="Notifications, {{ notifCount }} unread" style="width:34px;height:34px;border-radius:100px;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" stroke="rgba(255,255,255,0.85)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path><path d="M13.73 21a2 2 0 0 1-3.46 0" stroke="rgba(255,255,255,0.85)" stroke-width="1.8" stroke-linecap="round"></path></svg>
+            <sc-if value="{{ hasNotifications }}" hint-placeholder-val="{{ true }}">
+              <span aria-hidden="true" style="position:absolute;top:-2px;right:-2px;background:#8E1B18;color:#FFFFFF;font-size:10px;font-weight:700;width:16px;height:16px;border-radius:100px;display:flex;align-items:center;justify-content:center;border:1px solid #8E1B18;">{{ notifCount }}</span>
+            </sc-if>
+          </span>
+          <sc-if value="{{ notifOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;top:44px;right:0;width:320px;max-width:calc(100vw - 32px);background:#FFFFFF;border-radius:10px;border:1px solid #EAEAEA;border-bottom:3px solid #8E1B18;box-shadow:0 16px 40px rgba(25,25,25,0.16);z-index:20;overflow-y:auto;overscroll-behavior:contain;max-height:min(460px,calc(100vh - 100px));">
+              <div style="position:sticky;top:0;z-index:1;background:#FFFFFF;padding:14px 18px;border-bottom:1px solid #F3F3F3;display:flex;align-items:center;justify-content:space-between;"><p style="margin:0;font-weight:600;font-size:13px;color:#191919;">Notifications</p><sc-if value="{{ hasNotifications }}" hint-placeholder-val="{{ true }}"><span onClick="{{ markAllRead }}" style="font-size:11px;font-weight:600;color:#8E1B18;cursor:pointer;">Mark all read</span></sc-if></div>
+              <sc-for list="{{ notifications }}" as="n" hint-placeholder-count="3">
+                <div onClick="{{ n.onClick }}" onKeyDown="{{ n.onKeyDown }}" role="button" tabindex="0" aria-label="{{ n.title }}" style="display:flex;gap:12px;padding:14px 18px;border-bottom:1px solid #F8F8F8;cursor:pointer;align-items:flex-start;background:{{ n.rowBg }};">
+                  <span aria-hidden="true" style="width:7px;height:7px;border-radius:100px;background:{{ n.dotColor }};margin-top:6px;flex-shrink:0;"></span>
+                  <div style="flex:1;min-width:0;"><p style="margin:0 0 2px;font-size:13px;font-weight:{{ n.titleWeight }};color:{{ n.titleColor }};">{{ n.title }}</p><p style="margin:0;font-size:12px;color:#6B6B6B;line-height:1.4;">{{ n.detail }}</p></div>
+                  <span aria-hidden="true" style="font-size:12px;color:#6B6B6B;flex-shrink:0;">{{ n.time }}</span>
+                </div>
+              </sc-for>
+              <sc-if value="{{ hasNoNotifications }}" hint-placeholder-val="{{ false }}">
+                <div style="padding:32px 20px;text-align:center;"><p style="margin:0;font-size:13px;color:#6B6B6B;">You&rsquo;re all caught up.</p></div>
+              </sc-if>
+            </div>
+          </sc-if>
+        </div>
+        <div style="position:relative;">
+          <span onClick="{{ toggleAccount }}" onKeyDown="{{ accountKeyDown }}" role="button" tabindex="0" aria-haspopup="true" aria-expanded="{{ accountOpen }}" aria-label="Account menu for Latika Singh" style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+            <span class="ea-persona-text" style="text-align:right;"><span style="display:block;font-size:13px;font-weight:600;color:#FFFFFF;line-height:1.25;">Latika Singh</span><span style="display:block;font-size:12px;color:rgba(255,255,255,0.8);line-height:1.25;">Manager</span></span>
+            <span aria-hidden="true" style="width:34px;height:34px;border-radius:100px;background:#8E1B18;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;">LS</span>
+          </span>
+          <sc-if value="{{ accountOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;top:42px;right:0;min-width:280px;width:max-content;max-width:calc(100vw - 32px);background:#FFFFFF;border-radius:10px;border:1px solid #EAEAEA;border-bottom:3px solid #8E1B18;box-shadow:0 16px 40px rgba(25,25,25,0.16);z-index:20;overflow:hidden;">
+              <div style="padding:14px 16px;border-bottom:1px solid #F3F3F3;"><p style="margin:0;font-size:13px;font-weight:600;color:#191919;">Latika Singh</p><p style="margin:2px 0 0;font-size:12px;color:#6B6B6B;">Manager</p></div>
+              <div style="padding:8px 0;border-bottom:1px solid #F3F3F3;">
+                <p style="margin:0;padding:4px 16px 6px;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#6B6B6B;">View As</p>
+                <sc-for list="{{ personas }}" as="persona" hint-placeholder-count="4">
+                  <div onClick="{{ persona.select }}" onKeyDown="{{ persona.selectKeyDown }}" role="button" tabindex="0" aria-pressed="{{ persona.isActive }}" style="display:flex;align-items:center;justify-content:space-between;padding:8px 16px;font-size:13px;font-weight:600;color:{{ persona.textColor }};cursor:{{ persona.cursor }};">
+                    {{ persona.name }}
+                    <sc-if value="{{ persona.disabled }}" hint-placeholder-val="{{ false }}">
+                      <span style="font-size:10px;font-weight:600;letter-spacing:0.04em;color:#8A8A8A;background:#F3F3F3;border-radius:100px;padding:2px 8px;white-space:nowrap;">Coming soon</span>
+                    </sc-if>
+                    <sc-if value="{{ persona.isActive }}" hint-placeholder-val="{{ false }}">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L19 7" stroke="#8E1B18" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                    </sc-if>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="padding:10px 16px;border-bottom:1px solid #F3F3F3;">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+                  <span style="font-size:12.5px;font-weight:600;color:#191919;">Email Notifications</span>
+                  <span onClick="{{ toggleEmailNotifs }}" onKeyDown="{{ toggleEmailNotifsKeyDown }}" role="switch" aria-checked="{{ emailNotifsOn }}" tabindex="0" style="width:34px;height:20px;border-radius:100px;background:{{ emailNotifsToggleBg }};position:relative;cursor:pointer;flex-shrink:0;">
+                    <span aria-hidden="true" style="position:absolute;top:2px;left:{{ emailNotifsKnobLeft }};width:16px;height:16px;border-radius:100px;background:#FFFFFF;transition:left 150ms ease-out;"></span>
+                  </span>
+                </div>
+                <span onClick="{{ previewEmailClick }}" style="display:inline-block;margin-top:8px;font-size:12px;font-weight:600;color:#8E1B18;cursor:pointer;padding-bottom:2px;background-image:linear-gradient(currentColor,currentColor);background-repeat:no-repeat;background-position:0 100%;background-size:5px 1.5px;transition:background-size 150ms ease-out;" style-hover="background-size:100% 1.5px;">Preview sample email</span>
+              </div>
+              <a href="./EAPortalVisualRoadmap.dc.html" style="display:block;padding:12px 16px;font-size:13px;font-weight:600;color:#191919;text-decoration:none;border-bottom:1px solid #F3F3F3;">Visual Roadmap</a>
+<a href="./EAPortalAssetLibrary.dc.html?persona=manager" style="display:block;padding:12px 16px;font-size:13px;font-weight:600;color:#191919;text-decoration:none;border-bottom:1px solid #F3F3F3;">Brand &amp; Asset Library</a>
+              <a href="./index.dc.html" style="display:block;padding:12px 16px;font-size:13px;font-weight:600;color:#8E1B18;text-decoration:none;">Sign Out</a>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </header>
+    <div style="position:relative;z-index:1;flex:1;display:flex;flex-direction:column;justify-content:flex-end;padding:140px clamp(20px,4vw,36px) 48px;">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:32px;flex-wrap:wrap;">
+        <div style="min-width:0;max-width:560px;flex:1 1 400px;">
+          <h1 style="margin:0 0 10px;font-family:'Fraunces', ui-serif, Georgia, serif;font-optical-sizing:auto;font-weight:500;font-size:40px;line-height:1.1;color:#FFFFFF;">Welcome back, Latika</h1>
+          <p style="margin:0;font-size:15px;color:rgba(255,255,255,0.75);">3 of your projects need attention this week.</p>
+        </div>
+        <div style="display:flex;align-items:flex-end;gap:10px;flex:1 1 560px;max-width:880px;margin-left:auto;min-width:0;"><div style="display:flex;gap:1px;min-width:0;flex:1 1 auto;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.2);border-radius:10px;overflow:hidden;flex-wrap:wrap;">
+          <div style="background:rgba(25,25,25,0.55);padding:12px 14px;min-width:92px;flex:1 1 0;display:flex;flex-direction:column;justify-content:space-between;gap:4px;">
+            <p style="margin:0 0 4px;font-size:12px;font-weight:600;letter-spacing:0.06em;line-height:1.35;text-transform:uppercase;color:rgba(255,255,255,0.65);">Live Projects</p>
+            <p style="margin:0;font-family:'Fraunces', ui-serif, Georgia, serif;font-optical-sizing:auto;font-size:32px;line-height:1.1;color:#FFFFFF;">12</p>
+          </div>
+          <div style="background:rgba(25,25,25,0.55);padding:12px 14px;min-width:92px;flex:1 1 0;display:flex;flex-direction:column;justify-content:space-between;gap:4px;">
+            <p style="margin:0 0 4px;font-size:12px;font-weight:600;letter-spacing:0.06em;line-height:1.35;text-transform:uppercase;color:rgba(255,255,255,0.65);">Due This Week</p>
+            <p style="margin:0;font-family:'Fraunces', ui-serif, Georgia, serif;font-optical-sizing:auto;font-size:32px;line-height:1.1;color:#FFFFFF;">3</p>
+          </div>
+          <div style="background:rgba(25,25,25,0.55);padding:12px 14px;min-width:92px;flex:1 1 0;display:flex;flex-direction:column;justify-content:space-between;gap:4px;">
+            <p style="margin:0 0 4px;font-size:12px;font-weight:600;letter-spacing:0.06em;line-height:1.35;text-transform:uppercase;color:rgba(255,255,255,0.65);">Sent Back To You</p>
+            <p style="margin:0;font-family:'Fraunces', ui-serif, Georgia, serif;font-optical-sizing:auto;font-size:32px;line-height:1.1;color:#FFFFFF;">1</p>
+          </div>
+        </div><button onClick="{{ changeBanner }}" aria-label="Change banner image" title="Change banner image" style="flex-shrink:0;align-self:flex-end;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:100px;border:1px solid rgba(255,255,255,0.6);background:rgba(25,25,25,0.55);color:#fff;cursor:pointer;" style-hover="background:rgba(25,25,25,0.8);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h3l2-3h6l2 3h3a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path><circle cx="12" cy="13" r="3.5" stroke="currentColor" stroke-width="1.8"></circle></svg></button></div>
+      </div>
+    </div>
+  </div>
+  <div style="position:sticky;top:{{ tabsTop }}px;transition:top 0.3s ease-out;z-index:5;background:#FFFFFF;border-bottom:1px solid #EAEAEA;padding:22px clamp(20px,4vw,36px) 0;box-shadow:0 4px 12px rgba(25,25,25,0.06);border-radius:20px 20px 0 0;margin-top:-16px;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <sc-if value="{{ canGoPrevTab }}" hint-placeholder-val="{{ false }}">
+        <span onClick="{{ scrollTabsLeft }}" onKeyDown="{{ scrollTabsLeftKeyDown }}" role="button" tabindex="0" aria-label="Previous tab" style="flex-shrink:0;width:26px;height:26px;border-radius:100px;border:1px solid #D1D1D1;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#474747;margin-bottom:12px;">
+          <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        </span>
+      </sc-if>
+      <div style="position:relative;flex:1;min-width:0;overflow:hidden;">
+        <div ref="{{ tabsScrollRef }}" class="ea-tabs-row" style="display:flex;gap:28px;overflow-x:auto;scrollbar-width:none;">
+          <sc-for list="{{ staffTabs }}" as="tab" hint-placeholder-count="7">
+            <div onClick="{{ tab.select }}" role="button" tabindex="0" style="{{ tab.style }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="{{ tab.icon }}" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{ tab.label }}</div>
+          </sc-for>
+        </div>
+      </div>
+      <sc-if value="{{ canGoNextTab }}" hint-placeholder-val="{{ true }}">
+        <span onClick="{{ scrollTabsRight }}" onKeyDown="{{ scrollTabsRightKeyDown }}" role="button" tabindex="0" aria-label="Next tab" style="flex-shrink:0;width:26px;height:26px;border-radius:100px;border:1px solid #D1D1D1;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#474747;margin-bottom:12px;">
+          <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        </span>
+      </sc-if>
+    </div>
+  </div>
+  <sc-if value="{{ isStandardTab }}" hint-placeholder-val="{{ true }}">
+    <div style="padding:32px clamp(20px,4vw,36px) 64px;">
+      <div style="min-height:360px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;padding:48px 20px;">
+        <p style="margin:0;font-size:13px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:#8E1B18;">Manager Dashboard</p>
+        <h2 style="margin:0;font-family:'Fraunces', ui-serif, Georgia, serif;font-optical-sizing:auto;font-weight:500;font-size:32px;color:#191919;">{{ staffTabTitle }}</h2>
+        <p style="margin:0;font-size:13px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:#6B6B6B;">Coming Soon</p>
+        <p style="margin:0;font-size:14px;color:#6B6B6B;max-width:420px;line-height:1.6;">{{ staffTabDesc }}</p>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ isProjectsTab }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:32px clamp(20px,4vw,36px) 72px;">
+      <div style="background:#FFFFFF;border-top:3px solid #8E1B18;border-radius:8px;box-shadow:0 1px 3px rgba(25,25,25,0.08);padding:28px;">
+        <p style="margin:0 0 6px;font-size:13px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:#8E1B18;">Managers &amp; Admins</p>
+        <h2 style="margin:0 0 22px;font-family:'Fraunces', ui-serif, Georgia, serif;font-optical-sizing:auto;font-weight:500;font-size:30px;color:#191919;">Add a Project</h2>
+
+        <div style="margin-bottom:18px;">
+          <label style="display:block;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;margin-bottom:6px;">Project Type</label>
+          <div role="tablist" style="display:flex;flex-wrap:wrap;gap:28px;border-bottom:1px solid #EAEAEA;">
+            <sc-for list="{{ projectTypeToggle }}" as="pt" hint-placeholder-count="3">
+              <div onClick="{{ pt.select }}" role="tab" aria-selected="{{ pt.selected }}" tabindex="0" style="{{ pt.style }}">{{ pt.label }}</div>
+            </sc-for>
+          </div>
+          <p style="margin:12px 0 0;font-size:12px;color:#6B6B6B;line-height:1.5;">Internal Capture covers work that isn't a household build — a website, a brand refresh, anything your own team is running as a project.</p>
+          <div style="margin-top:16px;max-width:420px;">
+            <label style="display:block;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;margin-bottom:6px;">Project Thumbnail</label>
+            <label style="display:block;position:relative;aspect-ratio:16/9;border:1px dashed #D1D1D1;border-radius:6px;background:#FBFBFB;overflow:hidden;cursor:pointer;">
+              <span style="position:absolute;inset:0;background-size:cover;background-position:center;background-image:{{ npThumbBg }};"></span>
+              <span style="position:absolute;left:0;right:0;bottom:0;padding:8px 12px;background:rgba(25,25,25,0.6);color:#FFFFFF;font-size:12px;font-weight:500;">{{ npThumbLabel }}</span>
+              <input type="file" accept="image/*" onChange="{{ pickNpThumb }}" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;">
+            </label>
+            <p style="margin:4px 0 0;font-size:11px;color:#8A8A8A;">16:9 image shown on the project card. Leave empty to use the default.</p>
+          </div>
+        </div>
+
+        <sc-if value="{{ isInternalProject }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;gap:2px;background:#F3F3F3;border-radius:100px;padding:2px;margin-bottom:14px;width:fit-content;">
+            <span onClick="{{ setInternalModeNew }}" role="button" tabindex="0" style="{{ internalModeNewStyle }}">New</span>
+            <span onClick="{{ setInternalModeExisting }}" role="button" tabindex="0" style="{{ internalModeExistingStyle }}">Existing</span>
+          </div>
+          <sc-if value="{{ isInternalExisting }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-bottom:18px;max-width:420px;">
+              <label style="display:block;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;margin-bottom:6px;">Existing Internal Project</label>
+              <div style="position:relative;">
+                <div onClick="{{ existingInternalDD.toggle }}" role="button" tabindex="0" style="width:100%;padding:12px 14px;border:1px solid #D1D1D1;border-radius:6px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;background:#FFFFFF;box-sizing:border-box;">
+                  <span style="color:{{ existingInternalDD.textColor }};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ existingInternalDD.value }}</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><path d="M6 9l6 6 6-6" stroke="#474747" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                </div>
+                <sc-if value="{{ existingInternalDD.open }}" hint-placeholder-val="{{ false }}">
+                  <div onClick="{{ existingInternalDD.close }}" style="position:fixed;inset:0;z-index:9;"></div>
+                  <div style="position:absolute;top:calc(100% + 4px);left:0;right:0;background:#FFFFFF;border:1px solid #D1D1D1;border-radius:6px;box-shadow:0 12px 28px rgba(25,25,25,0.14);z-index:10;max-height:240px;overflow-y:auto;">
+                    <sc-for list="{{ existingInternalDD.items }}" as="it" hint-placeholder-count="3">
+                      <div onClick="{{ it.select }}" role="button" tabindex="0" style="padding:10px 14px;font-size:13.5px;color:#191919;cursor:pointer;border-bottom:1px solid #F3F3F3;background:{{ it.bg }};">{{ it.label }}</div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+              </div>
+              <p style="margin:6px 0 0;font-size:11px;color:#8A8A8A;">Pick a project already being tracked to log further progress.</p>
+              <sc-if value="{{ existingInternalDD.isEmpty }}" hint-placeholder-val="{{ false }}">
+                <p style="margin:6px 0 0;font-size:12px;color:#6B6B6B;">No internal projects yet — switch to New to create the first one.</p>
+              </sc-if>
+            </div>
+          </sc-if>
+          <sc-if value="{{ isInternalNew }}" hint-placeholder-val="{{ true }}">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;">
+            <div>
+              <label style="display:block;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;margin-bottom:6px;">Project Name</label>
+              <input type="text" placeholder="Website Redesign" value="{{ npInternalProjectName }}" onChange="{{ setNpInternalProjectName }}" style="width:100%;padding:12px 14px;border:1px solid #D1D1D1;border-radius:6px;font-size:14px;font-family:inherit;box-sizing:border-box;outline:none;" style-focus="border-color:#8E1B18;box-shadow:0 0 0 3px rgba(142,27,24,0.18);">
+              <p style="margin:4px 0 0;font-size:11px;color:#8A8A8A;">A short, clear name for the internal initiative.</p>
+            </div>
+            <div>
+              <label style="display:block;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;margin-bottom:6px;">Capture Team</label>
+              <div style="position:relative;">
+                <div onClick="{{ internalTeamDD.toggle }}" role="button" tabindex="0" style="width:100%;padding:12px 14px;border:1px solid #D1D1D1;border-radius:6px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;background:#FFFFFF;box-sizing:border-box;">
+                  <span style="color:{{ internalTeamDD.textColor }};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ internalTeamDD.value }}</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><path d="M6 9l6 6 6-6" stroke="#474747" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                </div>
+                <sc-if value="{{ internalTeamDD.open }}" hint-placeholder-val="{{ false }}">
+                  <div onClick="{{ internalTeamDD.close }}" style="position:fixed;inset:0;z-index:9;"></div>
+                  <div style="position:absolute;top:calc(100% + 4px);left:0;right:0;background:#FFFFFF;border:1px solid #D1D1D1;border-radius:6px;box-shadow:0 12px 28px rgba(25,25,25,0.14);z-index:10;max-height:240px;overflow-y:auto;">
+                    <sc-for list="{{ internalTeamDD.items }}" as="it" hint-placeholder-count="6">
+                      <div onClick="{{ it.select }}" role="button" tabindex="0" style="padding:10px 14px;font-size:13.5px;color:#191919;cursor:pointer;border-bottom:1px solid #F3F3F3;background:{{ it.bg }};">{{ it.label }}</div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+              </div>
+              <p style="margin:4px 0 0;font-size:11px;color:#8A8A8A;">Which capture team owns this project.</p>
+            </div>
+          </div>
+          </sc-if>
+        </sc-if>
+
+        <sc-if value="{{ isClientProject }}" hint-placeholder-val="{{ true }}">
+        <sc-if value="{{ isReturningClient }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-bottom:18px;">
+          <label style="display:block;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;margin-bottom:6px;">Household / Client</label>
+          <div style="position:relative;">
+            <div onClick="{{ householdDD.toggle }}" role="button" tabindex="0" style="width:100%;padding:12px 14px;border:1px solid #D1D1D1;border-radius:6px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;background:#FFFFFF;box-sizing:border-box;">
+              <span style="color:{{ householdDD.textColor }};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ householdDD.value }}</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><path d="M6 9l6 6 6-6" stroke="#474747" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </div>
+            <sc-if value="{{ householdDD.open }}" hint-placeholder-val="{{ false }}">
+              <div onClick="{{ householdDD.close }}" style="position:fixed;inset:0;z-index:9;"></div>
+              <div style="position:absolute;top:calc(100% + 4px);left:0;right:0;background:#FFFFFF;border:1px solid #D1D1D1;border-radius:6px;box-shadow:0 12px 28px rgba(25,25,25,0.14);z-index:10;max-height:240px;overflow-y:auto;">
+                <sc-for list="{{ householdDD.items }}" as="it" hint-placeholder-count="6">
+                  <div onClick="{{ it.select }}" role="button" tabindex="0" style="padding:10px 14px;font-size:13.5px;color:#191919;cursor:pointer;border-bottom:1px solid #F3F3F3;background:{{ it.bg }};">{{ it.label }}</div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+        </sc-if>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;">
+          <div>
+            <label style="display:block;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;margin-bottom:6px;">Client Reference</label>
+            <input type="text" placeholder="ExtensionArchitecture_Web_2026" value="{{ npClientRef }}" onChange="{{ setNpClientRef }}" style="width:100%;padding:12px 14px;border:1px solid #D1D1D1;border-radius:6px;font-size:14px;font-family:inherit;box-sizing:border-box;outline:none;" style-focus="border-color:#8E1B18;box-shadow:0 0 0 3px rgba(142,27,24,0.18);">
+            <p style="margin:4px 0 0;font-size:11px;color:#8A8A8A;">Format: CompanyName_Source_Year (Web, IG, Meta, Google Ads), e.g. ExtensionArchitecture_Web_2026. The year is used to filter projects by year.</p>
+          </div>
+          <div>
+            <label style="display:block;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;margin-bottom:6px;">Household Name</label>
+            <input type="text" placeholder="House / Flat No, Building, Street Name, Town" value="{{ npHouseholdName }}" onChange="{{ setNpHouseholdName }}" style="width:100%;padding:12px 14px;border:1px solid #D1D1D1;border-radius:6px;font-size:14px;font-family:inherit;box-sizing:border-box;outline:none;" style-focus="border-color:#8E1B18;box-shadow:0 0 0 3px rgba(142,27,24,0.18);">
+            <p style="margin:4px 0 0;font-size:11px;color:#8A8A8A;">Short name used internally to identify this household.</p>
+          </div>
+          <div>
+            <label style="display:block;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;margin-bottom:6px;">Client Name</label>
+            <input type="text" placeholder="Jane Thompson" value="{{ npClientName }}" onChange="{{ setNpClientName }}" style="width:100%;padding:12px 14px;border:1px solid #D1D1D1;border-radius:6px;font-size:14px;font-family:inherit;box-sizing:border-box;outline:none;" style-focus="border-color:#8E1B18;box-shadow:0 0 0 3px rgba(142,27,24,0.18);">
+            <p style="margin:4px 0 0;font-size:11px;color:#8A8A8A;">Primary contact for this project.</p>
+          </div>
+          <div>
+            <label style="display:block;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;margin-bottom:6px;">Client Email</label>
+            <input type="email" placeholder="jane@example.com" value="{{ npClientEmail }}" onChange="{{ setNpClientEmail }}" style="width:100%;padding:12px 14px;border:1px solid #D1D1D1;border-radius:6px;font-size:14px;font-family:inherit;box-sizing:border-box;outline:none;" style-focus="border-color:#8E1B18;box-shadow:0 0 0 3px rgba(142,27,24,0.18);">
+            <p style="margin:4px 0 0;font-size:11px;color:#8A8A8A;">Used to send their portal invite.</p>
+          </div>
+          <div>
+            <label style="display:block;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;margin-bottom:6px;">Client Phone No</label>
+            <input type="tel" placeholder="07700 900123" value="{{ npClientPhone }}" onChange="{{ setNpClientPhone }}" style="width:100%;padding:12px 14px;border:1px solid #D1D1D1;border-radius:6px;font-size:14px;font-family:inherit;box-sizing:border-box;outline:none;" style-focus="border-color:#8E1B18;box-shadow:0 0 0 3px rgba(142,27,24,0.18);">
+            <p style="margin:4px 0 0;font-size:11px;color:#8A8A8A;">Best number to reach the client, with country code if not UK.</p>
+          </div>
+          <div>
+            <label style="display:block;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;margin-bottom:6px;">Project Address</label>
+            <input type="text" placeholder="House / Flat No, Building, Street Name, Town, Post Code" value="{{ npAddress }}" onChange="{{ setNpAddress }}" style="width:100%;padding:12px 14px;border:1px solid #D1D1D1;border-radius:6px;font-size:14px;font-family:inherit;box-sizing:border-box;outline:none;" style-focus="border-color:#8E1B18;box-shadow:0 0 0 3px rgba(142,27,24,0.18);">
+            <p style="margin:4px 0 0;font-size:11px;color:#8A8A8A;">Shown on the client and staff project pages.</p>
+          </div>
+        </div>
+        <p style="margin:-10px 0 18px;font-size:12px;color:#6B6B6B;">Fill both to email their portal invite as the household is created. Leave both empty to add the household without one.</p>
+
+        </sc-if>
+
+        <sc-if value="{{ isClientProject }}" hint-placeholder-val="{{ true }}">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;">
+          <div>
+            <label style="display:block;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;margin-bottom:6px;">Extension Type</label>
+            <div style="position:relative;">
+              <div onClick="{{ toggleExtTypeDropdown }}" role="button" tabindex="0" style="width:100%;padding:12px 14px;border:1px solid #D1D1D1;border-radius:6px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;background:#FFFFFF;box-sizing:border-box;">
+                <span style="color:{{ extTypeSummaryColor }};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ extTypeSummary }}</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><path d="M6 9l6 6 6-6" stroke="#474747" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              </div>
+              <sc-if value="{{ npExtTypesOpen }}" hint-placeholder-val="{{ false }}">
+                <div onClick="{{ toggleExtTypeDropdown }}" style="position:fixed;inset:0;z-index:9;"></div>
+                <div style="position:absolute;top:calc(100% + 4px);left:0;right:0;background:#FFFFFF;border:1px solid #D1D1D1;border-radius:6px;box-shadow:0 12px 28px rgba(25,25,25,0.14);z-index:10;max-height:240px;overflow-y:auto;">
+                  <sc-for list="{{ extTypeMultiOptions }}" as="em" hint-placeholder-count="8">
+                    <label style="display:flex;align-items:center;gap:9px;padding:10px 14px;font-size:13.5px;color:#191919;cursor:pointer;border-bottom:1px solid #F3F3F3;">
+                      <input type="checkbox" checked="{{ em.checked }}" onChange="{{ em.toggle }}" style="width:15px;height:15px;accent-color:#8E1B18;cursor:pointer;">
+                      {{ em.name }}
+                    </label>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </div>
+            <p style="margin:4px 0 0;font-size:11px;color:#8A8A8A;">Select all that apply — Garima decides scope of works for multi-type projects.</p>
+          </div>
+          <div>
+            <label style="display:block;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;margin-bottom:6px;">Stages Purchased</label>
+            <div style="position:relative;">
+              <div onClick="{{ toggleStagesDropdown }}" role="button" tabindex="0" style="width:100%;padding:12px 14px;border:1px solid #D1D1D1;border-radius:6px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;background:#FFFFFF;box-sizing:border-box;">
+                <span style="color:{{ stagesSummaryColor }};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ stagesSummary }}</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><path d="M6 9l6 6 6-6" stroke="#474747" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              </div>
+              <sc-if value="{{ npStagesOpen }}" hint-placeholder-val="{{ false }}">
+                <div onClick="{{ toggleStagesDropdown }}" style="position:fixed;inset:0;z-index:9;"></div>
+                <div style="position:absolute;top:calc(100% + 4px);left:0;right:0;background:#FFFFFF;border:1px solid #D1D1D1;border-radius:6px;box-shadow:0 12px 28px rgba(25,25,25,0.14);z-index:10;max-height:240px;overflow-y:auto;">
+                  <sc-for list="{{ stageMultiOptions }}" as="sm" hint-placeholder-count="7">
+                    <label style="display:flex;align-items:center;gap:9px;padding:10px 14px;font-size:13.5px;color:#191919;cursor:pointer;border-bottom:1px solid #F3F3F3;">
+                      <input type="checkbox" checked="{{ sm.checked }}" onChange="{{ sm.toggle }}" style="width:15px;height:15px;accent-color:#8E1B18;cursor:pointer;">
+                      {{ sm.name }}
+                    </label>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </div>
+            <p style="margin:4px 0 0;font-size:11px;color:#8A8A8A;">Determines which stage templates show to the client and staff.</p>
+          </div>
+        </div>
+        </sc-if>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:22px;">
+          <div>
+            <label style="display:block;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;margin-bottom:6px;">Manager</label>
+            <div style="position:relative;">
+              <div onClick="{{ toggleManagersDropdown }}" role="button" tabindex="0" style="width:100%;padding:12px 14px;border:1px solid #D1D1D1;border-radius:6px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;background:#FFFFFF;box-sizing:border-box;">
+                <span style="color:{{ managersSummaryColor }};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ managersSummary }}</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><path d="M6 9l6 6 6-6" stroke="#474747" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              </div>
+              <sc-if value="{{ npManagersOpen }}" hint-placeholder-val="{{ false }}">
+                <div onClick="{{ toggleManagersDropdown }}" style="position:fixed;inset:0;z-index:9;"></div>
+                <div style="position:absolute;top:calc(100% + 4px);left:0;right:0;background:#FFFFFF;border:1px solid #D1D1D1;border-radius:6px;box-shadow:0 12px 28px rgba(25,25,25,0.14);z-index:10;max-height:240px;overflow-y:auto;">
+                  <sc-for list="{{ managerMultiOptions }}" as="mg" hint-placeholder-count="3">
+                    <label style="display:flex;align-items:center;gap:9px;padding:10px 14px;font-size:13.5px;color:#191919;cursor:pointer;border-bottom:1px solid #F3F3F3;">
+                      <input type="checkbox" checked="{{ mg.checked }}" onChange="{{ mg.toggle }}" style="width:15px;height:15px;accent-color:#8E1B18;cursor:pointer;">
+                      {{ mg.name }}
+                    </label>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </div>
+            <p style="margin:4px 0 0;font-size:11px;color:#8A8A8A;">Shown as the point of contact on the client and staff dashboards.</p>
+          </div>
+          <div>
+            <label style="display:block;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;margin-bottom:6px;">Project Team</label>
+            <div style="position:relative;">
+              <div onClick="{{ toggleStaffDropdown }}" role="button" tabindex="0" style="width:100%;padding:12px 14px;border:1px solid #D1D1D1;border-radius:6px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;background:#FFFFFF;box-sizing:border-box;">
+                <span style="color:{{ staffSummaryColor }};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ staffSummary }}</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><path d="M6 9l6 6 6-6" stroke="#474747" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              </div>
+              <sc-if value="{{ npStaffOpen }}" hint-placeholder-val="{{ false }}">
+                <div onClick="{{ toggleStaffDropdown }}" style="position:fixed;inset:0;z-index:9;"></div>
+                <div style="position:absolute;top:calc(100% + 4px);left:0;right:0;background:#FFFFFF;border:1px solid #D1D1D1;border-radius:6px;box-shadow:0 12px 28px rgba(25,25,25,0.14);z-index:10;max-height:240px;overflow-y:auto;">
+                  <sc-for list="{{ staffOptions }}" as="st" hint-placeholder-count="5">
+                    <label style="display:flex;align-items:center;gap:9px;padding:10px 14px;font-size:13.5px;color:#191919;cursor:pointer;border-bottom:1px solid #F3F3F3;">
+                      <input type="checkbox" checked="{{ st.checked }}" onChange="{{ st.toggle }}" style="width:15px;height:15px;accent-color:#8E1B18;cursor:pointer;">
+                      <span style="flex:1;">{{ st.name }}</span>
+                      <span style="font-size:12px;color:#6B6B6B;">{{ st.role }}</span>
+                    </label>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </div>
+            <p style="margin:4px 0 0;font-size:11px;color:#8A8A8A;">Assigned staff will see this project in their own dashboard.</p>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;">
+          <div>
+            <label style="display:block;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;margin-bottom:6px;">Start Date</label>
+            <div style="position:relative;">
+              <div ref="{{ npSD.btnRef }}" onClick="{{ npSD.toggle }}" role="button" tabindex="0" style="width:100%;padding:12px 14px;border:1px solid #D1D1D1;border-radius:6px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;background:#FFFFFF;box-sizing:border-box;">
+                <span style="color:{{ npSD.textColor }};">{{ npSD.shown }}</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><rect x="3" y="4.5" width="18" height="16.5" rx="2" stroke="#474747" stroke-width="1.8"></rect><path d="M3 9.5h18M8 3v3M16 3v3" stroke="#474747" stroke-width="1.8" stroke-linecap="round"></path></svg>
+              </div>
+                <sc-if value="{{ npSD.open }}" hint-placeholder-val="{{ false }}">
+                  <div onClick="{{ npSD.close }}" style="position:fixed;inset:0;z-index:55;"></div>
+                  <div style="{{ npSD.popStyle }}">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+                      <button onClick="{{ npSD.prev }}" aria-label="Previous month" style="width:32px;height:32px;border-radius:100px;border:1px solid #D1D1D1;background:#fff;color:#474747;display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="border-color:#191919;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+                      <span style="font-family:'Fraunces',serif;font-size:17px;font-weight:500;color:#191919;">{{ npSD.monthLabel }}</span>
+                      <button onClick="{{ npSD.next }}" aria-label="Next month" style="width:32px;height:32px;border-radius:100px;border:1px solid #D1D1D1;background:#fff;color:#474747;display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="border-color:#191919;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(7,1fr);text-align:center;margin-bottom:4px;font-size:11px;font-weight:700;letter-spacing:0.08em;color:#8C8C8C;"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+                    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;">
+                      <sc-for list="{{ npSD.cells }}" as="c" hint-placeholder-count="0">
+                        <button onClick="{{ c.pick }}" style="{{ c.style }}" style-hover="{{ c.hov }}">{{ c.label }}</button>
+                      </sc-for>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid #F3F3F3;">
+                      <button onClick="{{ npSD.clear }}" style="border:none;background:none;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;color:#6B6B6B;" style-hover="color:#8E1B18;">Clear</button>
+                      <button onClick="{{ npSD.todayPick }}" style="border:none;background:none;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;color:#8E1B18;" style-hover="color:#7A1714;">Today</button>
+                    </div>
+                  </div>
+                </sc-if>
+            </div>
+            <p style="margin:4px 0 0;font-size:11px;color:#8A8A8A;">When work on this project begins.</p>
+          </div>
+          <div>
+            <label style="display:block;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;margin-bottom:6px;">Estimated Completion</label>
+            <div style="position:relative;">
+              <div ref="{{ npED.btnRef }}" onClick="{{ npED.toggle }}" role="button" tabindex="0" style="width:100%;padding:12px 14px;border:1px solid #D1D1D1;border-radius:6px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;background:#FFFFFF;box-sizing:border-box;">
+                <span style="color:{{ npED.textColor }};">{{ npED.shown }}</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><rect x="3" y="4.5" width="18" height="16.5" rx="2" stroke="#474747" stroke-width="1.8"></rect><path d="M3 9.5h18M8 3v3M16 3v3" stroke="#474747" stroke-width="1.8" stroke-linecap="round"></path></svg>
+              </div>
+                <sc-if value="{{ npED.open }}" hint-placeholder-val="{{ false }}">
+                  <div onClick="{{ npED.close }}" style="position:fixed;inset:0;z-index:55;"></div>
+                  <div style="{{ npED.popStyle }}">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+                      <button onClick="{{ npED.prev }}" aria-label="Previous month" style="width:32px;height:32px;border-radius:100px;border:1px solid #D1D1D1;background:#fff;color:#474747;display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="border-color:#191919;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+                      <span style="font-family:'Fraunces',serif;font-size:17px;font-weight:500;color:#191919;">{{ npED.monthLabel }}</span>
+                      <button onClick="{{ npED.next }}" aria-label="Next month" style="width:32px;height:32px;border-radius:100px;border:1px solid #D1D1D1;background:#fff;color:#474747;display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="border-color:#191919;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(7,1fr);text-align:center;margin-bottom:4px;font-size:11px;font-weight:700;letter-spacing:0.08em;color:#8C8C8C;"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+                    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;">
+                      <sc-for list="{{ npED.cells }}" as="c" hint-placeholder-count="0">
+                        <button onClick="{{ c.pick }}" style="{{ c.style }}" style-hover="{{ c.hov }}">{{ c.label }}</button>
+                      </sc-for>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid #F3F3F3;">
+                      <button onClick="{{ npED.clear }}" style="border:none;background:none;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;color:#6B6B6B;" style-hover="color:#8E1B18;">Clear</button>
+                      <button onClick="{{ npED.todayPick }}" style="border:none;background:none;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;color:#8E1B18;" style-hover="color:#7A1714;">Today</button>
+                    </div>
+                  </div>
+                </sc-if>
+            </div>
+            <p style="margin:4px 0 0;font-size:11px;color:#8A8A8A;">Expected completion date.</p>
+          </div>
+        </div>
+
+        <sc-if value="{{ npAdded }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-bottom:16px;padding:14px 16px;border-radius:6px;background:#EEF3EE;color:#2A5C3A;font-size:13.5px;">Project added: {{ npAdded }}</div>
+        </sc-if>
+        <span onClick="{{ addProject }}" role="button" tabindex="0" style="display:inline-block;padding:8px 22px;border-radius:100px;background:#8E1B18;color:#FFFFFF;font-size:13px;font-weight:500;letter-spacing:0.016em;cursor:pointer;">{{ addProjectLabel }}</span>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:40px 0 16px;">
+        <h3 style="margin:0;font-size:13px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:#6B6B6B;">All Projects</h3>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <div style="display:flex;border:1px solid #D1D1D1;border-radius:6px;overflow:hidden;">
+            <span onClick="{{ setListView }}" role="button" tabindex="0" aria-label="List view" aria-pressed="{{ isListView }}" style="{{ listViewBtnStyle }}">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </span>
+            <span onClick="{{ setGridView }}" role="button" tabindex="0" aria-label="Grid view" aria-pressed="{{ isGridView }}" style="{{ gridViewBtnStyle }}">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"></rect><rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"></rect><rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"></rect><rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"></rect></svg>
+            </span>
+          </div>
+          <div style="position:relative;width:130px;">
+            <div onClick="{{ projectYearDD.toggle }}" role="button" tabindex="0" aria-label="Filter by year" style="width:100%;padding:9px 12px;border:1px solid #D1D1D1;border-radius:6px;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;background:#FFFFFF;box-sizing:border-box;">
+              <span style="color:#191919;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ projectYearDD.value }}</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><path d="M6 9l6 6 6-6" stroke="#474747" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </div>
+            <sc-if value="{{ projectYearDD.open }}" hint-placeholder-val="{{ false }}">
+              <div onClick="{{ projectYearDD.close }}" style="position:fixed;inset:0;z-index:9;"></div>
+              <div style="position:absolute;top:calc(100% + 4px);left:0;right:0;background:#FFFFFF;border:1px solid #D1D1D1;border-radius:6px;box-shadow:0 12px 28px rgba(25,25,25,0.14);z-index:10;max-height:240px;overflow-y:auto;">
+                <sc-for list="{{ projectYearDD.items }}" as="it" hint-placeholder-count="3">
+                  <div onClick="{{ it.select }}" role="button" tabindex="0" style="padding:10px 14px;font-size:13px;color:#191919;cursor:pointer;border-bottom:1px solid #F3F3F3;background:{{ it.bg }};">{{ it.label }}</div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+          <div style="position:relative;width:260px;max-width:100%;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);"><circle cx="11" cy="11" r="7" stroke="#8A8A8A" stroke-width="1.8"></circle><path d="M21 21l-4.3-4.3" stroke="#8A8A8A" stroke-width="1.8" stroke-linecap="round"></path></svg>
+            <input type="text" placeholder="Search projects" value="{{ projectSearch }}" onChange="{{ setProjectSearch }}" style="width:100%;padding:9px 12px 9px 34px;border:1px solid #D1D1D1;border-radius:6px;font-size:13px;font-family:inherit;box-sizing:border-box;outline:none;" style-focus="border-color:#8E1B18;box-shadow:0 0 0 3px rgba(142,27,24,0.18);">
+          </div>
+        </div>
+      </div>
+      <sc-if value="{{ isListView }}" hint-placeholder-val="{{ true }}">
+        <div style="overflow-x:auto;border:1px solid #EAEAEA;border-radius:10px;">
+          <table style="width:100%;border-collapse:collapse;min-width:1900px;">
+            <thead>
+              <tr style="background:#FBFBFB;">
+                <th style="text-align:left;padding:12px 16px;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;white-space:nowrap;">Project Type</th>
+                <th style="text-align:left;padding:12px 16px;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;white-space:nowrap;">Client Ref</th>
+                <th style="text-align:left;padding:12px 16px;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;white-space:nowrap;">Household Name</th>
+                <th style="text-align:left;padding:12px 16px;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;white-space:nowrap;">Client Name</th>
+                <th style="text-align:left;padding:12px 16px;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;white-space:nowrap;">Client Email</th>
+                <th style="text-align:left;padding:12px 16px;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;white-space:nowrap;">Client Phone No</th>
+                <th style="text-align:left;padding:12px 16px;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;white-space:nowrap;">Project Address</th>
+                <th style="text-align:left;padding:12px 16px;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;white-space:nowrap;">Extension Type</th>
+                <th style="text-align:left;padding:12px 16px;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;white-space:nowrap;">Stages Purchased</th>
+                <th style="text-align:left;padding:12px 16px;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;white-space:nowrap;">Manager</th>
+                <th style="text-align:left;padding:12px 16px;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;white-space:nowrap;">Project Team</th>
+                <th style="text-align:left;padding:12px 16px;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;white-space:nowrap;">Start Date</th>
+                <th style="text-align:left;padding:12px 16px;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;white-space:nowrap;">Estimated Completion</th>
+                <th style="text-align:right;padding:12px 16px;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;white-space:nowrap;">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <sc-for list="{{ pagedProjectRows }}" as="p" hint-placeholder-count="6">
+                <tr style="border-top:1px solid #F3F3F3;">
+                  <td style="padding:14px 16px;vertical-align:top;font-size:13px;color:#474747;white-space:nowrap;">{{ p.typeLabel }}</td>
+                  <td style="padding:14px 16px;vertical-align:top;font-size:13px;color:#474747;white-space:nowrap;">{{ p.clientRef }}</td>
+                  <td style="padding:14px 16px;vertical-align:top;font-size:13px;color:#474747;min-width:160px;">{{ p.householdLabel }}</td>
+                  <td style="padding:14px 16px;vertical-align:top;font-size:13px;color:#474747;font-weight:600;color:#191919;white-space:nowrap;">{{ p.client }}</td>
+                  <td style="padding:14px 16px;vertical-align:top;font-size:13px;color:#474747;">{{ p.emailLabel }}</td>
+                  <td style="padding:14px 16px;vertical-align:top;font-size:13px;color:#474747;white-space:nowrap;">{{ p.phoneLabel }}</td>
+                  <td style="padding:14px 16px;vertical-align:top;font-size:13px;color:#474747;min-width:200px;">{{ p.addressLabel }}</td>
+                  <td style="padding:14px 16px;vertical-align:top;font-size:13px;color:#474747;min-width:160px;">{{ p.project }}</td>
+                  <td style="padding:14px 16px;vertical-align:top;min-width:160px;"><div style="display:flex;flex-wrap:wrap;gap:6px;"><sc-for list="{{ p.stageList }}" as="st" hint-placeholder-count="1"><span style="display:inline-block;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;white-space:nowrap;{{ st.style }}">{{ st.label }}</span></sc-for></div></td>
+                  <td style="padding:14px 16px;vertical-align:top;min-width:140px;"><div style="display:flex;flex-wrap:wrap;gap:6px;"><sc-for list="{{ p.managerAvatars }}" as="pp" hint-placeholder-count="1"><span title="{{ pp.name }}" style="width:30px;height:30px;border-radius:100px;background:{{ pp.bg }};color:{{ pp.fg }};display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;letter-spacing:0.02em;box-sizing:border-box;">{{ pp.initials }}</span></sc-for></div></td>
+                  <td style="padding:14px 16px;vertical-align:top;min-width:140px;"><div style="display:flex;flex-wrap:wrap;gap:6px;"><sc-for list="{{ p.staffAvatars }}" as="pp" hint-placeholder-count="1"><span title="{{ pp.name }}" style="width:30px;height:30px;border-radius:100px;background:{{ pp.bg }};color:{{ pp.fg }};display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;letter-spacing:0.02em;box-sizing:border-box;">{{ pp.initials }}</span></sc-for></div></td>
+                  <td style="padding:14px 16px;vertical-align:top;font-size:13px;color:#474747;white-space:nowrap;">{{ p.startLabel }}</td>
+                  <td style="padding:14px 16px;vertical-align:top;font-size:13px;color:#474747;white-space:nowrap;">{{ p.endLabel }}</td>
+                  <td style="padding:14px 16px;vertical-align:top;text-align:right;white-space:nowrap;">
+                    <a href="{{ p.openHref }}" style="font-size:12.5px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:#8E1B18;text-decoration:none;">Open &rarr;</a>
+                  </td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+      </sc-if>
+      <sc-if value="{{ isGridView }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;">
+          <sc-for list="{{ pagedProjectRows }}" as="p" hint-placeholder-count="6">
+            <div onClick="{{ p.openDetail }}" role="button" tabindex="0" style="cursor:pointer;background:#FFFFFF;border-radius:10px;border:1px solid #EAEAEA;overflow:hidden;transition:box-shadow 150ms ease-out;" style-hover="box-shadow:0 8px 22px rgba(25,25,25,0.12);">
+              <div style="aspect-ratio:16/9;position:relative;overflow:hidden;">
+                <image-slot id="{{ p.thumbId }}" shape="rect" src="{{ p.thumbSrc }}" placeholder="Drop a project photo"></image-slot>
+                <span style="position:absolute;right:0;bottom:0;padding:11px 20px 11px 30px;pointer-events:none;">
+                  <span style="position:absolute;top:0;bottom:0;left:0;right:-12px;background:#FFFFFF;border-radius:.5rem 0 0 0;transform:skew(-25deg);"></span>
+                  <span style="position:relative;font-family:'Montserrat',sans-serif;font-size:13px;font-weight:600;color:#191919;white-space:nowrap;">View Project</span>
+                </span>
+              </div>
+              <div style="padding:18px 20px;">
+                <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;">
+                  <div style="flex-shrink:0;width:56px;height:56px;position:relative;display:flex;align-items:center;justify-content:center;">
+                    <svg width="56" height="56" viewBox="0 0 56 56" style="position:absolute;inset:0;transform:rotate(-90deg);">
+                      <circle cx="28" cy="28" r="25" fill="none" stroke="#F3F3F3" stroke-width="6"></circle>
+                      <circle cx="28" cy="28" r="25" fill="none" stroke="{{ p.progressColor }}" stroke-width="6" stroke-linecap="round" stroke-dasharray="157.08" stroke-dashoffset="{{ p.ringOffset }}" style="transition:stroke-dashoffset 900ms ease-out;"></circle>
+                    </svg>
+                    <div style="width:42px;height:42px;border-radius:100px;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#191919;position:relative;">{{ p.complete }}%</div>
+                  </div>
+                  <div style="min-width:0;flex:1;min-height:44px;display:flex;flex-direction:column;justify-content:center;">
+                    <h2 title="{{ p.household }}" style="margin:0;height:2.5em;font-family:'Fraunces', ui-serif, Georgia, serif;font-optical-sizing:auto;font-weight:500;font-size:17px;color:#191919;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">{{ p.household }}</h2>
+                  </div>
+                </div>
+                <span style="display:block;margin:-6px 0 14px;padding:6px 0;font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#8E1B18;">{{ p.complete }}% of {{ p.stage }}</span>
+                <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;color:#6B6B6B;margin-bottom:8px;">
+                  <span>{{ p.project }}</span>
+                  <span>{{ p.clientRef }}</span>
+                </div>
+                <div style="height:1px;background:#F3F3F3;margin-bottom:14px;"></div>
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+                  <span aria-hidden="true" style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:100px;background:#F3F3F3;color:#474747;white-space:nowrap;">{{ p.stage }}</span>
+                  <span style="font-size:12px;color:#9A9A9A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Next: {{ p.milestone }}</span>
+                </div>
+                <div style="height:1px;background:#F3F3F3;margin-bottom:14px;"></div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <div style="display:flex;flex-shrink:0;">
+                    <sc-for list="{{ p.teamLeadsPreview }}" as="lead" hint-placeholder-count="2">
+                      <span aria-hidden="true" title="{{ lead }}" style="width:28px;height:28px;border-radius:100px;background:#191919;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0;border:2px solid #FFFFFF;margin-left:-8px;">{{ lead.initials }}</span>
+                    </sc-for>
+                  </div>
+                  <div style="flex:1;min-width:0;">
+                    <div style="font-size:12.5px;font-weight:600;color:#191919;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ p.teamNames }}</div>
+                    <div style="font-size:12px;color:#6B6B6B;">Project team</div>
+                  </div>
+                  <span onClick="{{ stopPropagationHref }}" title="Chat with team" aria-label="Chat with team" style="width:30px;height:30px;border-radius:100px;border:1px solid #D1D1D1;display:flex;align-items:center;justify-content:center;color:#474747;flex-shrink:0;">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 20l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+      <sc-if value="{{ hasMultiplePages }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;justify-content:flex-end;gap:14px;margin-top:24px;">
+          <span onClick="{{ prevProjectPage }}" role="button" tabindex="0" aria-label="Previous page" style="{{ prevPageBtnStyle }}">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          </span>
+          <span style="font-size:12.5px;font-weight:600;color:#474747;">Page {{ projectPage }} of {{ projectTotalPages }}</span>
+          <span onClick="{{ nextProjectPage }}" role="button" tabindex="0" aria-label="Next page" style="{{ nextPageBtnStyle }}">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          </span>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+  <sc-if value="{{ progModalOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeProgressModal }}" style="position:fixed;inset:0;z-index:80;background:rgba(25,25,25,0.6);display:flex;align-items:center;justify-content:center;padding:20px;">
+      <div onClick="{{ stopProgressClick }}" style="width:100%;max-width:420px;background:#FFFFFF;border-radius:10px;border-top:3px solid #8E1B18;overflow:hidden;">
+        <div style="padding:18px 22px;border-bottom:1px solid #EAEAEA;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+          <div>
+            <p style="margin:0;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#8C8C8C;">Update Progress</p>
+            <p style="margin:2px 0 0;font-family:'Fraunces',serif;font-weight:500;font-size:17px;color:#191919;">{{ progModalProject }}</p>
+          </div>
+          <button onClick="{{ closeProgressModal }}" aria-label="Close" style="width:26px;height:26px;border-radius:100px;border:none;background:#F3F3F3;color:#474747;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;" style-hover="background:#E7E7E7;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg></button>
+        </div>
+        <div style="padding:18px 22px 0;">
+          <label style="display:block;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;margin-bottom:6px;">Stage</label>
+          <div style="position:relative;">
+            <div onClick="{{ progStageDD.toggle }}" role="button" tabindex="0" style="width:100%;padding:12px 14px;border:1px solid #D1D1D1;border-radius:6px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;background:#FFFFFF;box-sizing:border-box;">
+              <span style="color:{{ progStageDD.textColor }};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ progStageDD.value }}</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><path d="M6 9l6 6 6-6" stroke="#474747" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </div>
+            <sc-if value="{{ progStageDD.open }}" hint-placeholder-val="{{ false }}">
+              <div onClick="{{ progStageDD.close }}" style="position:fixed;inset:0;z-index:9;"></div>
+              <div style="position:absolute;top:calc(100% + 4px);left:0;right:0;background:#FFFFFF;border:1px solid #D1D1D1;border-radius:6px;box-shadow:0 12px 28px rgba(25,25,25,0.14);z-index:10;max-height:240px;overflow-y:auto;">
+                <sc-for list="{{ progStageDD.items }}" as="it" hint-placeholder-count="9">
+                  <div onClick="{{ it.select }}" role="button" tabindex="0" style="padding:10px 14px;font-size:13.5px;color:#191919;cursor:pointer;border-bottom:1px solid #F3F3F3;background:{{ it.bg }};">{{ it.label }}</div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px;">
+            <div>
+              <label style="display:block;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;margin-bottom:6px;">Stage Completion (%)</label>
+              <input type="number" min="0" max="100" value="{{ progStageComplete }}" onChange="{{ setProgStageComplete }}" style="width:100%;padding:12px 14px;border:1px solid #D1D1D1;border-radius:6px;font-size:14px;font-family:inherit;box-sizing:border-box;outline:none;" style-focus="border-color:#8E1B18;box-shadow:0 0 0 3px rgba(142,27,24,0.18);">
+            </div>
+            <div>
+              <label style="display:block;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;margin-bottom:6px;">Overall Completion (%)</label>
+              <input type="number" min="0" max="100" value="{{ progComplete }}" onChange="{{ setProgComplete }}" style="width:100%;padding:12px 14px;border:1px solid #D1D1D1;border-radius:6px;font-size:14px;font-family:inherit;box-sizing:border-box;outline:none;" style-focus="border-color:#8E1B18;box-shadow:0 0 0 3px rgba(142,27,24,0.18);">
+            </div>
+          </div>
+          <sc-for list="{{ progDates }}" as="d" hint-placeholder-count="2">
+            <label style="display:block;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;margin:18px 0 6px;">{{ d.label }}</label>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <sc-for list="{{ d.fields }}" as="f" hint-placeholder-count="2">
+                <div style="position:relative;">
+                  <div onClick="{{ f.toggle }}" role="button" tabindex="0" style="width:100%;padding:12px 14px;border:1px solid #D1D1D1;border-radius:6px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;background:#FFFFFF;box-sizing:border-box;"><span style="color:{{ f.textColor }};">{{ f.value }}</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><path d="M6 9l6 6 6-6" stroke="#474747" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+                  <sc-if value="{{ f.open }}" hint-placeholder-val="{{ false }}"><div onClick="{{ f.close }}" style="position:fixed;inset:0;z-index:9;"></div><div style="position:absolute;top:calc(100% + 4px);left:0;right:0;background:#FFFFFF;border:1px solid #D1D1D1;border-radius:6px;box-shadow:0 12px 28px rgba(25,25,25,0.14);z-index:10;max-height:200px;overflow-y:auto;"><sc-for list="{{ f.items }}" as="it" hint-placeholder-count="6"><div onClick="{{ it.select }}" role="button" tabindex="0" style="padding:10px 14px;font-size:13.5px;color:#191919;cursor:pointer;border-bottom:1px solid #F3F3F3;background:{{ it.bg }};">{{ it.label }}</div></sc-for></div></sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </sc-for>
+          <sc-if value="{{ progDateWarn }}" hint-placeholder-val="{{ false }}"><p style="margin:10px 0 0;font-size:12.5px;font-weight:600;color:#8E1B18;">The end date is before the start date.</p></sc-if>
+          <p style="margin:12px 0 0;font-size:12px;color:#6B6B6B;line-height:1.5;">This is reflected on the client's project page immediately.</p>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:12px;padding:20px 22px 22px;">
+          <span onClick="{{ closeProgressModal }}" role="button" tabindex="0" style="font-size:13px;font-weight:600;color:#6B6B6B;cursor:pointer;padding:10px 0;">Cancel</span>
+          <button onClick="{{ saveProgress }}" style="font-weight:600;font-size:13px;padding:10px 22px;border-radius:100px;background:#8E1B18;color:#FEFEFE;border:none;cursor:pointer;" style-hover="background:#7A1714;">Save</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ isRolesTab }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:32px clamp(20px,4vw,36px) 72px;">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:8px;">
+        <div>
+          <p style="margin:0 0 6px;font-size:13px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:#8E1B18;">Manager</p>
+          <h2 style="margin:0;font-family:'Fraunces', ui-serif, Georgia, serif;font-optical-sizing:auto;font-weight:500;font-size:32px;color:#191919;">Roles &amp; Permissions</h2>
+        </div>
+      </div>
+      <p style="margin:0 0 28px;font-size:14px;color:#6B6B6B;max-width:640px;line-height:1.6;">Configure what each role can see and do, and manage who has access to the portal.</p>
+
+      <sc-if value="{{ noProjectsYet }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;background:#FBEFEE;border:1px solid rgba(142,27,24,0.25);border-radius:8px;padding:14px 18px;margin-bottom:16px;">
+          <p style="margin:0;font-size:13px;color:#6B3330;line-height:1.5;">No projects yet. Add one first so a new client has somewhere to go.</p>
+          <span onClick="{{ goToProjectsTab }}" role="button" tabindex="0" style="flex-shrink:0;padding:7px 16px;border-radius:100px;background:#8E1B18;color:#FFFFFF;font-size:12px;font-weight:600;cursor:pointer;">Add Project</span>
+        </div>
+      </sc-if>
+
+      <div style="background:#FFFFFF;border-top:3px solid #8E1B18;border-radius:8px;box-shadow:0 1px 3px rgba(25,25,25,0.08);padding:28px;margin-top:16px;">
+      <h3 style="margin:0 0 4px;font-family:'Fraunces', ui-serif, Georgia, serif;font-optical-sizing:auto;font-weight:500;font-size:20px;color:#191919;">Invite a User</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:16px;">
+        <div>
+          <label style="display:block;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;margin-bottom:6px;">Full Name</label>
+          <input type="text" placeholder="Jane Smith" value="{{ inviteFullName }}" onChange="{{ setInviteFullName }}" style="width:100%;padding:12px 14px;border:1px solid #D1D1D1;border-radius:6px;font-size:14px;font-family:inherit;box-sizing:border-box;outline:none;" style-focus="border-color:#8E1B18;box-shadow:0 0 0 3px rgba(142,27,24,0.18);">
+        </div>
+        <div>
+          <label style="display:block;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;margin-bottom:6px;">Email</label>
+          <input type="email" placeholder="jane@example.com" value="{{ inviteEmail }}" onChange="{{ setInviteEmail }}" style="width:100%;padding:12px 14px;border:1px solid #D1D1D1;border-radius:6px;font-size:14px;font-family:inherit;box-sizing:border-box;outline:none;" style-focus="border-color:#8E1B18;box-shadow:0 0 0 3px rgba(142,27,24,0.18);">
+        </div>
+        <div>
+          <label style="display:block;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;margin-bottom:6px;">Role</label>
+          <div style="position:relative;">
+            <div onClick="{{ inviteRoleDD.toggle }}" role="button" tabindex="0" style="width:100%;padding:12px 14px;border:1px solid #D1D1D1;border-radius:6px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;background:#FFFFFF;box-sizing:border-box;">
+              <span style="color:{{ inviteRoleDD.textColor }};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ inviteRoleDD.value }}</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><path d="M6 9l6 6 6-6" stroke="#474747" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </div>
+            <sc-if value="{{ inviteRoleDD.open }}" hint-placeholder-val="{{ false }}">
+              <div onClick="{{ inviteRoleDD.close }}" style="position:fixed;inset:0;z-index:9;"></div>
+              <div style="position:absolute;top:calc(100% + 4px);left:0;right:0;background:#FFFFFF;border:1px solid #D1D1D1;border-radius:6px;box-shadow:0 12px 28px rgba(25,25,25,0.14);z-index:10;max-height:240px;overflow-y:auto;">
+                <sc-for list="{{ inviteRoleDD.items }}" as="it" hint-placeholder-count="4">
+                  <div onClick="{{ it.select }}" role="button" tabindex="0" style="padding:10px 14px;font-size:13.5px;color:#191919;cursor:pointer;border-bottom:1px solid #F3F3F3;background:{{ it.bg }};">{{ it.label }}</div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+        <div>
+          <label style="display:block;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;margin-bottom:6px;">Household / Client</label>
+          <div style="position:relative;">
+            <div onClick="{{ inviteHouseholdDD.toggle }}" role="button" tabindex="0" style="width:100%;padding:12px 14px;border:1px solid #D1D1D1;border-radius:6px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;background:#FFFFFF;box-sizing:border-box;">
+              <span style="color:{{ inviteHouseholdDD.textColor }};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ inviteHouseholdDD.value }}</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><path d="M6 9l6 6 6-6" stroke="#474747" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </div>
+            <sc-if value="{{ inviteHouseholdDD.open }}" hint-placeholder-val="{{ false }}">
+              <div onClick="{{ inviteHouseholdDD.close }}" style="position:fixed;inset:0;z-index:9;"></div>
+              <div style="position:absolute;top:calc(100% + 4px);left:0;right:0;background:#FFFFFF;border:1px solid #D1D1D1;border-radius:6px;box-shadow:0 12px 28px rgba(25,25,25,0.14);z-index:10;max-height:240px;overflow-y:auto;">
+                <sc-for list="{{ inviteHouseholdDD.items }}" as="it" hint-placeholder-count="6">
+                  <div onClick="{{ it.select }}" role="button" tabindex="0" style="padding:10px 14px;font-size:13.5px;color:#191919;cursor:pointer;border-bottom:1px solid #F3F3F3;background:{{ it.bg }};">{{ it.label }}</div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+        <div>
+          <label style="display:block;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;margin-bottom:6px;">Team</label>
+          <div style="position:relative;">
+            <div onClick="{{ inviteTeamDD.toggle }}" role="button" tabindex="0" style="width:100%;padding:12px 14px;border:1px solid #D1D1D1;border-radius:6px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;background:#FFFFFF;box-sizing:border-box;">
+              <span style="color:{{ inviteTeamDD.textColor }};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ inviteTeamDD.value }}</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><path d="M6 9l6 6 6-6" stroke="#474747" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </div>
+            <sc-if value="{{ inviteTeamDD.open }}" hint-placeholder-val="{{ false }}">
+              <div onClick="{{ inviteTeamDD.close }}" style="position:fixed;inset:0;z-index:9;"></div>
+              <div style="position:absolute;top:calc(100% + 4px);left:0;right:0;background:#FFFFFF;border:1px solid #D1D1D1;border-radius:6px;box-shadow:0 12px 28px rgba(25,25,25,0.14);z-index:10;max-height:240px;overflow-y:auto;">
+                <sc-for list="{{ inviteTeamDD.items }}" as="it" hint-placeholder-count="6">
+                  <div onClick="{{ it.select }}" role="button" tabindex="0" style="padding:10px 14px;font-size:13.5px;color:#191919;cursor:pointer;border-bottom:1px solid #F3F3F3;background:{{ it.bg }};">{{ it.label }}</div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+      </div>
+      <sc-if value="{{ inviteSent }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:16px;padding:14px 16px;border-radius:6px;background:#EEF3EE;color:#2A5C3A;font-size:13.5px;">Invite sent to {{ inviteSent }}.</div>
+      </sc-if>
+      <span onClick="{{ sendInvite }}" role="button" tabindex="0" style="display:inline-block;margin-top:18px;padding:8px 20px;border-radius:100px;background:#8E1B18;color:#FFFFFF;font-size:13px;font-weight:500;letter-spacing:0.016em;cursor:pointer;">Send Invite</span>
+      </div>
+
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;margin:44px 0 6px;">
+        <h3 style="margin:0;font-family:'Fraunces', ui-serif, Georgia, serif;font-optical-sizing:auto;font-weight:500;font-size:20px;color:#191919;">All Users</h3>
+        <div style="display:flex;gap:2px;background:#F3F3F3;border-radius:100px;padding:2px;">
+          <span onClick="{{ setUserFilterActive }}" role="button" tabindex="0" style="{{ userFilterActiveStyle }}">Active</span>
+          <span onClick="{{ setUserFilterArchived }}" role="button" tabindex="0" style="{{ userFilterArchivedStyle }}">Archived ({{ archivedCount }})</span>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;margin-bottom:16px;">
+        <p style="margin:0;font-size:12.5px;color:#6B6B6B;line-height:1.6;">Deactivate someone whose access should pause, archive someone whose project is complete, or delete them outright if they should never have been added. Deactivating and archiving keep all their project history; deleting removes their profile for good.</p>
+        <div style="position:relative;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" style="position:absolute;left:13px;top:50%;transform:translateY(-50%);"><circle cx="11" cy="11" r="7" stroke="#8A8A8A" stroke-width="1.8"></circle><path d="M21 21l-4.3-4.3" stroke="#8A8A8A" stroke-width="1.8" stroke-linecap="round"></path></svg>
+          <input type="text" placeholder="Search by name, email or role" value="{{ userSearch }}" onChange="{{ setUserSearch }}" style="width:100%;padding:11px 14px 11px 38px;border:1px solid #D1D1D1;border-radius:6px;font-size:13.5px;font-family:inherit;box-sizing:border-box;outline:none;" style-focus="border-color:#8E1B18;box-shadow:0 0 0 3px rgba(142,27,24,0.18);">
+        </div>
+      </div>
+      <div style="overflow-x:auto;border:1px solid #EAEAEA;border-radius:10px;">
+        <table style="width:100%;border-collapse:collapse;min-width:920px;">
+          <thead>
+            <tr style="background:#FBFBFB;">
+              <th style="text-align:left;padding:12px 16px;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;">Name</th>
+              <th style="text-align:left;padding:12px 16px;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;">Email</th>
+              <th style="text-align:left;padding:12px 16px;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;">Role</th>
+              <th style="text-align:left;padding:12px 16px;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;">Team</th>
+              <th style="text-align:left;padding:12px 16px;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;">Household</th>
+              <th style="text-align:left;padding:12px 16px;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;">Added</th>
+              <th style="text-align:left;padding:12px 16px;font-size:11.5px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;">Access</th>
+              <th style="padding:12px 16px;position:sticky;right:0;background:#FBFBFB;"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <sc-for list="{{ userRows }}" as="u" hint-placeholder-count="6">
+              <tr style="border-top:1px solid #F3F3F3;">
+                <td style="padding:12px 16px;vertical-align:top;font-size:13.5px;font-weight:600;color:#191919;white-space:nowrap;">{{ u.name }}</td>
+                <td style="padding:12px 16px;vertical-align:top;font-size:13px;color:#6B6B6B;white-space:nowrap;">{{ u.email }}</td>
+                <td style="padding:12px 16px;vertical-align:top;"><span style="{{ u.rolePillStyle }}">{{ u.roleLabel }}</span></td>
+                <td style="padding:12px 16px;vertical-align:top;font-size:13px;color:#474747;white-space:nowrap;">{{ u.team }}</td>
+                <td style="padding:12px 16px;vertical-align:top;font-size:13px;color:#191919;white-space:nowrap;">{{ u.household }}</td>
+                <td style="padding:12px 16px;vertical-align:top;font-size:13px;color:#6B6B6B;white-space:nowrap;">{{ u.dateInvited }}</td>
+                <td style="padding:12px 16px;vertical-align:top;white-space:nowrap;">
+                  <span style="{{ u.statusPillStyle }}">{{ u.statusLabel }}</span>
+                  <sc-if value="{{ u.deactivatedSince }}" hint-placeholder-val="{{ false }}">
+                    <div style="margin-top:4px;font-size:11px;color:#6B6B6B;">since {{ u.deactivatedSince }}</div>
+                  </sc-if>
+                </td>
+                <td style="padding:12px 16px;vertical-align:top;position:sticky;right:0;background:#FFFFFF;text-align:right;white-space:nowrap;">
+                  <sc-if value="{{ u.isCurrentUser }}" hint-placeholder-val="{{ false }}">
+                    <span style="font-size:13px;color:#6B6B6B;">You</span>
+                  </sc-if>
+                  <sc-if value="{{ u.isArchived }}" hint-placeholder-val="{{ false }}">
+                    <span onClick="{{ u.restoreUser }}" role="button" tabindex="0" style="display:inline-block;padding:6px 14px;border-radius:100px;font-size:12px;font-weight:500;color:#474747;border:1px solid #D1D1D1;background:#FFFFFF;cursor:pointer;margin-right:6px;">Restore</span>
+                  </sc-if>
+                  <sc-if value="{{ u.showToggleButton }}" hint-placeholder-val="{{ true }}">
+                    <span onClick="{{ u.toggleSuspend }}" role="button" tabindex="0" style="{{ u.toggleButtonStyle }}">{{ u.toggleButtonLabel }}</span>
+                  </sc-if>
+                  <sc-if value="{{ u.showMenuButton }}" hint-placeholder-val="{{ true }}">
+                    <span onClick="{{ u.toggleMenu }}" role="button" tabindex="0" aria-label="More actions" style="display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:100px;border:1px solid #D1D1D1;background:#FFFFFF;cursor:pointer;margin-left:6px;vertical-align:middle;">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="5" cy="12" r="1.6" fill="#474747"></circle><circle cx="12" cy="12" r="1.6" fill="#474747"></circle><circle cx="19" cy="12" r="1.6" fill="#474747"></circle></svg>
+                    </span>
+                  </sc-if>
+                </td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+      </div>
+
+      <sc-if value="{{ openUserMenu }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ closeUserMenu }}" style="position:fixed;inset:0;z-index:65;"></div>
+        <div style="position:fixed;top:{{ openUserMenu.top }}px;left:{{ openUserMenu.left }}px;background:#FFFFFF;border:1px solid #D1D1D1;border-radius:6px;box-shadow:0 12px 28px rgba(25,25,25,0.14);z-index:70;min-width:140px;text-align:left;overflow:hidden;">
+          <sc-if value="{{ openUserMenu.canArchive }}" hint-placeholder-val="{{ true }}">
+            <div onClick="{{ openUserMenu.openArchive }}" role="button" tabindex="0" style="padding:9px 14px;font-size:12.5px;color:#191919;cursor:pointer;border-bottom:1px solid #F3F3F3;">Archive</div>
+          </sc-if>
+          <div onClick="{{ openUserMenu.openDelete }}" role="button" tabindex="0" style="padding:9px 14px;font-size:12.5px;color:#8E1B18;cursor:pointer;">Delete</div>
+        </div>
+      </sc-if>
+      <p style="margin:16px 0 0;font-size:12.5px;color:#6B6B6B;line-height:1.6;max-width:720px;">
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const EA_MODULES = ['Projects', 'Applications', 'Tasks', 'Calendar', 'Documents', 'Messages', 'Billing', 'Roles & Permissions'];
+const EA_ROLES_META = [
+  { id: 'admin', name: 'Admin', desc: 'Full control of the platform, including roles, billing and all projects.', userCount: 2, locked: false },
+  { id: 'manager', name: 'Manager', desc: 'Oversees assigned projects and the team working on them.', userCount: 3, locked: false },
+  { id: 'staff', name: 'Staff', desc: 'Works assigned tasks across their projects.', userCount: 9, locked: false },
+  { id: 'client', name: 'Client', desc: 'Views progress and documents on their own project.', userCount: 12, locked: false },
+  { id: 'sales_prospect', name: 'Sales Prospect', desc: 'Limited access before a project is confirmed.', userCount: 4, locked: false }
+];
+const EA_DEFAULT_PERMS = {
+  admin: { Projects: 'edit', Applications: 'edit', Tasks: 'edit', Calendar: 'edit', Documents: 'edit', Messages: 'edit', Billing: 'edit', 'Roles & Permissions': 'edit' },
+  manager: { Projects: 'edit', Applications: 'edit', Tasks: 'edit', Calendar: 'edit', Documents: 'edit', Messages: 'edit', Billing: 'view', 'Roles & Permissions': 'view' },
+  staff: { Projects: 'view', Applications: 'view', Tasks: 'edit', Calendar: 'view', Documents: 'edit', Messages: 'edit', Billing: 'none', 'Roles & Permissions': 'none' },
+  client: { Projects: 'view', Applications: 'view', Tasks: 'none', Calendar: 'none', Documents: 'view', Messages: 'edit', Billing: 'none', 'Roles & Permissions': 'none' },
+  sales_prospect: { Projects: 'none', Applications: 'view', Tasks: 'none', Calendar: 'none', Documents: 'none', Messages: 'edit', Billing: 'none', 'Roles & Permissions': 'none' }
+};
+const EA_ROLE_LABELS = { admin: 'Admin', manager: 'Manager', staff: 'Staff', client: 'Client', sales_prospect: 'Sales Prospect' };
+const EA_STAFF_TEAM_LOOKUP = { 'Latika Singh': 'Planning', 'Siddharth Ghodke': 'Planning', 'Aisha Sheikh': 'Planning', 'Varun Nishar': 'Construction & CA/PM' };
+const EA_TEAM_OPTIONS = ['Planning', 'SE/BR', 'Tender & Interior Design', 'Construction & CA/PM', 'Web Team', 'Social Media Team'];
+const EA_PROJECT_OPTIONS = ['1 Lambourne Drive, Cobham', 'Bossiney, The Leigh, Kingston upon Thames', '26 Tadorne Road, Tadworth', '14 Pinewood Close, Esher', '3 Elm Grove, Weybridge', '9 Meadow Bank, Guildford', '5 Chestnut Walk, Reigate', '21 Fairview Road, Banstead', '8 Larkspur Drive, Epsom', '17 Windmill Rise, Dorking', '2 Orchard End, Leatherhead', '30 Beacon Hill, Godalming'];
+const EA_DEFAULT_THUMBS = { new: './assets/img-step-5.webp', returning: './assets/02_1LD-SE-01-opt.webp', internal: './assets/office-team-photo.png' };
+const EA_TYPE_KEY = { 'New Client Project': 'new', 'Returning Client Project': 'returning', 'Internal Capture Project': 'internal' };
+const EA_STAGE_OPTIONS = ['Planning Permission', 'Building Regulations', 'Structural Drawings', 'Interior Design', 'Tender Design', 'Contract Admin', 'Project Management', 'Snagging', 'Handover'];
+const EA_STAGE_DEFAULT_COMPLETION = { 'Planning Permission': 10, 'Building Regulations': 25, 'Structural Drawings': 40, 'Interior Design': 50, 'Tender Design': 60, 'Contract Admin': 70, 'Project Management': 80, 'Snagging': 95, 'Handover': 100 };
+const EA_EXTENSION_TYPE_OPTIONS = ['Loft Conversion', 'Single Storey Extension', 'Double Storey Extension', 'Rear Extension', 'Side Return & Roof Terrace', 'Basement Extension', 'Loft Conversion & Dormer', 'Change of Use'];
+const EA_STAFF_MILESTONE_MAP = {
+  'Interior Design': 'FF&E sign-off', 'Snagging': 'Final inspection', 'Planning Permission': 'Council decision',
+  'Structural Drawings': 'Engineer resubmission', 'Project Management': 'First fix complete', 'Handover': 'Certificates issued',
+  'Tender Design': 'Tender return', 'Building Regulations': 'Building control approval'
+};
+const EA_PROJECTS_SEED = [
+  { id: 1, client: 'James Whitfield', clientRef: 'EA-2026-033', household: '1 Lambourne Drive, Cobham', project: 'Side Return & Roof Terrace', stage: 'Structural Drawings', complete: 62, manager: 'Gargi Gambir', staff: ['Uma Menon'] },
+  { id: 2, client: 'Priya Nair', clientRef: 'EA-2026-041', household: 'Bossiney, The Leigh, Kingston upon Thames', project: 'Loft Conversion', stage: 'Planning Permission', complete: 15, manager: 'Eugene Kim', staff: ['Vaishnavi Patil', 'Aisha Sheikh'] },
+  { id: 3, client: 'Daniel Okafor', clientRef: 'EA-2025-118', household: '26 Tadorne Road, Tadworth', project: 'Single Storey Extension', stage: 'Project Management', complete: 88, manager: 'Varun Nishar', staff: ['Mfon'] },
+  { id: 4, client: 'Helen Carter', clientRef: 'EA-2026-057', household: '14 Pinewood Close, Esher', project: 'Rear Extension & Basement', stage: 'Structural Drawings', complete: 33, manager: 'Marek Cajka', staff: ['Syed'] },
+  { id: 5, client: 'Sarah Bennett', clientRef: 'EA-2025-096', household: '3 Elm Grove, Weybridge', project: 'Double Storey Extension', stage: 'Project Management', complete: 74, manager: 'Zhak Wadood', staff: ['Mfon'] },
+  { id: 6, client: 'Tom Reynolds', clientRef: 'EA-2026-072', household: '9 Meadow Bank, Guildford', project: 'Loft Conversion & Dormer', stage: 'Handover', complete: 100, manager: 'Varun Nishar', staff: ['Mfon'] },
+  { id: 7, client: 'Amira Hassan', clientRef: 'EA-2026-081', household: '5 Chestnut Walk, Reigate', project: 'Kitchen Extension & Open Plan', stage: 'Tender Design', complete: 48, manager: 'Latika Singh', staff: ['Siddharth Ghodke'] },
+  { id: 8, client: 'Oliver Grant', clientRef: 'EA-2026-064', household: '21 Fairview Road, Banstead', project: 'Full Refurbishment & Interiors', stage: 'Project Management', complete: 58, manager: 'Varun Nishar', staff: ['Naman Gupta'] },
+  { id: 9, client: 'Julia Martin', clientRef: 'EA-2026-089', household: '8 Larkspur Drive, Epsom', project: 'Garden Room & Studio', stage: 'Building Regulations', complete: 27, manager: 'Shahram', staff: ['Mohammed'] },
+  { id: 10, client: 'Raj Patel', clientRef: 'EA-2025-104', household: '17 Windmill Rise, Dorking', project: 'Two Storey Side Extension', stage: 'Project Management', complete: 91, manager: 'Zhak Wadood', staff: ['Mfon'] },
+  { id: 11, client: 'Emma Clarke', clientRef: 'EA-2026-094', household: '2 Orchard End, Leatherhead', project: 'Loft Conversion', stage: 'Structural Drawings', complete: 41, manager: 'Gargi Gambir', staff: ['Vaishnavi Valke'] },
+  { id: 12, client: 'Michael Foster', clientRef: 'EA-2025-132', household: '30 Beacon Hill, Godalming', project: 'Basement & Rear Extension', stage: 'Handover', complete: 100, manager: 'Varun Nishar', staff: ['Syed'] }
+];
+const EA_USERS_ADMIN = [
+  { id: 1, name: 'Abdul Khan', email: 'abdul.khan@extensionarchitecture.co.uk', role: 'admin', status: 'active', household: '\u2014', dateInvited: '08 Aug 2026' },
+  { id: 2, name: 'Latika Singh', email: 'latika.singh@extensionarchitecture.co.uk', role: 'manager', status: 'active', household: '\u2014', dateInvited: '12 Aug 2026', isCurrentUser: true },
+  { id: 47, name: 'Aesha Patel', email: 'aesha.patel@extensionarchitecture.co.uk', role: 'manager', status: 'active', household: '\u2014', dateInvited: '26 Oct 2026' },
+  { id: 3, name: 'Mehak Mehta', email: 'mehak.mehta@extensionarchitecture.co.uk', role: 'admin', status: 'active', household: '\u2014', dateInvited: '19 Apr 2026' },
+  { id: 4, name: 'Varun Nishar', email: 'varun.nishar@extensionarchitecture.co.uk', role: 'staff', status: 'active', household: '\u2014', dateInvited: '11 Jun 2026' },
+  { id: 5, name: 'Aisha Sheikh', email: 'aisha.sheikh@extensionarchitecture.co.uk', role: 'staff', status: 'active', household: '\u2014', dateInvited: '02 Sept 2026' },
+  { id: 6, name: 'Siddharth Ghodke', email: 'siddharth.ghodke@extensionarchitecture.co.uk', role: 'staff', status: 'active', household: '\u2014', dateInvited: '12 Aug 2026' },
+  { id: 11, name: 'Kashfa Khalil Surme', email: 'kashfa.surme@extensionarchitecture.co.uk', role: 'staff', status: 'active', household: '\u2014', dateInvited: '14 Feb 2026' },
+  { id: 12, name: 'Anzar Saleem', email: 'anzar.saleem@extensionarchitecture.co.uk', role: 'staff', status: 'active', household: '\u2014', dateInvited: '03 Mar 2026' },
+  { id: 13, name: 'Vaishnavi Patil', email: 'vaishnavi.patil@extensionarchitecture.co.uk', role: 'staff', status: 'active', household: '\u2014', dateInvited: '21 Jan 2026' },
+  { id: 14, name: 'Alisha Bhatti', email: 'alisha.bhatti@extensionarchitecture.co.uk', role: 'staff', status: 'active', household: '\u2014', dateInvited: '09 May 2026' },
+  { id: 15, name: 'Umar Ahmad', email: 'umar.ahmad@extensionarchitecture.co.uk', role: 'staff', status: 'active', household: '\u2014', dateInvited: '09 May 2026' },
+  { id: 16, name: 'Vanessa Chu', email: 'vanessa.chu@extensionarchitecture.co.uk', role: 'staff', status: 'active', household: '\u2014', dateInvited: '17 Jun 2026' },
+  { id: 17, name: 'Fae Mirzaei', email: 'fae.mirzaei@extensionarchitecture.co.uk', role: 'staff', status: 'active', household: '\u2014', dateInvited: '17 Jun 2026' },
+  { id: 18, name: 'Marek Cajka', email: 'marek.cajka@extensionarchitecture.co.uk', role: 'staff', status: 'active', household: '\u2014', dateInvited: '26 Nov 2025' },
+  { id: 19, name: 'Syed', email: 'syed@extensionarchitecture.co.uk', role: 'staff', status: 'active', household: '\u2014', dateInvited: '15 Jul 2026' },
+  { id: 20, name: 'Mohammed', email: 'mohammed@extensionarchitecture.co.uk', role: 'staff', status: 'active', household: '\u2014', dateInvited: '15 Jul 2026' },
+  { id: 21, name: 'Shahram', email: 'shahram@extensionarchitecture.co.uk', role: 'staff', status: 'active', household: '\u2014', dateInvited: '02 Oct 2025' },
+  { id: 22, name: 'Gargi Gambir', email: 'gargi.gambir@extensionarchitecture.co.uk', role: 'staff', status: 'active', household: '\u2014', dateInvited: '18 Mar 2025' },
+  { id: 23, name: 'Uma Menon', email: 'uma.menon@extensionarchitecture.co.uk', role: 'staff', status: 'active', household: '\u2014', dateInvited: '30 Apr 2026' },
+  { id: 24, name: 'Naman Gupta', email: 'naman.gupta@extensionarchitecture.co.uk', role: 'staff', status: 'active', household: '\u2014', dateInvited: '30 Apr 2026' },
+  { id: 25, name: 'Vaishnavi Valke', email: 'vaishnavi.valke@extensionarchitecture.co.uk', role: 'staff', status: 'active', household: '\u2014', dateInvited: '12 Sept 2026' },
+  { id: 26, name: 'Lamis Sandouk', email: 'lamis.sandouk@extensionarchitecture.co.uk', role: 'staff', status: 'active', household: '\u2014', dateInvited: '06 Jun 2025' },
+  { id: 27, name: 'Venkata Sai Nikhil Choppa', email: 'venkata.choppa@extensionarchitecture.co.uk', role: 'staff', status: 'active', household: '\u2014', dateInvited: '12 Sept 2026' },
+  { id: 28, name: 'Sandra Carolyn', email: 'sandra.carolyn@extensionarchitecture.co.uk', role: 'staff', status: 'active', household: '\u2014', dateInvited: '23 Aug 2025' },
+  { id: 29, name: 'Zhak Wadood', email: 'zhak.wadood@extensionarchitecture.co.uk', role: 'staff', status: 'active', household: '\u2014', dateInvited: '14 Feb 2025' },
+  { id: 30, name: 'Mfon', email: 'mfon@extensionarchitecture.co.uk', role: 'staff', status: 'active', household: '\u2014', dateInvited: '28 Dec 2025' },
+  { id: 31, name: 'David Lewis', email: 'david.lewis@extensionarchitecture.co.uk', role: 'manager', status: 'active', household: '\u2014', dateInvited: '11 Jan 2025' },
+  { id: 32, name: 'Akshay Kamath', email: 'akshay.kamath@extensionarchitecture.co.uk', role: 'staff', status: 'active', household: '\u2014', dateInvited: '19 Aug 2026' },
+  { id: 33, name: 'Nishanth Tripati', email: 'nishanth.tripati@extensionarchitecture.co.uk', role: 'staff', status: 'active', household: '\u2014', dateInvited: '05 Mar 2026' },
+  { id: 34, name: 'Ali Asgar', email: 'ali.asgar@extensionarchitecture.co.uk', role: 'staff', status: 'active', household: '\u2014', dateInvited: '05 Mar 2026' },
+  { id: 35, name: 'Aesha Patel', email: 'aesha.patel@extensionarchitecture.co.uk', role: 'staff', status: 'active', household: '\u2014', dateInvited: '22 Apr 2026' },
+  { id: 36, name: 'Nikunj Bakrania', email: 'nikunj.bakrania@extensionarchitecture.co.uk', role: 'staff', status: 'active', household: '\u2014', dateInvited: '22 Apr 2026' },
+  { id: 37, name: 'Rishav Kumar', email: 'rishav.kumar@extensionarchitecture.co.uk', role: 'staff', status: 'active', household: '\u2014', dateInvited: '14 Jul 2026' },
+  { id: 38, name: 'Muskan Danda', email: 'muskan.danda@extensionarchitecture.co.uk', role: 'staff', status: 'active', household: '\u2014', dateInvited: '14 Jul 2026' },
+  { id: 39, name: 'Bhavin Vadodariya', email: 'bhavin.vadodariya@extensionarchitecture.co.uk', role: 'staff', status: 'active', household: '\u2014', dateInvited: '30 Sept 2026' },
+  { id: 40, name: 'Aswin P', email: 'aswin.p@extensionarchitecture.co.uk', role: 'staff', status: 'active', household: '\u2014', dateInvited: '30 Sept 2026' },
+  { id: 41, name: 'Garima Batra', email: 'garima.batra@extensionarchitecture.co.uk', role: 'staff', status: 'active', household: '\u2014', dateInvited: '16 Feb 2025' },
+  { id: 42, name: 'Niharika Arora', email: 'niharika.arora@extensionarchitecture.co.uk', role: 'manager', status: 'active', household: '\u2014', dateInvited: '16 Feb 2025' },
+  { id: 43, name: 'Youn-Ou Kim', email: 'eugene.kim@extensionarchitecture.co.uk', role: 'admin', status: 'active', household: '\u2014', dateInvited: '01 Jan 2024' },
+  { id: 44, name: 'Tirna Ghosh', email: 'tirna.ghosh@extensionarchitecture.co.uk', role: 'manager', status: 'active', household: '\u2014', dateInvited: '27 Jun 2025' },
+  { id: 45, name: 'A S Mythri Reddy', email: 'mythri.reddy@extensionarchitecture.co.uk', role: 'admin', status: 'active', household: '\u2014', dateInvited: '09 Sept 2025' },
+  { id: 46, name: 'Kushi Venkatesh', email: 'kushi.venkatesh@extensionarchitecture.co.uk', role: 'admin', status: 'active', household: '\u2014', dateInvited: '09 Sept 2025' },
+  { id: 7, name: 'James Whitfield', email: 'james.whitfield@gmail.com', role: 'client', status: 'active', household: '1 Lambourne Drive, Cobham', dateInvited: '22 Aug 2026' },
+  { id: 8, name: 'Sarah Bennett', email: 'sarah.bennett@gmail.com', role: 'client', status: 'active', household: 'Bossiney, The Leigh, Kingston upon Thames', dateInvited: '08 Nov 2026' },
+  { id: 9, name: 'Daniel Okafor', email: 'daniel.okafor@gmail.com', role: 'client', status: 'active', household: '5 Chestnut Walk, Reigate', dateInvited: '07 Sept 2026' },
+  { id: 10, name: 'Ravi Patel', email: 'ravi.patel@gmail.com', role: 'client', status: 'deactivated', household: '9 Meadow Bank, Guildford', dateInvited: '04 Aug 2026', deactivatedSince: '7 Sept 2026' }
+];
+class Component extends DCLogic {
+  state = { projectYear: 'all', activeTab: 'dashboard', messagesOpen: false, accountOpen: false, notifOpen: false, menuVisible: true, salesMode: false, expandedRoleId: null, permOverrides: {}, users: EA_USERS_ADMIN, inviteFullName: '', inviteEmail: '', inviteRole: '', inviteHousehold: '', inviteSent: null, projects: EA_PROJECTS_SEED, extraHouseholds: [], extraTeams: {}, npHousehold: '', npClientRef: '', npHouseholdName: '', npClientName: '', npClientEmail: '', npClientPhone: '', npAddress: '', npExtensionTypes: [], npStage: '', npManagers: [], npStaff: [], npAdded: null, inviteTeam: '', userViewFilter: 'active', confirmArchiveUser: null, confirmDeleteUser: null, expandedUserMenuId: null, npProjectType: 'New Client Project', npInternalProjectName: '', npInternalTeam: '', npInternalMode: 'new' };
+  keyActivate(fn) { return (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn(e); } }; }
+  tabsScrollRef = React.createRef();
+  sdBtnRef = React.createRef();
+  edBtnRef = React.createRef();
+  tabOrder = ['dashboard', 'projects', 'applications', 'tasks', 'calendar', 'documents', 'messages', 'roles'];
+  ensureActiveTabVisible(tab) {
+    const el = this.tabsScrollRef.current; if (!el) return;
+    const idx = this.tabOrder.indexOf(tab); const activeEl = el.children[idx]; if (!activeEl) return;
+    const start = activeEl.offsetLeft, end = start + activeEl.offsetWidth;
+    if (end > el.scrollLeft + el.clientWidth) el.scrollLeft = end - el.clientWidth + 8;
+    else if (start < el.scrollLeft) el.scrollLeft = Math.max(0, start - 8);
+  }
+  goToTabOffset(offset) {
+    const idx = this.tabOrder.indexOf(this.state.activeTab); const next = idx + offset;
+    if (next < 0 || next >= this.tabOrder.length) return;
+    const tab = this.tabOrder[next];
+    this.setState({ activeTab: tab }, () => this.ensureActiveTabVisible(tab));
+  }
+  scrollTabsLeft = () => this.goToTabOffset(-1);
+  scrollTabsRight = () => this.goToTabOffset(1);
+  isRoleEditable(role) { return !role.locked; }
+  customSelect(stateKey, options, placeholder, suffix) {
+    const s = this.state, openKey = stateKey + 'Open', val = s[stateKey], has = val !== '' && val != null;
+    suffix = suffix || '';
+    const norm = options.map(o => (o && typeof o === 'object') ? o : { value: o, label: String(o) + suffix });
+    const cur = norm.find(o => String(o.value) === String(val));
+    return {
+      value: has && cur ? cur.label : placeholder, isPlaceholder: !has,
+      textColor: has ? '#191919' : '#8A8A8A',
+      open: !!s[openKey],
+      toggle: () => this.setState(st => ({ [openKey]: !st[openKey] })),
+      close: () => this.setState({ [openKey]: false }),
+      items: norm.map(o => ({
+        label: o.label, selected: String(o.value) === String(val),
+        bg: String(o.value) === String(val) ? '#FCEAEA' : '#FFFFFF',
+        select: () => this.setState({ [stateKey]: o.value, [openKey]: false })
+      }))
+    };
+  }
+  permLevel(roleId, module) { const o = this.state.permOverrides[roleId]; return (o && o[module]) || EA_DEFAULT_PERMS[roleId][module]; }
+  setPerm(roleId, module, level) { this.setState(s => ({ permOverrides: { ...s.permOverrides, [roleId]: { ...(s.permOverrides[roleId] || {}), [module]: level } } })); }
+  addProject() {
+    const s = this.state;
+    if (s.npProjectType === 'Internal Capture Project') {
+      if (!s.npInternalProjectName) return;
+      const base = { client: s.npInternalTeam || 'Internal', clientRef: s.npClientRef || ('EA-INT-' + (s.projects.length + 1)), household: s.npInternalTeam || 'Internal', project: s.npInternalProjectName, projectType: 'internal', thumbSrc: s.npThumb || undefined, startDate: s.npStartDate || '', endDate: s.npEndDate || '', stage: s.npStage || 'Planning Permission', stageComplete: 0, complete: 0, manager: (s.npManagers || []).join(', ') || '\u2014', staff: s.npStaff, projectType: 'internal' };
+      const resetFields = { npStaffOpen: false, npProjectType: 'New Client Project', npInternalMode: 'new', npInternalProjectName: '', npInternalTeam: '', npHousehold: '', npClientRef: '', npHouseholdName: '', npClientName: '', npClientEmail: '', npClientPhone: '', npAddress: '', npExtensionTypes: [], npExtTypesOpen: false, npStage: '', npStages: [], npStagesOpen: false, npManagers: [], npManagersOpen: false, npStaff: [], npThumb: '', npStartDate: '', npEndDate: '', npEditId: null };
+      if (s.npEditId) {
+        this.setState(st => ({ projects: st.projects.map(p => p.id === s.npEditId ? { ...p, ...base } : p), npAdded: base.project + ' \u2014 ' + base.household, ...resetFields }));
+        return;
+      }
+      const np = { id: Date.now(), ...base };
+      this.setState(st => ({ projects: [...st.projects, np], npAdded: np.project + ' \u2014 ' + np.household, ...resetFields }));
+      return;
+    }
+    if (!s.npAddress) return;
+    const newHousehold = !s.npHousehold && (s.npHouseholdName || s.npAddress);
+    const base = { client: s.npClientName || s.npHousehold || '\u2014', clientRef: s.npClientRef || ('EA-2026-0' + (s.projects.length + 1)), household: s.npHousehold || s.npHouseholdName || s.npAddress, project: (s.npExtensionTypes || []).join(', ') || 'New Project', stage: s.npStage || 'Planning Permission', stageComplete: 0, complete: 0, manager: (s.npManagers || []).join(', ') || '\u2014', staff: s.npStaff, projectType: s.npProjectType === 'Returning Client Project' ? 'returning' : 'new', clientEmail: s.npClientEmail || '', clientPhone: s.npClientPhone || '', thumbSrc: s.npThumb || undefined, startDate: s.npStartDate || '', endDate: s.npEndDate || '', address: s.npAddress, householdName: s.npHouseholdName || '', extTypes: s.npExtensionTypes || [], stages: s.npStages || [] };
+    const resetFields = { npStaffOpen: false, npProjectType: 'New Client Project', npInternalMode: 'new', npInternalProjectName: '', npInternalTeam: '', npHousehold: '', npClientRef: '', npHouseholdName: '', npClientName: '', npClientEmail: '', npClientPhone: '', npAddress: '', npExtensionTypes: [], npExtTypesOpen: false, npStage: '', npStages: [], npStagesOpen: false, npManagers: [], npManagersOpen: false, npStaff: [], npThumb: '', npStartDate: '', npEndDate: '', npEditId: null };
+    if (s.npEditId) {
+      this.setState(st => ({ projects: st.projects.map(p => p.id === s.npEditId ? { ...p, ...base } : p), npAdded: base.project + ' \u2014 ' + base.household, ...resetFields }));
+      return;
+    }
+    const np = { id: Date.now(), ...base };
+    this.setState(st => ({ projects: [...st.projects, np], extraHouseholds: newHousehold && st.extraHouseholds.indexOf(newHousehold) === -1 ? [...st.extraHouseholds, newHousehold] : st.extraHouseholds, npAdded: np.project + ' \u2014 ' + np.household, ...resetFields }));
+  }
+  editProject(p) {
+    this.setState({
+      npEditId: p.id, npAdded: null, npHousehold: p.household, npClientRef: p.clientRef, npHouseholdName: '', npClientName: p.client, npClientEmail: p.clientEmail || '', npClientPhone: p.clientPhone || '',
+      npAddress: p.address || p.household, npExtensionTypes: (p.project || '').split(', ').filter(Boolean), npStage: p.stage, npStages: (p.stage || '').split(', ').filter(Boolean),
+      npManagers: (p.manager || '').split(', ').filter(Boolean), npStaff: p.staff || [], npThumb: p.thumbSrc || '', npStartDate: p.startDate || '', npEndDate: p.endDate || ''
+    });
+  }
+  dateSelect(which, part, options, placeholder) {
+    const s = this.state, st = s.progStage || '', map = s.progStageDates || {}, cur = (map[st] || {})[which] || '', val = part === 'm' ? cur.slice(5, 7) : cur.slice(0, 4), openKey = 'pd_' + which + part + 'Open';
+    const norm = options.map(o => (o && typeof o === 'object') ? o : { value: String(o), label: String(o) }), c = norm.find(o => o.value === val);
+    return { value: val && c ? c.label : placeholder, textColor: val ? '#191919' : '#8A8A8A', open: !!s[openKey], toggle: () => this.setState(x => ({ [openKey]: !x[openKey] })), close: () => this.setState({ [openKey]: false }),
+      items: norm.map(o => ({ label: o.label, bg: o.value === val ? '#FCEAEA' : '#FFFFFF', select: () => { const y = part === 'y' ? o.value : (cur.slice(0, 4) || String(new Date().getFullYear())), m = part === 'm' ? o.value : (cur.slice(5, 7) || '01'); this.setState(x => ({ progStageDates: { ...(x.progStageDates || {}), [st]: { ...((x.progStageDates || {})[st] || {}), [which]: y + '-' + m } }, [openKey]: false })); } })) };
+  }
+  openProgressModal(p) {
+    this.setState({ progModalOpen: true, progModalId: p.id, progModalProject: p.project, progStage: p.stage, progStageComplete: p.stageComplete || 0, progComplete: p.complete || 0, progStageDates: p.stageDates || {} });
+  }
+  saveProgress = () => {
+    this.setState(s => ({
+      progModalOpen: false,
+      projects: s.projects.map(p => p.id === s.progModalId ? { ...p, stage: s.progStage, stageComplete: Number(s.progStageComplete) || 0, complete: Number(s.progComplete) || 0, stageDates: s.progStageDates || p.stageDates || {} } : p)
+    }));
+  }
+  sendInvite() {
+    const s = this.state;
+    if (!s.inviteEmail) return;
+    const id = Date.now();
+    const nu = { id, name: s.inviteFullName || s.inviteEmail.split('@')[0], email: s.inviteEmail, role: s.inviteRole || 'client', status: 'active', household: s.inviteHousehold || '\u2014', dateInvited: 'Today' };
+    this.setState(st => ({ users: [...st.users, nu], extraTeams: s.inviteTeam ? { ...st.extraTeams, [id]: s.inviteTeam } : st.extraTeams, inviteSent: s.inviteEmail, inviteFullName: '', inviteEmail: '', inviteRole: '', inviteHousehold: '', inviteTeam: '' }));
+  }
+  lastScrollY = 0;
+  onBodyScroll = () => {
+    const y = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop;
+    const menuVisible = y <= 4 || y < this.lastScrollY;
+    if (menuVisible !== this.state.menuVisible) this.setState({ menuVisible });
+    this.lastScrollY = y;
+  };
+  persistIntake() { try { localStorage.setItem('ea-admin-intake', JSON.stringify(this.state.projects)); } catch (e) {} }
+  componentDidMount() { window.addEventListener('scroll', this.onBodyScroll, { passive: true }); this.persistIntake(); }
+  componentWillUnmount() { window.removeEventListener('scroll', this.onBodyScroll); document.body.style.overflow = ''; }
+  componentDidUpdate(pp, ps) {
+    if (ps && ps.projects !== this.state.projects) this.persistIntake();
+    const s = this.state, open = !!(s.confirmDeactivateUser || s.confirmArchiveUser || s.confirmDeleteUser || s.progModalOpen);
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+  renderVals() {
+    const menuVisible = this.state.menuVisible !== false;
+    const menuHeaderStyle = "position:fixed;top:0;left:0;width:100%;z-index:20;background:transparent;min-height:64px;display:flex;align-items:center;justify-content:space-between;padding:10px clamp(20px,4vw,36px);gap:16px;flex-wrap:nowrap;transition:background 0.2s ease-out,backdrop-filter 0.2s ease-out,transform 0.3s ease-out,opacity 0.3s ease-out;transform:" + (menuVisible ? "translateY(0)" : "translateY(-100%)") + ";opacity:" + (menuVisible ? "1" : "0") + ";pointer-events:" + (menuVisible ? "auto" : "none") + ";";
+    const activeTabStyle = "padding-bottom:12px;border-bottom:2px solid #8E1B18;color:#8E1B18;font-weight:600;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:7px;";
+    const inactiveTabStyle = "padding-bottom:12px;border-bottom:2px solid transparent;color:#474747;font-weight:600;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:7px;";
+    const copy = {
+      dashboard: ['Dashboard', 'Your workload, deadlines and project activity at a glance will appear here.'],
+      applications: ['Applications', 'Planning and building regulation applications you are tracking will appear here.'],
+      tasks: ['Tasks', 'Your task list, priorities and due dates will appear here.'],
+      calendar: ['Calendar', 'Site visits, meetings and deadlines will appear here.'],
+      documents: ['Documents', 'Drawings, reports and project files will appear here.'],
+      messages: ['Messages', 'Conversations with clients and the wider team will appear here.'],
+      roles: ['Roles & Permissions', '']
+    };
+    const staffTabs = [
+      ['dashboard','Dashboard','M3 3h7v7H3z M14 3h7v7h-7z M14 14h7v7h-7z M3 14h7v7H3z'],
+      ['projects','Projects','M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z'],
+      ['applications','Applications','M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z M14 2v6h6 M8 13h8 M8 17h8'],
+      ['tasks','Tasks','M9 11l3 3L22 4 M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11'],
+      ['calendar','Calendar','M8 2v4 M16 2v4 M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M3 10h18'],
+      ['documents','Documents','M15 2H8a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V6z M15 2v4h4 M4 8v12a2 2 0 0 0 2 2h9'],
+      ['messages','Messages','M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z'],
+      ['roles','Roles & Permissions','M12 3 5 6v6c0 5 3 8 7 9 4-1 7-4 7-9V6z M9 12l2 2 4-4']
+    ].map(([key,label,icon]) => ({ label, icon, style: this.state.activeTab === key ? activeTabStyle : inactiveTabStyle, select: () => this.setState({ activeTab: key }) }));
+    const isRolesTab = this.state.activeTab === 'roles';
+    const isProjectsTab = this.state.activeTab === 'projects';
+    const levelBtnBase = "flex:1;text-align:center;padding:5px 10px;font-size:11px;font-weight:600;border-radius:100px;cursor:pointer;white-space:nowrap;";
+    const levelBtn = (active, disabled) => levelBtnBase + (active ? "background:#8E1B18;color:#FFFFFF;" : "background:transparent;color:#6B6B6B;") + (disabled ? "pointer-events:none;opacity:0.5;" : "");
+    const roles = EA_ROLES_META.map(role => {
+      const editable = this.isRoleEditable(role);
+      const expanded = this.state.expandedRoleId === role.id;
+      const permRows = EA_MODULES.map(mod => {
+        const level = this.permLevel(role.id, mod);
+        return {
+          module: mod,
+          noneStyle: levelBtn(level === 'none', !editable), viewStyle: levelBtn(level === 'view', !editable), editStyle: levelBtn(level === 'edit', !editable),
+          setNone: () => editable && this.setPerm(role.id, mod, 'none'), setView: () => editable && this.setPerm(role.id, mod, 'view'), setEdit: () => editable && this.setPerm(role.id, mod, 'edit')
+        };
+      });
+      return {
+        ...role, expanded, permRows, locked: role.locked,
+        chevronStyle: "transition:transform 150ms ease-out;transform:" + (expanded ? "rotate(90deg)" : "rotate(0deg)") + ";",
+        viewOnlyNote: role.locked ? 'This role is locked \u2014 only a Super Admin can change its permissions.' : null,
+        toggleExpand: () => this.setState(s => ({ expandedRoleId: s.expandedRoleId === role.id ? null : role.id })),
+        toggleExpandKeyDown: this.keyActivate(() => this.setState(s => ({ expandedRoleId: s.expandedRoleId === role.id ? null : role.id })))
+      };
+    });
+    const rolePillMeta = { admin: ['#FFFFFF', '#191919'], manager: ['#191919', '#EBC6A3'], staff: ['#474747', '#F3F3F3'], client: ['#191919', '#FFFFFF'] };
+    const userFilterTabStyle = (active) => "padding:5px 14px;border-radius:100px;font-size:12px;font-weight:600;cursor:pointer;" + (active ? "background:#191919;color:#FFFFFF;" : "background:transparent;color:#6B6B6B;");
+    const archivedCount = (this.state.users || []).filter(u => u.status === 'archived').length;
+    const viewFilter = this.state.userViewFilter || 'active';
+    const userRows = (this.state.users || []).filter(u => viewFilter === 'archived' ? u.status === 'archived' : u.status !== 'archived').filter(u => {
+      const q = (this.state.userSearch || '').trim().toLowerCase();
+      if (!q) return true;
+      const roleLabel = EA_ROLE_LABELS[u.role] || u.role;
+      return (u.name + ' ' + u.email + ' ' + roleLabel).toLowerCase().indexOf(q) !== -1;
+    }).map(u => {
+      const rp = rolePillMeta[u.role] || rolePillMeta.staff;
+      const isActive = u.status === 'active';
+      const isArchived = u.status === 'archived';
+      const statusMeta = isArchived ? ['Archived', '#6B6B6B', '#F3F3F3'] : isActive ? ['Active', '#2E7D32', '#E8F5E9'] : ['Deactivated', '#C62828', '#FDECEA'];
+      return {
+        ...u, roleLabel: EA_ROLE_LABELS[u.role] || u.role, team: EA_STAFF_TEAM_LOOKUP[u.name] || (this.state.extraTeams || {})[u.id] || '\u2014',
+        rolePillStyle: "display:inline-block;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:" + rp[0] + ";background:" + rp[1] + (u.role === 'client' ? ";border:1px solid #D1D1D1;" : ";"),
+        statusLabel: statusMeta[0],
+        statusPillStyle: "display:inline-block;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:" + statusMeta[1] + ";background:" + statusMeta[2] + ";",
+        isArchived,
+        showToggleButton: !u.isCurrentUser && !isArchived,
+        showMenuButton: !u.isCurrentUser,
+        toggleButtonLabel: isActive ? 'Deactivate' : 'Reactivate',
+        toggleButtonStyle: "display:inline-block;padding:6px 16px;border-radius:100px;font-size:12.5px;font-weight:500;cursor:pointer;" + (isActive ? "color:#8E1B18;border:1px solid #8E1B18;background:#FFFFFF;" : "color:#474747;border:1px solid #D1D1D1;background:#FFFFFF;"),
+        toggleSuspend: isActive ? (() => this.setState({ confirmDeactivateUser: u })) : (() => this.setState(s => ({ users: s.users.map(x => x.id === u.id ? { ...x, status: 'active', deactivatedSince: null } : x) }))),
+        menuOpen: this.state.openUserMenu && this.state.openUserMenu.id === u.id,
+        toggleMenu: (e) => {
+          const r = e.currentTarget.getBoundingClientRect();
+          this.setState(s => ({ openUserMenu: (s.openUserMenu && s.openUserMenu.id === u.id) ? null : { id: u.id, top: r.bottom + 6, left: Math.max(8, r.right - 140), canArchive: !isArchived, openArchive: () => this.setState({ confirmArchiveUser: u, openUserMenu: null }), openDelete: () => this.setState({ confirmDeleteUser: u, openUserMenu: null }) } }));
+        },
+        restoreUser: () => this.setState(s => ({ users: s.users.map(x => x.id === u.id ? { ...x, status: 'active', archivedSince: null } : x) }))
+      };
+    });
+    const householdOptions = [...EA_PROJECT_OPTIONS, ...(this.state.extraHouseholds || [])];
+    const managerOptions = (this.state.users || []).filter(u => u.role === 'manager' || u.role === 'admin').map(u => u.name);
+    const staffOptions = [{"name":"David Lewis","role":"Planning Manager","initials":"DL"},{"name":"Marek Cajka","role":"ARB Architect","initials":"MC"},{"name":"Shahram","role":"Architectural Technologist","initials":"SH"},{"name":"Vaishnavi Patil","role":"Architectural Assistant","initials":"VP"},{"name":"Latika Singh","role":"Planning Architect","initials":"LS"},{"name":"Siddharth Ghodke","role":"Planning Architect","initials":"SG"},{"name":"Aisha Sheikh","role":"Architectural Designer","initials":"AS"},{"name":"Alisha Bhatti","role":"Architectural Planning Intern","initials":"AB"},{"name":"Umar Ahmad","role":"Architectural Planning Intern","initials":"UA"},{"name":"Vanessa Chu","role":"Architectural Planning Intern","initials":"VC"},{"name":"Fae Mirzaei","role":"Architectural Planning Intern","initials":"FM"},{"name":"Anzar Saleem","role":"Planning Manager","initials":"AZ"},{"name":"Kashfa Khalil Surme","role":"Planning Architect","initials":"KS"},{"name":"Gargi Gambir","role":"Interior Designer Manager","initials":"GG"},{"name":"Lamis Sandouk","role":"Kitchen Designer","initials":"LD"},{"name":"Uma Menon","role":"Interior Designer","initials":"UM"},{"name":"Venkata Sai Nikhil Choppa","role":"Interior Designer","initials":"VN"},{"name":"Vaishnavi Valke","role":"Interior Designer","initials":"VV"},{"name":"Sandra Carolyn","role":"Interior Designer","initials":"SC"},{"name":"Naman Gupta","role":"Interior Designer","initials":"NG"},{"name":"Akshay Kamath","role":"Interior Designer","initials":"AK"},{"name":"Varun Nishar","role":"Project Manager","initials":"VN"},{"name":"Zhak Wadood","role":"Project Manager","initials":"ZW"},{"name":"Mfon","role":"Junior Project Manager / Architectural Technologist","initials":"MF"},{"name":"Syed","role":"Structural Engineer (Outsourced)","initials":"SY"},{"name":"Mohammed","role":"Building Regulations (Outsourced)","initials":"MO"},{"name":"Nishanth Tripati","role":"Head of Post Production","initials":"NT"},{"name":"Ali Asgar","role":"3D Visualizer","initials":"AA"},{"name":"Aesha Patel","role":"UI/UX Developer","initials":"AP"},{"name":"Nikunj Bakrania","role":"SEO & Digital Analyst Marketing","initials":"NB"},{"name":"Rishav Kumar","role":"Backend Developer","initials":"RK"},{"name":"Muskan Danda","role":"Social Media Associate","initials":"MD"},{"name":"Bhavin Vadodariya","role":"UI/UX Designer","initials":"BV"},{"name":"Aswin P","role":"Full Stack Developer","initials":"AP"},{"name":"Abdul Khan","role":"Operations Manager","initials":"AK"},{"name":"Garima Batra","role":"Sales Admin & HubSpot Admin","initials":"GB"},{"name":"Niharika Arora","role":"Business Development Manager","initials":"NA"},{"name":"Youn-Ou Kim","role":"Founder","initials":"YK"},{"name":"Tirna Ghosh","role":"HR Manager","initials":"TG"},{"name":"Mehak Mehta","role":"Admin & Accounts","initials":"MM"},{"name":"A S Mythri Reddy","role":"Admin & Accounts","initials":"MR"},{"name":"Kushi Venkatesh","role":"Admin & Accounts","initials":"KV"}].map(u => ({
+      name: u.name, role: u.role, checked: (this.state.npStaff || []).indexOf(u.name) !== -1,
+      toggle: () => this.setState(s => ({ npStaff: s.npStaff.indexOf(u.name) !== -1 ? s.npStaff.filter(n => n !== u.name) : [...s.npStaff, u.name] }))
+    }));
+    const stagePillStyles = {
+      'Feasibility': 'color:#6B6B6B;background:#F3F3F3;',
+      'Design': 'color:#191919;background:#EBC6A3;',
+      'Planning Application': 'color:#8E1B18;background:rgba(142,27,24,0.12);',
+      'Planning Permission': 'color:#8E1B18;background:rgba(142,27,24,0.12);',
+      'Building Regulations': 'color:#8E1B18;background:rgba(142,27,24,0.22);',
+      'Structural Drawings': 'color:#191919;background:#EBC6A3;',
+      'Interior Design': 'color:#191919;background:rgba(25,25,25,0.08);border:1px solid #D1D1D1;',
+      'Tender Design': 'color:#191919;background:rgba(25,25,25,0.08);border:1px solid #D1D1D1;',
+      'Tender': 'color:#191919;background:rgba(25,25,25,0.08);border:1px solid #D1D1D1;',
+      'Contract Admin': 'color:#FFFFFF;background:#8E1B18;',
+      'Construction': 'color:#FFFFFF;background:#8E1B18;',
+      'Project Management': 'color:#FFFFFF;background:#8E1B18;',
+      'Snagging': 'color:#FFFFFF;background:#191919;',
+      'Handover': 'color:#FFFFFF;background:#191919;',
+      'Completion': 'color:#FFFFFF;background:#191919;'
+    };
+    const yearOf = (p) => ((p.clientRef || '').match(/(20\d\d)/) || [])[1] || String(new Date().getFullYear());
+    const years = [...new Set((this.state.projects || []).map(yearOf))].sort().reverse();
+    const projectYearDD = this.customSelect('projectYear', [{ value: 'all', label: 'All years' }, ...years.map(y => ({ value: y, label: y }))], 'All years');
+    const projectRows = (this.state.projects || []).filter(p => {
+      const yr = String(this.state.projectYear || 'all');
+      if (yr !== 'all' && yearOf(p) !== yr) return false;
+      const q = (this.state.projectSearch || '').trim().toLowerCase();
+      if (!q) return true;
+      return (p.client + ' ' + p.clientRef + ' ' + p.project + ' ' + p.household + ' ' + p.stage).toLowerCase().indexOf(q) !== -1;
+    }).map(p => {
+      const names = [p.manager, ...(p.staff || [])].filter(Boolean);
+      const initialsOf = (n) => n.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+      const dash = '\u2014'; const stageList = (p.stage || '').split(', ').filter(Boolean).map(l => ({ label: l, style: stagePillStyles[l] || stagePillStyles['Planning Permission'] }));
+      const av = (list, mgr) => list.filter(n => n && n !== dash).map(n => ({ name: n, initials: initialsOf(n), bg: mgr ? '#8E1B18' : '#EBC6A3', fg: mgr ? '#FFFFFF' : '#191919' }));
+      const fmt = (d) => d ? new Date(d + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : dash;
+      return { ...p, startLabel: fmt(p.startDate), endLabel: fmt(p.endDate), managerAvatars: av((p.manager || '').split(', '), true), staffAvatars: av(p.staff || [], false), thumbId: 'proj-thumb-' + p.clientRef, thumbSrc: p.thumbSrc || EA_DEFAULT_THUMBS[p.projectType] || EA_DEFAULT_THUMBS.new, typeLabel: p.projectType === 'returning' ? 'Returning Client' : p.projectType === 'internal' ? 'Internal Capture' : 'New Client', householdLabel: p.householdName || p.household || dash, emailLabel: p.clientEmail || dash, phoneLabel: p.clientPhone || dash, addressLabel: p.address || p.household || dash, staffLabel: (p.staff || []).join(', ') || dash, stageList, stageComplete: p.stageComplete != null ? p.stageComplete : p.complete, openHref: './EAPortalProjectDetailStaff.dc.html?project=' + encodeURIComponent(p.clientRef), stagePillStyle: stagePillStyles[p.stage] || stagePillStyles['Planning Permission'], thumbId: 'proj-thumb-' + p.id, thumbSrc: p.id === 1 ? './assets/06_1LD-SE-01-opt.webp' : (p.id % 2 ? './assets/img-step-5.webp' : './assets/img-step-7.webp'), progressColor: (p.complete || 0) < 33 ? '#C42721' : (p.complete || 0) < 67 ? '#B8860B' : '#2D7438', ringOffset: 157.08 * (1 - (p.complete || 0) / 100), teamLeadsPreview: names.slice(0, 2).map(n => ({ name: n, initials: initialsOf(n) })), teamNames: names.slice(0, 2).map(n => n.split(' ')[0]).join(' & ') || '\u2014', milestone: EA_STAFF_MILESTONE_MAP[p.stage] || 'Next review', openProgress: () => this.openProgressModal(p), edit: () => this.editProject(p), openDetail: () => { window.location.href = './EAPortalProjectDetailStaff.dc.html?project=' + encodeURIComponent(p.clientRef); } };
+    });
+    const stopPropagationHref = (e) => e.stopPropagation();
+    const projectPageSize = 8;
+    const projectTotalPages = Math.max(1, Math.ceil(projectRows.length / projectPageSize));
+    const projectPage = Math.min(Math.max(1, this.state.projectPage || 1), projectTotalPages);
+    const pagedProjectRows = projectRows.slice((projectPage - 1) * projectPageSize, projectPage * projectPageSize);
+    const pageBtnBase = "width:28px;height:28px;border-radius:100px;border:1px solid #D1D1D1;display:flex;align-items:center;justify-content:center;color:#474747;";
+    const staffSummary = (this.state.npStaff || []).length ? this.state.npStaff.join(', ') : 'Select staff';
+    const staffSummaryColor = (this.state.npStaff || []).length ? '#191919' : '#8A8A8A';
+    const personaDests = { 'Admin': './EAPortalDashboardAdmin.dc.html', 'Manager': './EAPortalDashboardManager.dc.html', 'Staff': './EAPortalDashboardStaff.dc.html', 'Client': './EAPortalDashboardClient.dc.html', 'Sales Prospect': './EAPortalDashboardSales.dc.html', '404': './EAPortal404.dc.html?persona=admin' };
+    const personas = ['Admin', 'Manager', 'Staff', 'Client', 'Sales Prospect', '404'].map(name => ({
+      name,
+      isActive: name === 'Manager', textColor: name === 'Manager' ? '#8E1B18' : '#191919',
+      select: () => { window.location.href = personaDests[name]; },
+      selectKeyDown: this.keyActivate(() => { window.location.href = personaDests[name]; })
+    }));
+
+    const C = './EAPortalDashboardClient.dc.html';
+    const go = (q) => () => { window.location.href = C + q; };
+    const nd = [{ id: 1, tab: 'projects', title: "Invoice overdue", detail: "INV-1449 for 1 Lambourne Drive is now overdue.", time: '2h ago' },
+      { id: 2, tab: 'tasks', title: "Resource clash", detail: "Varun Nishar is booked on two sites on Thursday.", time: '4h ago' },
+      { id: 3, tab: 'applications', title: "Planning decision received", detail: "26 Tadorne Road, Tadworth has been approved.", time: '6h ago' },
+      { id: 4, tab: 'messages', title: "New enquiry", detail: "Garima Batra logged a loft conversion enquiry in Epsom.", time: '1d ago' },
+      { id: 5, tab: 'calendar', title: "Programme review", detail: "Thursday at 10:00am with Eugene Kim.", time: '1d ago' }];
+    const read = this.state.readNotifIds || [];
+    const unread = nd.filter(n => read.indexOf(n.id) === -1);
+    const notifications = nd.map(n => { const r = read.indexOf(n.id) !== -1; const f = () => this.setState(s => ({ activeTab: n.tab, notifOpen: false, readNotifIds: (s.readNotifIds || []).indexOf(n.id) === -1 ? [...(s.readNotifIds || []), n.id] : s.readNotifIds })); return { ...n, rowBg: r ? '#FFFFFF' : '#FEF6F6', dotColor: r ? '#D1D1D1' : '#8E1B18', titleWeight: r ? 500 : 600, titleColor: r ? '#6B6B6B' : '#191919', onClick: f, onKeyDown: this.keyActivate(f) }; });
+    const emailOn = this.state.emailNotifsOn !== false;
+    const mkCal = (openKey, viewKey, valueKey, rectKey, btnRef) => {
+      const s = this.state, set = (o) => this.setState(o), pad2 = (n) => String(n).padStart(2, '0');
+      const toISO = (d) => d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+      const MON = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      const tIso = toISO(new Date()), val = s[valueKey] || '', vm = s[viewKey] || (val || tIso).slice(0, 7);
+      const y = +vm.slice(0, 4), mo = +vm.slice(5, 7) - 1, first = (new Date(y, mo, 1).getDay() + 6) % 7, dim = new Date(y, mo + 1, 0).getDate();
+      const shift = (d) => { const nd = new Date(y, mo + d, 1); return nd.getFullYear() + '-' + pad2(nd.getMonth() + 1); };
+      const pick = (iso) => { set({ [openKey]: false, [viewKey]: null, [valueKey]: iso, npAdded: null }); };
+      const cells = []; for (let i = 0; i < first; i++) cells.push({ label: '', style: 'height:36px;' });
+      for (let d = 1; d <= dim; d++) { const iso = y + '-' + pad2(mo + 1) + '-' + pad2(d), sel = iso === val, td = iso === tIso;
+        cells.push({ label: String(d), style: 'height:36px;border-radius:100px;border:1px solid ' + (sel || td ? '#8E1B18' : 'transparent') + ';background:' + (sel ? '#8E1B18' : 'transparent') + ';color:' + (sel ? '#fff' : '#191919') + ';font-size:14px;font-weight:' + (sel || td ? 600 : 500) + ';font-family:inherit;cursor:pointer;', hov: sel ? 'background:#7A1714;' : 'background:#FCEAEA;', pick: () => pick(iso) }); }
+      const r = s[rectKey] || { edgeY: 0, edgeX: 0 };
+      const popStyle = 'position:fixed;' + (r.openUp ? 'bottom:' + r.edgeY + 'px;' : 'top:' + r.edgeY + 'px;') + (r.alignRight ? 'right:' + r.edgeX + 'px;' : 'left:' + r.edgeX + 'px;') + 'width:280px;max-width:calc(100vw - 24px);box-sizing:border-box;background:#FFFFFF;border:1px solid #D1D1D1;border-radius:10px;box-shadow:0 12px 28px rgba(25,25,25,0.14);z-index:60;padding:14px;';
+      const vd = val ? new Date(val + 'T00:00:00') : null;
+      return { btnRef, open: !!s[openKey], popStyle, cells, monthLabel: MON[mo] + ' ' + y,
+        shown: vd ? vd.getDate() + ' ' + MON[vd.getMonth()] + ' ' + vd.getFullYear() : 'Select date', textColor: vd ? '#191919' : '#8A8A8A',
+        toggle: () => { if (s[openKey]) { set({ [openKey]: false }); return; }
+          const rect = btnRef.current ? btnRef.current.getBoundingClientRect() : { top: 0, bottom: 0, left: 0, right: 0 };
+          const openUp = rect.bottom + 330 > window.innerHeight, alignRight = rect.left + 280 > window.innerWidth - 12;
+          set({ [openKey]: true, [rectKey]: { openUp, alignRight, edgeY: openUp ? window.innerHeight - rect.top + 4 : rect.bottom + 4, edgeX: alignRight ? window.innerWidth - rect.right : rect.left } }); },
+        close: () => set({ [openKey]: false }), prev: () => set({ [viewKey]: shift(-1) }), next: () => set({ [viewKey]: shift(1) }),
+        clear: () => set({ [openKey]: false, [valueKey]: '', npAdded: null }), todayPick: () => pick(tIso) };
+    };
+    const npSD = mkCal('npSDOpen', 'npSDView', 'npStartDate', 'npSDRect', this.sdBtnRef), npED = mkCal('npEDOpen', 'npEDView', 'npEndDate', 'npEDRect', this.edBtnRef);
+    const contactIconClick = () => {};
+    return {
+      changeBanner: (e) => { const sl = document.querySelector('image-slot[id="admin-header-bg"]'); window.eaHeroPicker && window.eaHeroPicker.open(sl, e && e.currentTarget); }, menuHeaderStyle, staffTabs, tabsTop: menuVisible ? 64 : 0, staffTabTitle: (copy[this.state.activeTab] || ['', ''])[0], staffTabDesc: (copy[this.state.activeTab] || ['', ''])[1],
+      notifications, notifCount: unread.length, hasNotifications: unread.length > 0, hasNoNotifications: nd.length === 0,
+      markAllRead: () => this.setState({ readNotifIds: nd.map(n => n.id) }),
+      messagesOpen: this.state.messagesOpen, closeMessages: () => this.setState({ messagesOpen: false }),
+      messagesClick: () => this.setState({ messagesOpen: true, accountOpen: false, notifOpen: false }), messagesKeyDown: this.keyActivate(() => this.setState({ messagesOpen: true, accountOpen: false, notifOpen: false })),
+      previewEmailClick: go('?email=1'),
+      emailNotifsOn: emailOn, emailNotifsToggleBg: emailOn ? '#8E1B18' : '#D1D1D1', emailNotifsKnobLeft: emailOn ? '16px' : '2px',
+      toggleEmailNotifs: () => this.setState(s => ({ emailNotifsOn: s.emailNotifsOn === false })),
+      toggleEmailNotifsKeyDown: this.keyActivate(() => this.setState(s => ({ emailNotifsOn: s.emailNotifsOn === false }))),
+      goHome: go(''),
+      contactIconClick,
+      contactIconKeyDown: this.keyActivate(contactIconClick),
+      accountOpen: this.state.accountOpen,
+      salesMode: this.state.salesMode,
+      salesModeToggleBg: this.state.salesMode ? '#8E1B18' : 'rgba(255,255,255,0.25)',
+      salesModeKnobLeft: this.state.salesMode ? '16px' : '2px',
+      toggleSalesMode: () => this.setState(s => ({ salesMode: !s.salesMode })),
+      toggleSalesModeKeyDown: this.keyActivate(() => this.setState(s => ({ salesMode: !s.salesMode }))),
+      toggleAccount: () => this.setState(s => ({ accountOpen: !s.accountOpen, notifOpen: false })),
+      accountKeyDown: this.keyActivate(() => this.setState(s => ({ accountOpen: !s.accountOpen, notifOpen: false }))),
+      notifOpen: this.state.notifOpen,
+      toggleNotif: () => this.setState(s => ({ notifOpen: !s.notifOpen, accountOpen: false })),
+      notifKeyDown: this.keyActivate(() => this.setState(s => ({ notifOpen: !s.notifOpen, accountOpen: false }))),
+      anyDropdownOpen: this.state.accountOpen || this.state.notifOpen,
+      closeDropdowns: () => this.setState({ accountOpen: false, notifOpen: false }),
+      personas,
+      isRolesTab, isProjectsTab, isStandardTab: !isRolesTab && !isProjectsTab, roles, userRows, householdOptions, moduleList: EA_MODULES, hasLockedRole: roles.some(r => r.locked),
+      stageOptions: EA_STAGE_OPTIONS, extensionTypeOptions: EA_EXTENSION_TYPE_OPTIONS, completionOptions: [0, 10, 25, 50, 75, 90, 100], managerOptions, staffOptions, projectRows, staffSummary, staffSummaryColor,
+      stopPropagationHref, isListView: (this.state.projectView || 'list') === 'list', isGridView: this.state.projectView === 'grid',
+      setListView: () => this.setState({ projectView: 'list' }), setGridView: () => this.setState({ projectView: 'grid' }),
+      listViewBtnStyle: "width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;" + ((this.state.projectView || 'list') === 'list' ? "background:#8E1B18;color:#FFFFFF;" : "background:#FFFFFF;color:#6B6B6B;"),
+      gridViewBtnStyle: "width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;" + (this.state.projectView === 'grid' ? "background:#8E1B18;color:#FFFFFF;" : "background:#FFFFFF;color:#6B6B6B;"),
+      projectYearDD,
+      projectSearch: this.state.projectSearch, setProjectSearch: (e) => this.setState({ projectSearch: e.target.value, projectPage: 1 }),
+      pagedProjectRows, projectPage, projectTotalPages, hasMultiplePages: projectTotalPages > 1,
+      prevProjectPage: () => this.setState(s => ({ projectPage: Math.max(1, (s.projectPage || 1) - 1) })),
+      nextProjectPage: () => this.setState(s => ({ projectPage: Math.min(projectTotalPages, (s.projectPage || 1) + 1) })),
+      prevPageBtnStyle: pageBtnBase + (projectPage <= 1 ? "cursor:default;opacity:0.4;pointer-events:none;" : "cursor:pointer;"),
+      nextPageBtnStyle: pageBtnBase + (projectPage >= projectTotalPages ? "cursor:default;opacity:0.4;pointer-events:none;" : "cursor:pointer;"),
+      npStaffOpen: this.state.npStaffOpen, toggleStaffDropdown: () => this.setState(s => ({ npStaffOpen: !s.npStaffOpen })),
+      npHousehold: this.state.npHousehold, setNpHousehold: (e) => this.setState({ npHousehold: e.target.value, npAdded: null }),
+      npClientRef: this.state.npClientRef, setNpClientRef: (e) => this.setState({ npClientRef: e.target.value, npAdded: null }),
+      npHouseholdName: this.state.npHouseholdName, setNpHouseholdName: (e) => this.setState({ npHouseholdName: e.target.value, npAdded: null }),
+      npClientName: this.state.npClientName, setNpClientName: (e) => this.setState({ npClientName: e.target.value, npAdded: null }),
+      npThumbBg: "url('" + (this.state.npThumb || EA_DEFAULT_THUMBS[EA_TYPE_KEY[this.state.npProjectType] || 'new']) + "')", npThumbLabel: this.state.npThumb ? 'Click to change thumbnail' : 'Default for ' + ({ new: 'new client', returning: 'returning client', internal: 'internal capture' })[EA_TYPE_KEY[this.state.npProjectType] || 'new'] + ' projects \u2014 click to upload',
+      pickNpThumb: (e) => { const f = e.target.files && e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = () => { const im = new Image(); im.onload = () => { const c = document.createElement('canvas'); c.width = 640; c.height = 360; const x = c.getContext('2d'); const k = Math.max(640 / im.width, 360 / im.height); x.drawImage(im, (640 - im.width * k) / 2, (360 - im.height * k) / 2, im.width * k, im.height * k); this.setState({ npThumb: c.toDataURL('image/jpeg', 0.8), npAdded: null }); }; im.src = r.result; }; r.readAsDataURL(f); },
+      npSD, npED,
+      npClientPhone: this.state.npClientPhone, setNpClientPhone: (e) => this.setState({ npClientPhone: e.target.value, npAdded: null }),
+      npClientEmail: this.state.npClientEmail, setNpClientEmail: (e) => this.setState({ npClientEmail: e.target.value, npAdded: null }),
+      npAddress: this.state.npAddress, setNpAddress: (e) => this.setState({ npAddress: e.target.value, npAdded: null }),
+      npExtensionTypes: this.state.npExtensionTypes || [],
+      npStage: this.state.npStage,
+      npStagesOpen: !!this.state.npStagesOpen,
+      toggleExtTypeDropdown: () => this.setState(s => ({ npExtTypesOpen: !s.npExtTypesOpen })),
+      npExtTypesOpen: !!this.state.npExtTypesOpen,
+      extTypeMultiOptions: EA_EXTENSION_TYPE_OPTIONS.map(name => ({
+        name, checked: (this.state.npExtensionTypes || []).indexOf(name) !== -1,
+        toggle: () => this.setState(s => {
+          const cur = s.npExtensionTypes || [];
+          const next = cur.indexOf(name) !== -1 ? cur.filter(n => n !== name) : [...cur, name];
+          return { npExtensionTypes: next, npAdded: null };
+        })
+      })),
+      extTypeSummary: (this.state.npExtensionTypes || []).length ? this.state.npExtensionTypes.join(', ') : 'Select a type',
+      extTypeSummaryColor: (this.state.npExtensionTypes || []).length ? '#191919' : '#8A8A8A',
+      toggleStagesDropdown: () => this.setState(s => ({ npStagesOpen: !s.npStagesOpen })),
+      stageMultiOptions: EA_STAGE_OPTIONS.map(name => ({
+        name, checked: (this.state.npStages || []).indexOf(name) !== -1,
+        toggle: () => this.setState(s => {
+          const cur = s.npStages || [];
+          const next = cur.indexOf(name) !== -1 ? cur.filter(n => n !== name) : [...cur, name];
+          return { npStages: next, npStage: next.join(', '), npStageComplete: EA_STAGE_DEFAULT_COMPLETION[name] ?? s.npStageComplete, npAdded: null };
+        })
+      })),
+      stagesSummary: (this.state.npStages || []).length ? this.state.npStages.join(', ') : 'Select stages',
+      stagesSummaryColor: (this.state.npStages || []).length ? '#191919' : '#8A8A8A',
+      householdDD: (() => {
+        const seen = new Set(); const list = [];
+        (this.state.projects || []).forEach(p => { if (p.projectType !== 'internal' && !seen.has(p.household)) { seen.add(p.household); list.push(p); } });
+        const val = this.state.npHousehold;
+        return {
+          value: val ? (this.state.npClientName || val) : 'Select existing client', textColor: val ? '#191919' : '#8A8A8A',
+          open: !!this.state.householdOpen,
+          toggle: () => this.setState(s => ({ householdOpen: !s.householdOpen })),
+          close: () => this.setState({ householdOpen: false }),
+          isEmpty: list.length === 0,
+          items: list.map(p => ({
+            label: p.client + ' \u2014 ' + p.household,
+            bg: p.household === val ? '#FCEAEA' : '#FFFFFF',
+            select: () => this.setState({ npHousehold: p.household, npClientName: p.client, npClientRef: p.clientRef, npAddress: p.household, npAdded: null, householdOpen: false })
+          }))
+        };
+      })(),
+      projectTypeToggle: this.customSelect('npProjectType', ['New Client Project', 'Returning Client Project', 'Internal Capture Project'], 'New Client Project').items.map(it => ({ label: it.label, selected: it.selected, select: it.select, style: it.selected ? activeTabStyle : inactiveTabStyle })),
+      projectTypeDD: this.customSelect('npProjectType', ['New Client Project', 'Returning Client Project', 'Internal Capture Project'], 'New Client Project'),
+      internalTeamDD: this.customSelect('npInternalTeam', EA_TEAM_OPTIONS, 'Select a capture team'),
+      npInternalProjectName: this.state.npInternalProjectName, setNpInternalProjectName: (e) => this.setState({ npInternalProjectName: e.target.value, npAdded: null }),
+      isInternalProject: this.state.npProjectType === 'Internal Capture Project',
+      isClientProject: this.state.npProjectType !== 'Internal Capture Project',
+      isReturningClient: this.state.npProjectType === 'Returning Client Project',
+      isInternalNew: (this.state.npInternalMode || 'new') === 'new',
+      isInternalExisting: this.state.npInternalMode === 'existing',
+      setInternalModeNew: () => this.setState({ npInternalMode: 'new', npInternalProjectName: '', npInternalTeam: '' }),
+      setInternalModeExisting: () => this.setState({ npInternalMode: 'existing', npInternalProjectName: '', npInternalTeam: '' }),
+      internalModeNewStyle: "padding:5px 14px;border-radius:100px;font-size:12px;font-weight:600;cursor:pointer;" + ((this.state.npInternalMode || 'new') === 'new' ? "background:#191919;color:#FFFFFF;" : "background:transparent;color:#6B6B6B;"),
+      internalModeExistingStyle: "padding:5px 14px;border-radius:100px;font-size:12px;font-weight:600;cursor:pointer;" + (this.state.npInternalMode === 'existing' ? "background:#191919;color:#FFFFFF;" : "background:transparent;color:#6B6B6B;"),
+      existingInternalDD: (() => {
+        const list = (this.state.projects || []).filter(p => p.projectType === 'internal');
+        const val = this.state.npInternalProjectName;
+        return {
+          value: val ? val + ' \u2014 ' + this.state.npInternalTeam : 'Select existing project', textColor: val ? '#191919' : '#8A8A8A',
+          open: !!this.state.existingInternalOpen,
+          toggle: () => this.setState(s => ({ existingInternalOpen: !s.existingInternalOpen })),
+          close: () => this.setState({ existingInternalOpen: false }),
+          isEmpty: list.length === 0,
+          items: list.map(p => ({
+            label: p.project + ' \u2014 ' + p.client,
+            bg: p.project === val ? '#FCEAEA' : '#FFFFFF',
+            select: () => this.setState({ npInternalProjectName: p.project, npInternalTeam: p.client, npAdded: null, existingInternalOpen: false })
+          }))
+        };
+      })(),
+      toggleManagersDropdown: () => this.setState(s => ({ npManagersOpen: !s.npManagersOpen })),
+      npManagersOpen: !!this.state.npManagersOpen,
+      managerMultiOptions: managerOptions.map(name => ({
+        name, checked: (this.state.npManagers || []).indexOf(name) !== -1,
+        toggle: () => this.setState(s => {
+          const cur = s.npManagers || [];
+          const next = cur.indexOf(name) !== -1 ? cur.filter(n => n !== name) : [...cur, name];
+          return { npManagers: next, npAdded: null };
+        })
+      })),
+      managersSummary: (this.state.npManagers || []).length ? this.state.npManagers.join(', ') : 'Select a manager',
+      managersSummaryColor: (this.state.npManagers || []).length ? '#191919' : '#8A8A8A',
+      progStageDD: this.customSelect('progStage', EA_STAGE_OPTIONS, 'Select a stage'),
+      progDates: (() => { const MO = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].map((l, i) => ({ value: String(i + 1).padStart(2, '0'), label: l })), YR = [2024, 2025, 2026, 2027, 2028, 2029, 2030], nm = this.state.progStage || 'Stage';
+        return [{ label: nm + ' Start', fields: [this.dateSelect('startM', 'm', MO, 'Month'), this.dateSelect('startM', 'y', YR, 'Year')] }, { label: nm + ' End', fields: [this.dateSelect('endM', 'm', MO, 'Month'), this.dateSelect('endM', 'y', YR, 'Year')] }]; })(),
+      progDateWarn: (() => { const d = (this.state.progStageDates || {})[this.state.progStage] || {}; return !!(d.startM && d.endM && d.endM < d.startM); })(),
+      inviteRoleDD: this.customSelect('inviteRole', [{ value: 'admin', label: 'Admin' }, { value: 'manager', label: 'Manager' }, { value: 'staff', label: 'Staff' }, { value: 'client', label: 'Client' }], 'Select a role'),
+      inviteHouseholdDD: this.customSelect('inviteHousehold', householdOptions, '\u2014'),
+      inviteTeamDD: this.customSelect('inviteTeam', EA_TEAM_OPTIONS, '\u2014'),
+      npComplete: this.state.npComplete, setNpComplete: (e) => this.setState({ npComplete: e.target.value, npAdded: null }),
+      npStageComplete: this.state.npStageComplete, setNpStageComplete: (e) => this.setState({ npStageComplete: e.target.value, npAdded: null }),
+      npManagers: this.state.npManagers || [],
+      npAdded: this.state.npAdded, addProject: () => this.addProject(), addProjectLabel: (this.state.npEditId || this.state.npHousehold) ? 'Save' : 'Add Project',
+      progModalOpen: !!this.state.progModalOpen, progModalProject: this.state.progModalProject, closeProgressModal: () => this.setState({ progModalOpen: false }), stopProgressClick: (e) => e.stopPropagation(),
+      progStage: this.state.progStage, setProgStage: (e) => this.setState({ progStage: e.target.value }),
+      progStageComplete: this.state.progStageComplete, setProgStageComplete: (e) => this.setState({ progStageComplete: e.target.value }),
+      progComplete: this.state.progComplete, setProgComplete: (e) => this.setState({ progComplete: e.target.value }),
+      saveProgress: this.saveProgress,
+      userSearch: this.state.userSearch, setUserSearch: (e) => this.setState({ userSearch: e.target.value }),
+      inviteFullName: this.state.inviteFullName, setInviteFullName: (e) => this.setState({ inviteFullName: e.target.value, inviteSent: null }),
+      inviteEmail: this.state.inviteEmail, setInviteEmail: (e) => this.setState({ inviteEmail: e.target.value, inviteSent: null }),
+      inviteRole: this.state.inviteRole, setInviteRole: (e) => this.setState({ inviteRole: e.target.value, inviteSent: null }),
+      inviteHousehold: this.state.inviteHousehold, setInviteHousehold: (e) => this.setState({ inviteHousehold: e.target.value, inviteSent: null }),
+      inviteTeam: this.state.inviteTeam, setInviteTeam: (e) => this.setState({ inviteTeam: e.target.value, inviteSent: null }), teamOptions: EA_TEAM_OPTIONS,
+      inviteSent: this.state.inviteSent, sendInvite: () => this.sendInvite(),
+      confirmDeactivateUser: this.state.confirmDeactivateUser,
+      confirmDeactivateUserName: this.state.confirmDeactivateUser ? this.state.confirmDeactivateUser.name : '',
+      cancelDeactivate: () => this.setState({ confirmDeactivateUser: null }),
+      confirmDeactivate: () => { const u = this.state.confirmDeactivateUser; if (!u) return; this.setState(s => ({ users: s.users.map(x => x.id === u.id ? { ...x, status: 'deactivated', deactivatedSince: 'today' } : x), confirmDeactivateUser: null })); },
+      confirmArchiveUser: this.state.confirmArchiveUser,
+      confirmArchiveUserName: this.state.confirmArchiveUser ? this.state.confirmArchiveUser.name : '',
+      cancelArchive: () => this.setState({ confirmArchiveUser: null }),
+      confirmArchive: () => { const u = this.state.confirmArchiveUser; if (!u) return; this.setState(s => ({ users: s.users.map(x => x.id === u.id ? { ...x, status: 'archived', archivedSince: 'today' } : x), confirmArchiveUser: null })); },
+      confirmDeleteUser: this.state.confirmDeleteUser,
+      confirmDeleteUserName: this.state.confirmDeleteUser ? this.state.confirmDeleteUser.name : '',
+      cancelDelete: () => this.setState({ confirmDeleteUser: null }),
+      confirmDelete: () => { const u = this.state.confirmDeleteUser; if (!u) return; this.setState(s => ({ users: s.users.filter(x => x.id !== u.id), confirmDeleteUser: null })); },
+      setUserFilterActive: () => this.setState({ userViewFilter: 'active' }),
+      setUserFilterArchived: () => this.setState({ userViewFilter: 'archived' }),
+      userFilterActiveStyle: userFilterTabStyle(viewFilter === 'active'),
+      userFilterArchivedStyle: userFilterTabStyle(viewFilter === 'archived'),
+      archivedCount,
+      noProjectsYet: (this.state.projects || []).length === 0,
+      goToProjectsTab: () => this.setState({ activeTab: 'projects' }),
+      openUserMenu: this.state.openUserMenu || null,
+      closeUserMenu: () => this.setState({ openUserMenu: null }),
+      tabsScrollRef: this.tabsScrollRef, scrollTabsLeft: this.scrollTabsLeft, scrollTabsRight: this.scrollTabsRight,
+      scrollTabsLeftKeyDown: this.keyActivate(this.scrollTabsLeft), scrollTabsRightKeyDown: this.keyActivate(this.scrollTabsRight),
+      canGoPrevTab: this.tabOrder.indexOf(this.state.activeTab) > 0, canGoNextTab: this.tabOrder.indexOf(this.state.activeTab) < this.tabOrder.length - 1
+    };
+  }
+}
+
+</script>
+</body>
+</html>

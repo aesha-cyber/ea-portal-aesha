@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    @font-face{font-family:'Montserrat';src:url('./fonts/Montserrat-VariableFont_wght.ttf') format('truetype-variations');font-weight:100 900}
+    @font-face{font-family:'Fraunces';src:url('./fonts/Fraunces-VariableFont_SOFT_WONK_opsz_wght.ttf') format('truetype-variations');font-weight:100 900}
+    html,body{margin:0;padding:0;font-family:'Montserrat',ui-sans-serif,system-ui,sans-serif;background:#FFFFFF}
+    *{box-sizing:border-box}
+    .ea-msg-side>*{flex-shrink:0}
+    [role="button"]:focus-visible,a:focus-visible,button:focus-visible{outline:2px solid #8E1B18;outline-offset:2px}
+    
+  </style>
+</helmet>
+<div style="position:relative;height:100vh;overflow:hidden;display:flex;background:#FFFFFF;font-family:'Montserrat',ui-sans-serif,system-ui,sans-serif;color:#191919;">
+  <div style="{{ msgSidebarStyle }}">
+    <div style="padding:20px 20px 12px;display:flex;align-items:center;gap:10px;">
+      <span onClick="{{ closeMessagesPage }}" role="button" tabindex="0" aria-label="Back to dashboard" style="width:30px;height:30px;border-radius:100px;background:#F3F3F3;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="#191919" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      </span>
+      <p style="margin:0;font-family:'Fraunces', ui-serif, Georgia, serif;font-optical-sizing:auto;font-weight:500;font-size:20px;color:#191919;flex:1;">Messages</p>
+      <span onClick="{{ openNewConvo }}" role="button" tabindex="0" aria-label="New conversation" title="New conversation" style="width:30px;height:30px;border-radius:100px;background:#8E1B18;color:#FEFEFE;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-size:18px;line-height:1;">+</span>
+    </div>
+    <div style="flex:1;overflow-y:auto;">
+      <sc-for list="{{ threadList }}" as="t" hint-placeholder-count="4">
+        <div onClick="{{ t.select }}" role="button" tabindex="0" style="display:flex;align-items:center;gap:12px;padding:14px 20px;cursor:pointer;{{ t.rowStyle }}">
+          <div style="width:40px;height:40px;border-radius:100px;background:{{ t.avatarBg }};color:#FEFEFE;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;">{{ t.initials }}</div>
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px;">
+              <p style="margin:0;font-size:14px;font-weight:600;color:#191919;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ t.label }}</p>
+              <span style="font-size:11px;color:#6B6B6B;flex-shrink:0;">{{ t.timeLabel }}</span>
+            </div>
+            <p style="margin:2px 0 0;font-size:12.5px;color:#6B6B6B;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ t.snippet }}</p>
+          </div>
+        </div>
+      </sc-for>
+      <sc-if value="{{ threadListEmpty }}" hint-placeholder-val="{{ false }}">
+        <p style="margin:0;padding:20px;font-size:13px;color:#6B6B6B;text-align:center;">No conversations found.</p>
+      </sc-if>
+    </div>
+  </div>
+  <div style="{{ msgMainStyle }}">
+    <div style="flex-shrink:0;border-bottom:1px solid #EAEAEA;padding:18px 28px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+      <div style="display:flex;align-items:center;gap:10px;min-width:0;">
+        <sc-if value="{{ showMobileThreadBack }}" hint-placeholder-val="{{ false }}">
+          <span onClick="{{ backToThreadList }}" role="button" tabindex="0" aria-label="Back to conversations" style="width:30px;height:30px;border-radius:100px;background:#F3F3F3;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="#191919" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          </span>
+        </sc-if>
+        <div style="min-width:0;">
+          <p style="margin:0;font-size:15px;font-weight:600;color:#191919;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ activeThreadLabel }}</p>
+          <p style="margin:2px 0 0;font-size:12px;color:#6B6B6B;">{{ activeThreadSub }}</p>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+        <span onClick="{{ toggleDetailsPanel }}" role="button" tabindex="0" aria-label="Toggle details" title="Toggle details" style="width:34px;height:34px;border-radius:100px;background:#F3F3F3;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="16" rx="2" stroke="#191919" stroke-width="1.6"></rect><path d="M15 4v16" stroke="#191919" stroke-width="1.6"></path></svg>
+        </span>
+      </div>
+    </div>
+    <div style="flex:1;min-height:0;overflow-y:auto;padding:24px 28px;display:flex;flex-direction:column;gap:16px;">
+      <sc-for list="{{ activeThreadMessages }}" as="msg" hint-placeholder-count="2">
+        <div style="display:flex;flex-direction:column;gap:4px;{{ msg.rowStyle }}">
+          <div style="display:flex;align-items:center;gap:6px;{{ msg.bubbleRowStyle }}">
+            <div style="width:20px;height:20px;border-radius:100px;background:{{ msg.avatarBg }};color:#FEFEFE;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">{{ msg.avatarInitials }}</div>
+            <p style="margin:0;font-size:11.5px;font-weight:600;color:#6B6B6B;">{{ msg.name }}</p>
+          </div>
+          <div style="max-width:60%;background:{{ msg.bubbleBg }};color:{{ msg.bubbleColor }};padding:12px 16px;border-radius:12px;">
+            <p style="margin:0;font-size:14px;line-height:1.5;">{{ msg.text }}</p>
+            <sc-if value="{{ msg.attachmentName }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;align-items:center;gap:6px;margin-top:8px;padding:7px 10px;border-radius:8px;background:rgba(255,255,255,0.15);">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M21 12.5l-8.5 8.5a4 4 0 0 1-5.7-5.7l9-9a3 3 0 0 1 4.2 4.2l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                <span style="font-size:12px;">{{ msg.attachmentName }}</span>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="flex-shrink:0;border-top:1px solid #EAEAEA;padding:16px 28px;">
+      <sc-if value="{{ composerAttachment }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding:7px 12px;border-radius:8px;background:#F3F3F3;width:fit-content;">
+          <span style="font-size:12.5px;color:#191919;">{{ composerAttachment }}</span>
+          <span onClick="{{ clearComposerAttachment }}" role="button" tabindex="0" aria-label="Remove attachment" style="cursor:pointer;color:#6B6B6B;font-size:15px;line-height:1;">&times;</span>
+        </div>
+      </sc-if>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <input type="file" ref="{{ setMessageFileInputRef }}" onChange="{{ onComposerFileChange }}" style="display:none;">
+        <span onClick="{{ onAttachClick }}" role="button" tabindex="0" aria-label="Attach file" style="width:40px;height:40px;border-radius:100px;background:#F3F3F3;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 12.5l-8.5 8.5a4 4 0 0 1-5.7-5.7l9-9a3 3 0 0 1 4.2 4.2l-8 8" stroke="#191919" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        </span>
+        <input type="text" value="{{ messageInput }}" onInput="{{ onMessageInput }}" onKeyDown="{{ onMessageKeyDown }}" placeholder="Send a message..." style="flex:1;min-width:0;font-family:'Montserrat',sans-serif;font-size:13.5px;padding:12px 16px;border-radius:8px;border:1px solid #D1D1D1;outline:none;" style-focus="border-color:#8E1B18;box-shadow:0 0 0 3px rgba(142,27,24,0.18);">
+        <button onClick="{{ sendMessage }}" type="button" style="font-family:'Montserrat',sans-serif;font-weight:600;font-size:13px;padding:11px 22px;border-radius:100px;background:#8E1B18;color:#FEFEFE;border:none;cursor:pointer;flex-shrink:0;">Send</button>
+      </div>
+    </div>
+  </div>
+  <sc-if value="{{ detailsPanelOpen }}" hint-placeholder-val="{{ true }}">
+  <div class="ea-msg-side" style="{{ msgSideStyle }}">
+    <sc-if value="{{ showDetailsClose }}" hint-placeholder-val="{{ false }}">
+      <span onClick="{{ toggleDetailsPanel }}" role="button" tabindex="0" aria-label="Back to chat" style="width:30px;height:30px;border-radius:100px;background:#F3F3F3;display:flex;align-items:center;justify-content:center;cursor:pointer;align-self:flex-start;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="#191919" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      </span>
+    </sc-if>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+      <div style="width:56px;height:56px;border-radius:100px;background:{{ activeThreadAvatarBg }};color:#FEFEFE;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;">{{ activeThreadInitials }}</div>
+      <p style="margin:0;font-size:14px;font-weight:600;color:#191919;text-align:center;">{{ activeThreadLabel }}</p>
+    </div>
+    <div>
+      <p style="margin:0 0 8px;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#6B6B6B;">Search Messages</p>
+      <input type="text" value="{{ threadSearchValue }}" onInput="{{ onThreadSearchInput }}" placeholder="Search all conversations..." style="width:100%;font-family:'Montserrat',sans-serif;font-size:12.5px;padding:9px 12px;border-radius:8px;border:1px solid #D1D1D1;outline:none;" style-focus="border-color:#8E1B18;box-shadow:0 0 0 3px rgba(142,27,24,0.18);">
+    </div>
+    <div>
+      <p style="margin:0 0 8px;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#6B6B6B;">Files And Links</p>
+      <sc-for list="{{ activeThreadFiles }}" as="f" hint-placeholder-count="0">
+        <div style="display:flex;align-items:center;gap:8px;padding:7px 0;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="#6B6B6B" stroke-width="1.6"></path></svg>
+          <span style="font-size:13px;color:#191919;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ f.name }}</span>
+        </div>
+      </sc-for>
+      <sc-if value="{{ activeThreadFilesEmpty }}" hint-placeholder-val="{{ false }}">
+        <p style="margin:0;font-size:12.5px;color:#6B6B6B;">No files shared yet.</p>
+      </sc-if>
+    </div>
+    <div>
+      <p style="margin:0 0 6px;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#6B6B6B;">People</p>
+      <sc-for list="{{ activeThreadPeople }}" as="p" hint-placeholder-count="2">
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;">
+          <div style="width:26px;height:26px;border-radius:100px;background:#191919;color:#FEFEFE;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;flex-shrink:0;">{{ p.initials }}</div>
+          <p style="margin:0;font-size:13px;color:#191919;">{{ p.name }}</p>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ newConvoOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;background:rgba(25,25,25,0.6);display:flex;align-items:center;justify-content:center;z-index:65;padding:20px;" onClick="{{ closeNewConvo }}">
+      <div onClick="{{ stopClickPropagation }}" style="width:100%;max-width:440px;background:#FFFFFF;border-radius:10px;border-top:3px solid #8E1B18;overflow:hidden;">
+        <div style="padding:22px 24px 6px;">
+          <p style="margin:0 0 4px;font-size:12px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:#8E1B18;">New Conversation</p>
+          <h3 style="margin:0 0 14px;font-family:'Fraunces', ui-serif, Georgia, serif;font-optical-sizing:auto;font-weight:500;font-size:19px;color:#191919;">Who would you like to message?</h3>
+          <div style="display:flex;background:#F3F3F3;border-radius:100px;padding:3px;margin-bottom:16px;">
+            <span onClick="{{ setNewConvoTypeSingle }}" role="button" tabindex="0" style="flex:1;text-align:center;font-weight:600;font-size:13px;letter-spacing:0.04em;padding:10px 12px;border-radius:100px;cursor:pointer;{{ newConvoTypeSingleStyle }}">Direct Message</span>
+            <span onClick="{{ setNewConvoTypeGroup }}" role="button" tabindex="0" style="flex:1;text-align:center;font-weight:600;font-size:13px;letter-spacing:0.04em;padding:10px 12px;border-radius:100px;cursor:pointer;{{ newConvoTypeGroupStyle }}">Group</span>
+          </div>
+        </div>
+        <div style="padding:0 24px 12px;">
+          <sc-if value="{{ newConvoIsGroup }}" hint-placeholder-val="{{ false }}">
+            <input type="text" value="{{ newConvoGroupName }}" onInput="{{ onNewConvoGroupNameInput }}" placeholder="Group name" style="width:100%;font-family:'Montserrat',sans-serif;font-size:13px;padding:10px 14px;border-radius:8px;border:1px solid #D1D1D1;outline:none;margin-bottom:12px;" style-focus="border-color:#8E1B18;box-shadow:0 0 0 3px rgba(142,27,24,0.18);">
+          </sc-if>
+          <div style="display:flex;flex-direction:column;gap:8px;max-height:220px;overflow-y:auto;">
+            <sc-for list="{{ newConvoContacts }}" as="c" hint-placeholder-count="4">
+              <span onClick="{{ c.toggle }}" role="button" tabindex="0" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-radius:8px;border:1px solid #EAEAEA;cursor:pointer;{{ c.rowStyle }}">
+                <span style="display:flex;align-items:center;gap:10px;">
+                  <span style="width:26px;height:26px;border-radius:100px;background:#191919;color:#FEFEFE;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;flex-shrink:0;">{{ c.initials }}</span>
+                  <span style="font-size:13.5px;color:#191919;">{{ c.name }}</span>
+                </span>
+                <sc-if value="{{ c.selected }}" hint-placeholder-val="{{ false }}">
+                  <span style="color:#8E1B18;font-weight:700;font-size:14px;">&check;</span>
+                </sc-if>
+              </span>
+            </sc-for>
+          </div>
+        </div>
+        <div style="padding:16px 24px 22px;display:flex;justify-content:flex-end;gap:12px;">
+          <span onClick="{{ closeNewConvo }}" role="button" tabindex="0" style="font-size:13px;font-weight:600;color:#6B6B6B;cursor:pointer;padding:10px 0;">Cancel</span>
+          <button onClick="{{ createNewConvo }}" type="button" disabled="{{ newConvoCannotCreate }}" style="font-family:'Montserrat',sans-serif;font-weight:600;font-size:13px;padding:10px 22px;border-radius:100px;background:#8E1B18;color:#FEFEFE;border:none;cursor:pointer;">Start Conversation</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"persona":{"editor":"enum","default":"admin","tsType":"string","options":["admin","manager","staff"]},"onBack":{"editor":null,"tsType":"() => void"}}'>
+class Component extends DCLogic {
+  state = { activeThreadId: 'general', threadSearch: '', messageInput: '', composerAttachment: null, threadExtra: {}, customThreads: [], newConvoOpen: false, newConvoType: 'single', newConvoSelected: [], newConvoGroupName: '', isMobile: false, isTablet: false, mobileThreadListOpen: true, mobileDetailsOpen: false, detailsPanelOpen: true, tabletDetailsOpen: false };
+  fileInput = null;
+  personas = {
+    admin: { name: 'Abdul Khan', role: 'Operations Manager', ini: 'AK', projects: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] },
+    manager: { name: 'Latika Singh', role: 'Planning Architect', ini: 'LS', projects: [7] },
+    staff: { name: 'Aisha Sheikh', role: 'Architectural Designer', ini: 'AS', projects: [2] }
+  };
+  projects = [
+    { id: 1, name: '1 Lambourne Drive, Cobham', type: 'Side Return & Roof Terrace', client: 'James Whitfield', team: ['Gargi Gambir, Interior Designer Manager', 'Uma Menon, Interior Designer'], open: 'Interiors mood boards are approved. FF&E schedule is next.' },
+    { id: 2, name: 'Bossiney, The Leigh, Kingston upon Thames', type: 'Loft Conversion', client: 'Sarah Bennett', team: ['Vaishnavi Patil, Architectural Assistant', 'Aisha Sheikh, Architectural Designer'], open: 'The planning application is with Merton. Two neighbour comments about dormer height.' },
+    { id: 3, name: '26 Tadorne Road, Tadworth', type: 'Single Storey Extension', client: 'Mark Davies', team: ['Varun Nishar, Project Manager', 'Mfon, Junior Project Manager'], open: 'First-fix snagging is complete. Final inspection booked for 22 Oct.' },
+    { id: 4, name: '14 Pinewood Close, Esher', type: 'Rear Extension & Basement', client: 'Priya Nair', team: ['Marek Cajka, ARB Architect', 'Syed, Structural Engineer (Outsourced)'], open: 'Beam sizing is under way. Calculations due within two weeks.' },
+    { id: 5, name: '3 Elm Grove, Weybridge', type: 'Double Storey Extension', client: 'Tom Hargreaves', team: ['Zhak Wadood, Project Manager', 'Mfon, Junior Project Manager'], open: 'Roof is watertight and first-fix electrics start this week.' },
+    { id: 6, name: '9 Meadow Bank, Guildford', type: 'Loft Conversion & Dormer', client: 'Olivia Grant', team: ['Varun Nishar, Project Manager', 'Mfon, Junior Project Manager'], open: 'Certificates are being finalised for handover.' },
+    { id: 7, name: '5 Chestnut Walk, Reigate', type: 'Kitchen Extension & Open Plan', client: 'Daniel Okafor', team: ['Latika Singh, Planning Architect', 'Siddharth Ghodke, Planning Architect'], open: 'The tender pack is out to three builders.' },
+    { id: 8, name: '21 Fairview Road, Banstead', type: 'Whole-house Refurbishment', client: 'Hannah Lewis', team: ['Varun Nishar, Project Manager', 'Naman Gupta, Interior Designer'], open: 'Contract is signed and the builder mobilises next week.' },
+    { id: 9, name: '8 Larkspur Drive, Epsom', type: 'Garden Room & Studio', client: 'Ravi Patel', team: ['Shahram, Architectural Technologist', 'Mohammed, Building Regulations (Outsourced)'], open: 'Building control drawings are with the inspector.' },
+    { id: 10, name: '17 Windmill Rise, Dorking', type: 'Two Storey Side Extension', client: 'Emma Clarke', team: ['Zhak Wadood, Project Manager', 'Mfon, Junior Project Manager'], open: 'The snag list has gone to the builder.' },
+    { id: 11, name: '2 Orchard End, Leatherhead', type: 'Loft Conversion', client: 'Chris Morgan', team: ['Gargi Gambir, Interior Designer Manager', 'Vaishnavi Valke, Interior Designer'], open: 'Mood boards for the en-suite are ready to review.' },
+    { id: 12, name: '30 Beacon Hill, Godalming', type: 'Basement & Rear Extension', client: 'Laura Fenn', team: ['Varun Nishar, Project Manager', 'Syed, Structural Engineer (Outsourced)'], open: 'All certificates and warranties are in place.' }
+  ];
+  directory = ['Eugene Kim, Founder', 'Abdul Khan, Operations Manager', 'Tirna Ghosh, HR Manager', 'Mehak Mehta, Admin & Accounts', 'A S Mythri Reddy, Admin & Accounts', 'Marek Cajka, ARB Architect', 'Shahram, Architectural Technologist', 'Vaishnavi Patil, Architectural Assistant', 'Aisha Sheikh, Architectural Designer', 'Latika Singh, Planning Architect', 'Siddharth Ghodke, Planning Architect', 'Gargi Gambir, Interior Designer Manager', 'Uma Menon, Interior Designer', 'Vaishnavi Valke, Interior Designer', 'Naman Gupta, Interior Designer', 'Varun Nishar, Project Manager', 'Zhak Wadood, Project Manager', 'Mfon, Junior Project Manager', 'Syed, Structural Engineer (Outsourced)', 'Mohammed, Building Regulations (Outsourced)'];
+  convoLines = [
+    ['t', 'Good morning {c}. Quick note before the week starts: the survey drawings have been checked and are now saved to your Drawings tab.'],
+    ['m', 'Thanks. Are the dimensions confirmed against the site visit?'],
+    ['t', 'Yes, we re-measured the rear wall and the boundary on Tuesday. Everything is within 10mm of the original survey.'],
+    ['m', 'Great. And the party wall notice, has that gone out to the neighbours yet?'],
+    ['t', 'It went out on Friday. Both neighbours have 14 days to respond. We will tell you as soon as either replies.'],
+    ['m', 'One of them mentioned they might want to see the plans first.'],
+    ['t', 'That is fine, we can send a short PDF pack with the plans and elevations. Shall I prepare one?'],
+    ['m', 'Yes please, that would help.'],
+    ['t', 'Done. I have attached the pack so you can forward it directly.', 'Neighbour_Pack_RevA.pdf'],
+    ['m', 'Perfect, forwarded. Can we also talk about the kitchen layout next week?'],
+    ['t', 'Of course. I have Wednesday at 2:30pm or Thursday at 11am free. Which suits you better?'],
+    ['m', 'Thursday at 11am please.'],
+    ['t', 'Booked. I will bring two layout options and a rough cost comparison so you can decide on the day.'],
+    ['m', 'Will the cost comparison include the structural changes?'],
+    ['t', 'Yes. The structural engineer has given us provisional beam sizes, so the figures include steel, installation and making good. Final numbers follow the calculations.'],
+    ['m', 'Understood. Is there anything I need to do before then?'],
+    ['t', 'Just decide whether you want an island or a peninsula, and how many people usually cook at once. That drives most of the layout.'],
+    ['m', 'Usually two. I would like an island if the space allows.'],
+    ['t', 'It should. The side return gives us enough clearance for 1.1m circulation around it. I will sketch it both ways.'],
+    ['m', 'Brilliant. The builder asked for the latest drawing set. Can I send him the portal link?'],
+    ['t', 'You can. I have enabled read-only access for him on the Drawings tab, so he will always see the current revision.'],
+    ['m', 'Thanks, I have shared it.'],
+    ['t', 'Great. A reminder that the next invoice is due on the 14th. You can download it from the Invoices tab.', 'INV-Statement.pdf'],
+    ['m', 'Noted, I will pay it this week.'],
+    ['t', 'Thank you {c}. Let me know if anything else comes up.']
+  ];
+  internal = {
+    admin: [
+      { id: 'int_founder', label: 'Eugene Kim, Founder', initials: 'EK', sub: 'Direct message', people: ['Eugene Kim, Founder'], msgs: [['them', 'Eugene Kim, Founder', 'Abdul, can you send me the pipeline numbers before Thursday\u2019s review?'], ['me', 'Yes. Twelve live projects, two at planning, three in technical design, four on site, three at snagging or handover.'], ['them', 'Eugene Kim, Founder', 'Good. Flag anything at risk. I saw 21 Fairview Road has slipped.'], ['me', 'About two weeks because of planning. Varun has a recovery plan.']] },
+      { id: 'int_hr', label: 'Tirna Ghosh, HR Manager', initials: 'TG', sub: 'Direct message', people: ['Tirna Ghosh, HR Manager'], msgs: [['them', 'Tirna Ghosh, HR Manager', 'Hi Abdul, two new starters join on Monday. Can IT have their laptops ready?'], ['me', 'Already ordered, arriving Friday. I will set up their portal access this week.'], ['them', 'Tirna Ghosh, HR Manager', 'Thanks. I will send the welcome pack on Friday.']] },
+      { id: 'int_acct', label: 'Mehak Mehta, Admin & Accounts', initials: 'MM', sub: 'Direct message', people: ['Mehak Mehta, Admin & Accounts'], msgs: [['them', 'Mehak Mehta, Admin & Accounts', 'INV-1449 for 1 Lambourne Drive is still overdue. Shall I send a reminder?'], ['me', 'Yes, a polite one. The client usually pays within a few days of a nudge.'], ['them', 'Mehak Mehta, Admin & Accounts', 'Sent. I will update you when it clears.']] },
+      { id: 'int_pm', label: 'Project Managers', initials: 'PM', sub: 'Group \u00b7 4 people', people: ['Varun Nishar, Project Manager', 'Zhak Wadood, Project Manager', 'Mfon, Junior Project Manager'], msgs: [['me', 'Team, please update programme dates on your live sites by Wednesday.'], ['them', 'Varun Nishar, Project Manager', 'Will do. Fairview Road is the only one moving.'], ['them', 'Zhak Wadood, Project Manager', 'Elm Grove and Windmill Rise are on track.'], ['them', 'Mfon, Junior Project Manager', 'Tadorne Road final inspection is booked for the 22nd.']] }
+    ],
+    manager: [
+      { id: 'int_ops', label: 'Abdul Khan, Operations Manager', initials: 'AK', sub: 'Direct message', people: ['Abdul Khan, Operations Manager'], msgs: [['them', 'Abdul Khan, Operations Manager', 'Latika, Eugene wants the programme review on Thursday at 10am. Can you bring the planning status for Chestnut Walk?'], ['me', 'Yes. The tender pack is out to three builders and planning is approved.'], ['them', 'Abdul Khan, Operations Manager', 'Perfect, thanks.']] },
+      { id: 'int_sid', label: 'Siddharth Ghodke, Planning Architect', initials: 'SG', sub: 'Direct message', people: ['Siddharth Ghodke, Planning Architect'], msgs: [['them', 'Siddharth Ghodke, Planning Architect', 'The Merton validation letter has arrived. Do you want to review the neighbour comments together?'], ['me', 'Yes, send them over and I will draft the response today.'], ['them', 'Siddharth Ghodke, Planning Architect', 'Sent. Thanks Latika.']] },
+      { id: 'int_aisha', label: 'Aisha Sheikh, Architectural Designer', initials: 'AS', sub: 'Direct message', people: ['Aisha Sheikh, Architectural Designer'], msgs: [['me', 'Aisha, can you send me the Reigate side return sketch options for the planning pack?'], ['them', 'Aisha Sheikh, Architectural Designer', 'They are ready. I will upload them to the portal this afternoon.'], ['me', 'Great, thank you.']] }
+    ],
+    staff: [
+      { id: 'int_marek', label: 'Marek Cajka, ARB Architect', initials: 'MC', sub: 'Direct message', people: ['Marek Cajka, ARB Architect'], msgs: [['them', 'Marek Cajka, ARB Architect', 'Aisha, can you update the Bossiney elevations with the lower dormer ridge?'], ['me', 'Yes, I will have Rev C by end of day.'], ['them', 'Marek Cajka, ARB Architect', 'Thanks. Copy Latika so the planning response matches.']] },
+      { id: 'int_vaish', label: 'Vaishnavi Patil, Architectural Assistant', initials: 'VP', sub: 'Direct message', people: ['Vaishnavi Patil, Architectural Assistant'], msgs: [['me', 'Vaishnavi, can you check the loft stair headroom against Building Regs?'], ['them', 'Vaishnavi Patil, Architectural Assistant', 'It is 2.05m at the lowest point, which passes. I will mark it on the section.'], ['me', 'Great, thanks.']] },
+      { id: 'int_planning', label: 'Planning Team', initials: 'PT', sub: 'Group \u00b7 3 people', people: ['Latika Singh, Planning Architect', 'Siddharth Ghodke, Planning Architect'], msgs: [['them', 'Latika Singh, Planning Architect', 'Merton planning officer confirmed the site visit is on Thursday.'], ['me', 'I will have the response letter drafted tomorrow.'], ['them', 'Siddharth Ghodke, Planning Architect', 'I can review it before it goes out.']] }
+    ]
+  };
+  cfg() { return this.personas[this.props.persona] || this.personas.admin; }
+  initials(n) { return n.split(',')[0].trim().split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase(); }
+  buildAll() {
+    const key = this.props.persona || 'admin';
+    if (this._all && this._key === key) return this._all;
+    const cfg = this.cfg();
+    const metas = [{ id: 'general', label: 'EA Team', initials: 'EA', avatarBg: '#191919', sub: 'Group \u00b7 all staff', people: ['Eugene Kim, Founder', 'Abdul Khan, Operations Manager', 'Varun Nishar, Project Manager'] }];
+    const seeds = { general: [
+      { from: 'them', name: 'Eugene Kim, Founder', text: 'Morning all. A reminder that the programme review is Thursday at 10am. Please update your project notes beforehand.' },
+      { from: 'them', name: 'Abdul Khan, Operations Manager', text: 'Agenda goes out Wednesday. New starters join on Monday, please say hello.' }
+    ] };
+    (this.internal[key] || []).forEach(t => {
+      metas.push({ id: t.id, label: t.label, initials: t.initials, avatarBg: '#191919', sub: t.sub, people: t.people });
+      seeds[t.id] = t.msgs.map(m => m[0] === 'me' ? { from: 'me', text: m[1] } : { from: 'them', name: m[1], text: m[2] });
+    });
+    this.projects.filter(p => cfg.projects.indexOf(p.id) !== -1).forEach(p => {
+      const first = p.client.split(' ')[0];
+      const lead = p.team[0];
+      metas.push({ id: 'proj_' + p.id, label: p.name, initials: /^\d/.test(p.name) ? p.name.split(' ')[0] + p.name.split(' ')[1][0] : p.name.slice(0, 2).toUpperCase(), avatarBg: '#8E1B18', sub: 'Client: ' + p.client + ' \u00b7 ' + p.type, people: [p.client + ', Client'].concat(p.team) });
+      const msgs = [{ from: 'me', text: 'Hi ' + first + ', ' + p.open }];
+      this.convoLines.forEach(l => {
+        const text = l[1].split('{c}').join(first);
+        msgs.push(l[0] === 't' ? Object.assign({ from: 'me', text }, l[2] ? { attachmentName: l[2] } : {}) : { from: 'them', name: p.client + ', Client', text });
+      });
+      seeds[p.id === 0 ? 'x' : 'proj_' + p.id] = msgs;
+    });
+    this._key = key; this._all = { metas, seeds };
+    return this._all;
+  }
+  measure = () => {
+    const w = window.innerWidth;
+    const isMobile = w <= 640, isTablet = w > 640 && w <= 1100;
+    if (isMobile !== this.state.isMobile) this.setState({ isMobile });
+    if (isTablet !== this.state.isTablet) this.setState({ isTablet });
+  };
+  componentDidMount() { this.measure(); window.addEventListener('resize', this.measure); }
+  componentWillUnmount() { window.removeEventListener('resize', this.measure); document.body.style.overflow = ''; }
+  componentDidUpdate() { document.body.style.overflow = this.state.newConvoOpen ? 'hidden' : ''; }
+  keyActivate(fn) { return (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn(e); } }; }
+  sendMessage = () => {
+    const text = this.state.messageInput.trim();
+    const att = this.state.composerAttachment;
+    if (!text && !att) return;
+    const id = this.state.activeThreadId;
+    const msg = Object.assign({ from: 'me', text: text || 'Sent an attachment.' }, att ? { attachmentName: att } : {});
+    this.setState(s => ({ threadExtra: { ...s.threadExtra, [id]: [...(s.threadExtra[id] || []), msg] }, messageInput: '', composerAttachment: null }));
+  };
+  createNewConvo = () => {
+    const sel = this.state.newConvoSelected;
+    if (!sel.length) return;
+    const isGroup = this.state.newConvoType === 'group';
+    const names = sel.map(n => n.split(',')[0]);
+    const id = 'custom_' + Date.now();
+    const label = isGroup ? (this.state.newConvoGroupName.trim() || names.join(', ')) : names[0];
+    const thread = { id, label, initials: isGroup ? 'GR' : this.initials(names[0]), avatarBg: isGroup ? '#6B6B6B' : '#191919', sub: isGroup ? 'Group \u00b7 ' + (sel.length + 1) + ' people' : 'Direct message', people: sel };
+    this.setState(s => ({ customThreads: [...s.customThreads, thread], activeThreadId: id, newConvoOpen: false, newConvoSelected: [], newConvoGroupName: '', newConvoType: 'single', mobileThreadListOpen: false }));
+  };
+  renderVals() {
+    const cfg = this.cfg();
+    const all = this.buildAll();
+    const st = this.state;
+    const raw = (id) => [...(all.seeds[id] || []), ...(st.threadExtra[id] || [])];
+    const bubbles = (msgs) => msgs.map(m => ({
+      text: m.text,
+      name: m.from === 'me' ? 'You' : (m.name || 'EA Team'),
+      rowStyle: m.from === 'me' ? 'align-items:flex-end;' : 'align-items:flex-start;',
+      bubbleRowStyle: m.from === 'me' ? 'flex-direction:row-reverse;' : '',
+      avatarInitials: m.from === 'me' ? cfg.ini : this.initials(m.name || 'EA Team'),
+      avatarBg: m.from === 'me' ? '#8E1B18' : '#191919',
+      bubbleBg: m.from === 'me' ? '#8E1B18' : '#F3F3F3',
+      bubbleColor: m.from === 'me' ? '#FEFEFE' : '#191919',
+      attachmentName: m.attachmentName || null
+    }));
+    const q = st.threadSearch.trim().toLowerCase();
+    const metaAll = [...all.metas, ...st.customThreads];
+    const filtered = metaAll.filter(m => !q || m.label.toLowerCase().includes(q) || raw(m.id).some(x => x.text.toLowerCase().includes(q)));
+    const threadList = filtered.map(m => { const r = raw(m.id); return {
+      label: m.label, initials: m.initials, avatarBg: m.avatarBg,
+      snippet: r.length ? r[r.length - 1].text : 'No messages yet.',
+      timeLabel: (st.threadExtra[m.id] || []).length ? 'Just now' : '1d ago',
+      rowStyle: st.activeThreadId === m.id ? 'background:#FEF6F6;border-left:3px solid #8E1B18;' : 'border-left:3px solid transparent;',
+      select: () => this.setState({ activeThreadId: m.id, mobileThreadListOpen: false })
+    }; });
+    const active = metaAll.find(m => m.id === st.activeThreadId) || metaAll[0];
+    const files = raw(active.id).filter(m => m.attachmentName).map(m => ({ name: m.attachmentName }));
+    const mob = st.isMobile, tab = st.isTablet;
+    const group = st.newConvoType === 'group';
+    const dir = this.directory.filter(n => n.indexOf(cfg.name) !== 0);
+    return {
+      closeMessagesPage: () => { if (this.props.onBack) this.props.onBack(); },
+      openNewConvo: () => this.setState({ newConvoOpen: true }),
+      closeNewConvo: () => this.setState({ newConvoOpen: false }),
+      stopClickPropagation: (e) => e.stopPropagation(),
+      threadList, threadListEmpty: threadList.length === 0,
+      msgSidebarStyle: mob ? (st.mobileThreadListOpen ? 'width:100%;flex-shrink:0;min-height:0;border-right:1px solid #EAEAEA;display:flex;flex-direction:column;' : 'display:none;') : 'width:' + (tab ? '240px' : '300px') + ';flex-shrink:0;min-height:0;border-right:1px solid #EAEAEA;display:flex;flex-direction:column;',
+      msgMainStyle: mob ? ((st.mobileThreadListOpen || st.mobileDetailsOpen) ? 'display:none;' : 'flex:1;display:flex;flex-direction:column;min-width:0;min-height:0;width:100%;') : 'flex:1;display:flex;flex-direction:column;min-width:0;min-height:0;',
+      msgSideStyle: mob ? 'width:100%;flex-shrink:0;border-left:none;padding:24px 20px;display:flex;flex-direction:column;gap:22px;overflow-y:auto;' : (tab ? 'position:absolute;top:0;right:0;bottom:0;z-index:5;background:#FFFFFF;box-shadow:-8px 0 24px rgba(25,25,25,0.14);width:300px;max-width:85%;' : 'width:280px;flex-shrink:0;') + 'border-left:1px solid #EAEAEA;padding:24px 20px;display:flex;flex-direction:column;gap:22px;overflow-y:auto;',
+      showMobileThreadBack: mob, showDetailsClose: mob || tab,
+      backToThreadList: () => this.setState({ mobileThreadListOpen: true }),
+      activeThreadLabel: active.label, activeThreadSub: active.sub, activeThreadInitials: active.initials, activeThreadAvatarBg: active.avatarBg,
+      activeThreadMessages: bubbles(raw(active.id)),
+      activeThreadFiles: files, activeThreadFilesEmpty: files.length === 0,
+      activeThreadPeople: [{ name: cfg.name + ', ' + cfg.role + ' (You)', initials: cfg.ini }].concat(active.people.map(n => ({ name: n, initials: this.initials(n) }))),
+      toggleDetailsPanel: () => mob ? this.setState(s => ({ mobileDetailsOpen: !s.mobileDetailsOpen })) : tab ? this.setState(s => ({ tabletDetailsOpen: !s.tabletDetailsOpen })) : this.setState(s => ({ detailsPanelOpen: !s.detailsPanelOpen })),
+      detailsPanelOpen: mob ? st.mobileDetailsOpen : tab ? st.tabletDetailsOpen : st.detailsPanelOpen,
+      threadSearchValue: st.threadSearch, onThreadSearchInput: (e) => this.setState({ threadSearch: e.target.value }),
+      messageInput: st.messageInput, onMessageInput: (e) => this.setState({ messageInput: e.target.value }),
+      onMessageKeyDown: (e) => { if (e.key === 'Enter') { e.preventDefault(); this.sendMessage(); } },
+      sendMessage: this.sendMessage,
+      composerAttachment: st.composerAttachment,
+      clearComposerAttachment: () => this.setState({ composerAttachment: null }),
+      setMessageFileInputRef: (el) => { this.fileInput = el; },
+      onAttachClick: () => { if (this.fileInput) this.fileInput.click(); },
+      onComposerFileChange: (e) => { const f = e.target.files && e.target.files[0]; if (f) this.setState({ composerAttachment: f.name }); e.target.value = ''; },
+      newConvoOpen: st.newConvoOpen, newConvoIsGroup: group, newConvoGroupName: st.newConvoGroupName,
+      onNewConvoGroupNameInput: (e) => this.setState({ newConvoGroupName: e.target.value }),
+      setNewConvoTypeSingle: () => this.setState({ newConvoType: 'single', newConvoSelected: st.newConvoSelected.slice(0, 1) }),
+      setNewConvoTypeGroup: () => this.setState({ newConvoType: 'group' }),
+      newConvoTypeSingleStyle: group ? 'color:#474747;' : 'background:#191919;color:#FEFEFE;',
+      newConvoTypeGroupStyle: group ? 'background:#191919;color:#FEFEFE;' : 'color:#474747;',
+      newConvoContacts: dir.map(name => { const sel = st.newConvoSelected.indexOf(name) !== -1; return {
+        name, initials: this.initials(name), selected: sel, rowStyle: sel ? 'background:#FEF6F6;border-color:#8E1B18;' : '',
+        toggle: () => this.setState(s => { const has = s.newConvoSelected.indexOf(name) !== -1; return { newConvoSelected: group ? (has ? s.newConvoSelected.filter(n => n !== name) : [...s.newConvoSelected, name]) : (has ? [] : [name]) }; })
+      }; }),
+      newConvoCannotCreate: st.newConvoSelected.length === 0,
+      createNewConvo: this.createNewConvo
+    };
+  }
+}
+</script>
+</body>
+</html>

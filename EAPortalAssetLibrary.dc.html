@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/extension-architecture-design-system-0124207d-8759-4968-8e99-e143fec3b79f/colors_and_type.css">
+  <link rel="stylesheet" href="_ds/extension-architecture-design-system-0124207d-8759-4968-8e99-e143fec3b79f/styles.css">
+  <script src="./image-slot.js"></script>
+  <meta name="format-detection" content="address=no, telephone=no, email=no">
+  <script src="_ds/extension-architecture-design-system-0124207d-8759-4968-8e99-e143fec3b79f/_ds_bundle.js"></script>
+  <style>@font-face{font-family:'Montserrat';src:url('./fonts/Montserrat-VariableFont_wght.ttf') format('truetype-variations');font-weight:100 900}@font-face{font-family:'Fraunces';src:url('./fonts/Fraunces-VariableFont_SOFT_WONK_opsz_wght.ttf') format('truetype-variations');font-weight:100 900}html,body{margin:0;padding:0;font-family:'Montserrat',ui-sans-serif,system-ui,sans-serif;background:#FFFFFF;overflow-x:hidden}*{box-sizing:border-box}a{color:#8E1B18}a:hover{color:#7A1714}[role="button"]:focus-visible,a:focus-visible,button:focus-visible{outline:2px solid #8E1B18;outline-offset:2px}select:focus,input:focus{outline:none;border-color:#8E1B18;box-shadow:0 0 0 3px rgba(142,27,24,0.18)}select.ea-select{appearance:none;-webkit-appearance:none;background-color:#FFFFFF;background-image:url('data:image/svg+xml,%3Csvg xmlns%3D%22http%3A//www.w3.org/2000/svg%22 width%3D%2214%22 height%3D%2214%22 viewBox%3D%220 0 24 24%22 fill%3D%22none%22%3E%3Cpath d%3D%22M6 9l6 6 6-6%22 stroke%3D%22%23474747%22 stroke-width%3D%221.8%22 stroke-linecap%3D%22round%22 stroke-linejoin%3D%22round%22/%3E%3C/svg%3E');background-repeat:no-repeat;background-position:right 11px center}.ea-asset-tab{transition:color 150ms ease-out,border-color 150ms ease-out}.ea-asset-card{transition:box-shadow 150ms ease-out,transform 150ms ease-out}.ea-asset-card:hover{box-shadow:0 10px 28px rgba(25,25,25,0.12);transform:translateY(-2px)}.ea-asset-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}@media (max-width:1024px){.ea-asset-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}@media (max-width:640px){.ea-asset-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}image-slot::part(ring){display:none}::selection{background:#8E1B18;color:#FFFFFF}::-moz-selection{background:#8E1B18;color:#FFFFFF}.ea-upload-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-family:'Montserrat',sans-serif;font-weight:600;font-size:12.5px;padding:22px 16px;border-radius:8px;background:#FBFBFB;border:1.5px dashed #D1D1D1;color:#6B6B6B;cursor:pointer;width:100%;text-align:center;transition:border-color 150ms ease-out,color 150ms ease-out,background 150ms ease-out}.ea-upload-btn:hover{border-color:#8E1B18;color:#8E1B18;background:#FEF6F6}.ea-upload-btn input[type="file"]{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;clip:rect(0,0,0,0)}</style>
+</helmet>
+
+<div style="min-height:100vh;background:#FFFFFF;color:#191919;display:flex;flex-direction:column;">
+
+  <div style="width:100%;padding:40px 32px 80px;flex:1;">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px;">
+      <a href="javascript:history.back()" style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:#6B6B6B;text-decoration:none;border-bottom:none;padding-bottom:0;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        Back
+      </a>
+      <sc-if value="{{ canAddAsset }}" hint-placeholder-val="{{ true }}">
+        <button type="button" onClick="{{ openAddModal }}" style="display:inline-flex;align-items:center;gap:6px;font-family:'Montserrat',sans-serif;font-size:12.5px;font-weight:600;padding:8px 16px;border-radius:100px;background:#8E1B18;color:#FFFFFF;border:none;cursor:pointer;flex-shrink:0;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"></path></svg>
+          Add Asset
+        </button>
+      </sc-if>
+    </div>
+    <p style="margin:0 0 4px;font-size:12px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:#8E1B18;">For Everyone At EA</p>
+    <h1 style="margin:0 0 8px;font-family:'Fraunces', ui-serif, Georgia, serif;font-optical-sizing:auto;font-weight:500;font-size:34px;color:#191919;">Brand &amp; Asset Library</h1>
+    <p style="margin:0 0 28px;font-size:14.5px;color:#474747;max-width:640px;line-height:1.6;">Videos, photography, sales decks, brand books, templates, forms and guides for Extension Architecture &mdash; shared across the whole team.</p>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:28px;padding-bottom:16px;">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <sc-for list="{{ assetFilters }}" as="f" hint-placeholder-count="6">
+          <div class="ea-asset-tab" onClick="{{ f.select }}" role="button" tabindex="0" style="{{ f.style }}">{{ f.label }}</div>
+        </sc-for>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;flex-shrink:0;margin-left:auto;">
+        <div style="display:flex;align-items:center;border:1px solid #D1D1D1;border-radius:6px;overflow:hidden;flex-shrink:0;">
+          <button type="button" onClick="{{ setGridView }}" aria-label="Grid view" aria-pressed="{{ isGridView }}" style="{{ gridViewBtnStyle }}">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.8"></rect><rect x="13" y="3" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.8"></rect><rect x="3" y="13" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.8"></rect><rect x="13" y="13" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.8"></rect></svg>
+          </button>
+          <button type="button" onClick="{{ setTableView }}" aria-label="Table view" aria-pressed="{{ isTableView }}" style="{{ tableViewBtnStyle }}">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="4" rx="1" stroke="currentColor" stroke-width="1.8"></rect><rect x="3" y="10" width="18" height="4" rx="1" stroke="currentColor" stroke-width="1.8"></rect><rect x="3" y="16" width="18" height="4" rx="1" stroke="currentColor" stroke-width="1.8"></rect></svg>
+          </button>
+        </div>
+        <select class="ea-select" value="{{ sortBy }}" onChange="{{ onSortChange }}" style="padding:9px 32px 9px 12px;border-radius:6px;border:1px solid #D1D1D1;font-family:'Montserrat',sans-serif;font-size:13px;color:#191919;">
+          <option value="recent">Newest</option>
+          <option value="az">Name A&ndash;Z</option>
+          <option value="favorites">Favorites first</option>
+        </select>
+        <div style="position:relative;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;"><circle cx="11" cy="11" r="7" stroke="#8A8A8A" stroke-width="1.8"></circle><path d="M21 21l-4.3-4.3" stroke="#8A8A8A" stroke-width="1.8" stroke-linecap="round"></path></svg>
+          <input type="text" value="{{ searchQuery }}" onChange="{{ onSearchChange }}" placeholder="Search assets" style="padding:9px 34px 9px 12px;border-radius:6px;border:1px solid #D1D1D1;font-family:'Montserrat',sans-serif;font-size:13px;color:#191919;width:200px;">
+        </div>
+      </div>
+    </div>
+
+    <sc-if value="{{ isGridView }}" hint-placeholder-val="{{ true }}">
+    <div class="ea-asset-grid">
+      <sc-for list="{{ visibleAssets }}" as="a" hint-placeholder-count="8">
+        <div class="ea-asset-card" style="background:#FFFFFF;border:1px solid #EAEAEA;border-radius:10px;overflow:hidden;display:flex;flex-direction:column;height:100%;">
+          <div onMouseEnter="{{ a.onEnter }}" onMouseLeave="{{ a.onLeave }}" style="position:relative;width:100%;aspect-ratio:16/9;flex-shrink:0;overflow:hidden;background:#F6F6F6;">
+            <image-slot id="{{ a.slotId }}" shape="rect" src="{{ a.src }}" placeholder="{{ a.placeholder }}"></image-slot>
+            <button type="button" onClick="{{ a.toggleFavoriteClick }}" aria-label="{{ a.favoriteAriaLabel }}" style="position:absolute;top:10px;left:10px;z-index:4;width:28px;height:28px;border-radius:100px;border:none;background:rgba(25,25,25,0.55);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;">
+              <sc-if value="{{ a.isFavorite }}" hint-placeholder-val="{{ false }}">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="#EBC6A3"><path d="M12 17.3l-6.2 3.6 1.6-7-5.4-4.7 7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7z"></path></svg>
+              </sc-if>
+              <sc-if value="{{ a.isNotFavorite }}" hint-placeholder-val="{{ true }}">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linejoin="round"><path d="M12 17.3l-6.2 3.6 1.6-7-5.4-4.7 7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7z"></path></svg>
+              </sc-if>
+            </button>
+            <sc-if value="{{ a.canDelete }}" hint-placeholder-val="{{ false }}">
+              <button type="button" onClick="{{ a.deleteClick }}" aria-label="Delete asset" style="position:absolute;top:10px;right:10px;z-index:4;width:28px;height:28px;border-radius:100px;border:none;background:rgba(25,25,25,0.55);color:#FFFFFF;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+              </button>
+            </sc-if>
+            <sc-if value="{{ a.isVideo }}" hint-placeholder-val="{{ false }}">
+              <sc-if value="{{ a.showVideo }}" hint-placeholder-val="{{ false }}">
+                <div aria-hidden="true" style="position:absolute;inset:0;overflow:hidden;pointer-events:none;opacity:{{ a.videoOpacity }};transition:opacity 300ms ease-out;">
+                  <iframe ref="{{ a.videoRef }}" title="Asset preview" src="{{ a.videoSrc }}" loading="lazy" onLoad="{{ a.onVideoLoad }}" frameborder="0" allow="autoplay; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" style="position:absolute;top:50%;left:50%;width:100%;height:100%;transform:translate(-50%,-50%) scale(1.04);border:0;pointer-events:none;"></iframe>
+                </div>
+                <button type="button" onClick="{{ a.togglePlayClick }}" aria-label="{{ a.playAriaLabel }}" style="position:absolute;top:10px;left:10px;z-index:3;width:28px;height:28px;border-radius:100px;border:none;background:rgba(25,25,25,0.55);color:#FFFFFF;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;">
+                  <sc-if value="{{ a.isPaused }}" hint-placeholder-val="{{ false }}">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M6 4l14 8-14 8Z"></path></svg>
+                  </sc-if>
+                  <sc-if value="{{ a.isNotPaused }}" hint-placeholder-val="{{ true }}">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><rect x="6" y="4" width="4" height="16" rx="1" fill="#FFFFFF"></rect><rect x="14" y="4" width="4" height="16" rx="1" fill="#FFFFFF"></rect></svg>
+                  </sc-if>
+                </button>
+                <button type="button" onClick="{{ a.toggleMuteClick }}" aria-label="{{ a.muteAriaLabel }}" style="position:absolute;top:10px;right:10px;z-index:3;width:28px;height:28px;border-radius:100px;border:none;background:rgba(25,25,25,0.55);color:#FFFFFF;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;">
+                  <sc-if value="{{ a.isMuted }}" hint-placeholder-val="{{ true }}">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5Z"></path><path d="M16 9l6 6M22 9l-6 6"></path></svg>
+                  </sc-if>
+                  <sc-if value="{{ a.isNotMuted }}" hint-placeholder-val="{{ false }}">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4V5Z"></path><path d="M15.5 8.5a5 5 0 0 1 0 7"></path><path d="M18 6a8.5 8.5 0 0 1 0 12"></path></svg>
+                  </sc-if>
+                </button>
+              </sc-if>
+              <sc-if value="{{ a.showCenterPlay }}" hint-placeholder-val="{{ true }}">
+                <span aria-hidden="true" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:2;width:44px;height:44px;border-radius:100px;background:rgba(255,255,255,0.9);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="#191919"><path d="M6 4l14 8-14 8Z"></path></svg>
+                </span>
+              </sc-if>
+            </sc-if>
+          </div>
+          <div style="padding:20px 16px;display:flex;flex-direction:column;flex:1;">
+            <span style="display:inline-block;margin-bottom:6px;font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:4px 9px;border-radius:100px;background:#F3F3F3;color:#474747;align-self:flex-start;">{{ a.typeLabel }}</span>
+            <p style="margin:8px 0 3px;font-size:14px;font-weight:600;color:#191919;line-height:1.3;min-height:2.6em;">{{ a.title }}</p>
+            <sc-if value="{{ a.description }}" hint-placeholder-val="{{ false }}">
+              <p style="margin:0 0 8px;font-size:12px;color:#6B6B6B;line-height:1.5;">{{ a.description }}</p>
+            </sc-if>
+            <div style="height:1px;background:#F3F3F3;margin:10px 0;"></div>
+            <p style="margin:0 0 10px;font-size:12px;color:#6B6B6B;">{{ a.meta }}</p>
+            <p style="margin:0 0 10px;font-size:11px;color:#9A9A9A;">Added {{ a.dateAddedLabel }}</p>
+            <div style="height:1px;background:#F3F3F3;margin-bottom:10px;"></div>
+            <div style="flex:1;"></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+              <sc-if value="{{ a.contributor }}" hint-placeholder-val="{{ false }}">
+                <div title="{{ a.contributor }}" style="display:flex;align-items:center;gap:7px;min-width:0;">
+                  <span aria-hidden="true" style="width:20px;height:20px;border-radius:100px;background:#8E1B18;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:700;flex-shrink:0;">{{ a.contributorInitials }}</span>
+                  <span style="font-size:11.5px;color:#474747;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ a.contributor }}</span>
+                </div>
+              </sc-if>
+              <a href="{{ a.url }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:#8E1B18;text-decoration:none;border-bottom:none;padding-bottom:0;flex-shrink:0;margin-left:auto;">
+                {{ a.linkLabel }}
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M17 7H9M17 7V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ isTableView }}" hint-placeholder-val="{{ false }}">
+      <div style="border:1px solid #EAEAEA;border-radius:10px;overflow:hidden;">
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <thead>
+            <tr style="background:#FBFBFB;border-bottom:1px solid #EAEAEA;">
+              <th style="width:1%;padding:12px 0 12px 16px;"></th>
+              <th style="text-align:left;padding:12px 16px;font-size:10.5px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;">Asset</th>
+              <th style="text-align:left;padding:12px 16px;font-size:10.5px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;">Type</th>
+              <th style="text-align:left;padding:12px 16px;font-size:10.5px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;">Contributor</th>
+              <th style="text-align:left;padding:12px 16px;font-size:10.5px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;">Added</th>
+              <th style="text-align:right;padding:12px 16px;font-size:10.5px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#6B6B6B;">Link</th>
+            </tr>
+          </thead>
+          <tbody>
+            <sc-for list="{{ tablePageAssets }}" as="a" hint-placeholder-count="8">
+              <tr style="border-bottom:1px solid #F3F3F3;">
+                <td style="padding:12px 0 12px 16px;">
+                  <button type="button" onClick="{{ a.toggleFavoriteClick }}" aria-label="{{ a.favoriteAriaLabel }}" style="border:1px solid #D1D1D1;background:none;padding:4px;cursor:pointer;display:flex;flex-shrink:0;border-radius:100px;">
+                    <sc-if value="{{ a.isFavorite }}" hint-placeholder-val="{{ false }}">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="#8E1B18"><path d="M12 17.3l-6.2 3.6 1.6-7-5.4-4.7 7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7z"></path></svg>
+                    </sc-if>
+                    <sc-if value="{{ a.isNotFavorite }}" hint-placeholder-val="{{ true }}">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9C9C9" stroke-width="1.8" stroke-linejoin="round"><path d="M12 17.3l-6.2 3.6 1.6-7-5.4-4.7 7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7z"></path></svg>
+                    </sc-if>
+                  </button>
+                </td>
+                <td style="padding:12px 16px;">
+                  <div>
+                    <p style="margin:0;font-weight:600;color:#191919;">{{ a.title }}</p>
+                    <p style="margin:2px 0 0;font-size:11.5px;color:#9A9A9A;">{{ a.meta }}</p>
+                  </div>
+                </td>
+                <td style="padding:12px 16px;color:#474747;">{{ a.typeLabel }}</td>
+                <td style="padding:12px 16px;color:#474747;">{{ a.contributor }}</td>
+                <td style="padding:12px 16px;color:#9A9A9A;font-size:12px;">{{ a.dateAddedLabel }}</td>
+                <td style="padding:12px 16px;text-align:right;">
+                  <a href="{{ a.url }}" target="_blank" rel="noopener" style="font-size:12px;font-weight:600;color:#8E1B18;text-decoration:none;">{{ a.linkLabel }}</a>
+                </td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+      </div>
+      <sc-if value="{{ tableHasPages }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;justify-content:flex-end;gap:14px;margin-top:16px;">
+          <button type="button" onClick="{{ tablePrevPage }}" disabled="{{ tableOnFirstPage }}" style="font-family:'Montserrat',sans-serif;font-weight:600;font-size:12.5px;padding:8px 16px;border-radius:100px;background:#FFFFFF;border:1px solid #D1D1D1;color:#474747;cursor:pointer;">Previous</button>
+          <span style="font-size:12.5px;color:#6B6B6B;">Page {{ tablePageLabel }}</span>
+          <button type="button" onClick="{{ tableNextPage }}" disabled="{{ tableOnLastPage }}" style="font-family:'Montserrat',sans-serif;font-weight:600;font-size:12.5px;padding:8px 16px;border-radius:100px;background:#FFFFFF;border:1px solid #D1D1D1;color:#474747;cursor:pointer;">Next</button>
+        </div>
+      </sc-if>
+    </sc-if>
+
+    <sc-if value="{{ hasNoVisibleAssets }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:48px 20px;text-align:center;">
+        <p style="margin:0;font-size:13px;color:#6B6B6B;">No assets in this category yet.</p>
+      </div>
+    </sc-if>
+  </div>
+
+  <sc-if value="{{ addModalOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:60;background:rgba(25,25,25,0.6);display:flex;align-items:center;justify-content:center;padding:20px;" onClick="{{ closeAddModal }}">
+      <div onClick="{{ stopClickPropagation }}" style="width:100%;max-width:440px;background:#FFFFFF;border-radius:10px;border-top:3px solid #8E1B18;padding:28px;max-height:90vh;overflow-y:auto;">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;">
+          <p style="margin:0;font-family:'Fraunces', ui-serif, Georgia, serif;font-optical-sizing:auto;font-weight:500;font-size:19px;color:#191919;">Add Asset</p>
+          <span onClick="{{ closeAddModal }}" role="button" tabindex="0" aria-label="Close" style="cursor:pointer;color:#6B6B6B;font-size:20px;line-height:1;">&times;</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div>
+            <label style="display:block;margin-bottom:6px;font-size:11px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:#6B6B6B;">Type</label>
+            <select class="ea-select" value="{{ newAssetType }}" onChange="{{ onNewAssetTypeChange }}" style="width:100%;padding:10px 36px 10px 14px;border-radius:6px;border:1px solid #D1D1D1;font-family:'Montserrat',sans-serif;font-size:13.5px;color:#191919;">
+              <sc-for list="{{ addableTypes }}" as="t" hint-placeholder-count="5">
+                <option value="{{ t.id }}">{{ t.label }}</option>
+              </sc-for>
+            </select>
+          </div>
+          <div>
+            <label style="display:block;margin-bottom:6px;font-size:11px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:#6B6B6B;">Title</label>
+            <input type="text" value="{{ newAssetTitle }}" onChange="{{ onNewAssetTitleChange }}" placeholder="e.g. Site Visit Checklist" style="width:100%;padding:10px 12px;border-radius:6px;border:1px solid #D1D1D1;font-family:'Montserrat',sans-serif;font-size:13.5px;color:#191919;">
+          </div>
+          <div>
+            <label style="display:block;margin-bottom:6px;font-size:11px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:#6B6B6B;">Description</label>
+            <textarea value="{{ newAssetDescription }}" onChange="{{ onNewAssetDescriptionChange }}" rows="2" placeholder="A short note about this asset, for search" style="width:100%;padding:10px 12px;border-radius:6px;border:1px solid #D1D1D1;font-family:'Montserrat',sans-serif;font-size:13.5px;color:#191919;resize:vertical;"></textarea>
+          </div>
+          <div>
+            <label style="display:block;margin-bottom:6px;font-size:11px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:#6B6B6B;">Details</label>
+            <input type="text" value="{{ newAssetMeta }}" onChange="{{ onNewAssetMetaChange }}" placeholder="e.g. PDF \u00b7 4 pages" style="width:100%;padding:10px 12px;border-radius:6px;border:1px solid #D1D1D1;font-family:'Montserrat',sans-serif;font-size:13.5px;color:#191919;">
+          </div>
+          <div>
+            <label style="display:block;margin-bottom:6px;font-size:11px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:#6B6B6B;">Contributor</label>
+            <select class="ea-select" value="{{ newAssetContributor }}" onChange="{{ onNewAssetContributorChange }}" style="width:100%;padding:10px 36px 10px 14px;border-radius:6px;border:1px solid #D1D1D1;font-family:'Montserrat',sans-serif;font-size:13.5px;color:#191919;">
+              <option value="">Select a staff member…</option>
+              <sc-for list="{{ staffOptions }}" as="s" hint-placeholder-count="6">
+                <option value="{{ s }}">{{ s }}</option>
+              </sc-for>
+            </select>
+          </div>
+          <sc-if value="{{ isVideoType }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <label style="display:block;margin-bottom:6px;font-size:11px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:#6B6B6B;">Vimeo URL</label>
+              <input type="text" value="{{ newAssetUrl }}" onChange="{{ onNewAssetUrlChange }}" placeholder="https://vimeo.com/123456789" style="width:100%;padding:10px 12px;border-radius:6px;border:1px solid #D1D1D1;font-family:'Montserrat',sans-serif;font-size:13.5px;color:#191919;">
+            </div>
+            <div>
+              <label style="display:block;margin-bottom:6px;font-size:11px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:#6B6B6B;">Thumbnail (optional)</label>
+              <label class="ea-upload-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 16V4M12 4L7 9M12 4l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                <span>Choose Image</span>
+                <span style="font-size:11px;font-weight:500;color:#9A9A9A;">or drag and drop</span>
+                <input type="file" accept="image/*" onChange="{{ onNewAssetFileChange }}">
+              </label>
+            </div>
+          </sc-if>
+          <sc-if value="{{ isImageType }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <label style="display:block;margin-bottom:6px;font-size:11px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:#6B6B6B;">Upload Image</label>
+              <label class="ea-upload-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 16V4M12 4L7 9M12 4l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                <span>Choose Image</span>
+                <span style="font-size:11px;font-weight:500;color:#9A9A9A;">or drag and drop</span>
+                <input type="file" accept="image/*" onChange="{{ onNewAssetFileChange }}">
+              </label>
+            </div>
+          </sc-if>
+          <sc-if value="{{ isDocType }}" hint-placeholder-val="{{ true }}">
+            <div>
+              <label style="display:block;margin-bottom:6px;font-size:11px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:#6B6B6B;">Link URL</label>
+              <input type="text" value="{{ newAssetUrl }}" onChange="{{ onNewAssetUrlChange }}" placeholder="https://drive.google.com/..." style="width:100%;padding:10px 12px;border-radius:6px;border:1px solid #D1D1D1;font-family:'Montserrat',sans-serif;font-size:13.5px;color:#191919;">
+            </div>
+          </sc-if>
+          <sc-if value="{{ isDocType }}" hint-placeholder-val="{{ true }}">
+            <div>
+              <label style="display:block;margin-bottom:6px;font-size:11px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:#6B6B6B;">Cover Image (optional)</label>
+              <label class="ea-upload-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 16V4M12 4L7 9M12 4l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                <span>Choose Image</span>
+                <span style="font-size:11px;font-weight:500;color:#9A9A9A;">or drag and drop</span>
+                <input type="file" accept="image/*" onChange="{{ onNewAssetCoverChange }}">
+              </label>
+            </div>
+          </sc-if>
+          <sc-if value="{{ newAssetFileName }}" hint-placeholder-val="{{ false }}">
+            <p style="margin:0;font-size:12px;color:#6B6B6B;">Selected: {{ newAssetFileName }}</p>
+          </sc-if>
+          <sc-if value="{{ newAssetError }}" hint-placeholder-val="{{ false }}">
+            <p style="margin:0;font-size:12px;color:#8E1B18;">{{ newAssetError }}</p>
+          </sc-if>
+          <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px;">
+            <button type="button" onClick="{{ closeAddModal }}" style="font-family:'Montserrat',sans-serif;font-weight:600;font-size:13px;padding:10px 20px;border-radius:100px;background:#FFFFFF;border:1px solid #D1D1D1;color:#474747;cursor:pointer;">Cancel</button>
+            <button type="button" onClick="{{ submitNewAsset }}" style="font-family:'Montserrat',sans-serif;font-weight:600;font-size:13px;padding:10px 20px;border-radius:100px;background:#8E1B18;border:none;color:#FFFFFF;cursor:pointer;">Add Asset</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  assetData = [
+    { id: 'a1', type: 'video', typeLabel: 'Video', title: 'Project Walkthrough Reel 2026', meta: 'MP4 \u00b7 2:14', slotId: 'asset-v1', placeholder: 'Drop video thumbnail', src: './assets/email-hero-opt.jpg', linkLabel: 'Watch on Vimeo', url: 'https://vimeo.com', contributor: 'Nishanth Tripati', description: 'Full walkthrough of a recent side return project, from site to handover.', dateAdded: '2026-08-12' },
+    { id: 'a2', type: 'video', typeLabel: 'Video', title: 'Client Testimonial \u2014 Cobham', meta: 'MP4 \u00b7 1:05', slotId: 'asset-v2', placeholder: 'Drop video thumbnail', src: './assets/office-team-photo.png', linkLabel: 'Watch on YouTube', url: 'https://youtube.com', contributor: 'Ali Asgar', description: 'Homeowner reflects on the extension process, timeline and result.', dateAdded: '2026-07-30' },
+    { id: 'a3', type: 'image', typeLabel: 'Image', title: 'Side Return Extension \u2014 Finished', meta: 'JPG \u00b7 Photography', slotId: 'asset-i1', placeholder: 'Drop photo', src: './assets/02_1LD-SE-01-opt.webp', linkLabel: 'Open in Drive', url: 'https://drive.google.com', contributor: 'Marek Cajka', description: 'Completed side return extension, open-plan kitchen and dining space.', dateAdded: '2026-09-02' },
+    { id: 'a4', type: 'image', typeLabel: 'Image', title: 'Roof Terrace \u2014 Before / After', meta: 'JPG \u00b7 Photography', slotId: 'asset-i2', placeholder: 'Drop photo', src: './assets/03_1LD-SE-01-opt.webp', linkLabel: 'Open in Drive', url: 'https://drive.google.com', contributor: 'Latika Singh', description: 'Before and after comparison of a roof terrace conversion.', dateAdded: '2026-06-18' },
+    { id: 'a5', type: 'image', typeLabel: 'Image', title: 'Kitchen Extension \u2014 Interior', meta: 'JPG \u00b7 Photography', slotId: 'asset-i3', placeholder: 'Drop photo', src: './assets/04_1LD-SE-01-opt.webp', linkLabel: 'Open in Drive', url: 'https://drive.google.com', contributor: 'Gargi Gambir', description: 'Interior shot of a finished kitchen extension with roof lantern.', dateAdded: '2026-05-21' },
+    { id: 'a7', type: 'sales', typeLabel: 'Sales Deck', title: 'New Client Pitch Deck', meta: 'PDF \u00b7 18 slides', slotId: 'asset-s1', placeholder: 'Drop deck cover', src: './assets/img-step-7.webp', linkLabel: 'Open in Drive', url: 'https://drive.google.com', contributor: 'Niharika Arora (Nikki)', description: 'Pitch deck used in first meetings with prospective clients.', dateAdded: '2026-09-25' },
+    { id: 'a8', type: 'sales', typeLabel: 'Sales Deck', title: 'Fee Proposal Template', meta: 'PDF \u00b7 6 slides', slotId: 'asset-s2', placeholder: 'Drop deck cover', src: './assets/01_Plan-opt.webp', linkLabel: 'Open in Drive', url: 'https://drive.google.com', contributor: 'Varun Nishar', description: 'Standard fee breakdown deck shared after the first consultation.', dateAdded: '2026-03-14' },
+    { id: 'a9', type: 'brand', typeLabel: 'Brand Book', title: 'EA Brand Guidelines v3', meta: 'PDF \u00b7 32 pages', slotId: 'asset-b1', placeholder: 'Drop cover image', src: './assets/brand-book-cover-1.png', linkLabel: 'Open in Drive', url: 'https://drive.google.com', contributor: 'Bhavin Vadodariya', description: 'Full brand guidelines covering colour, type, logo and photography rules.', dateAdded: '2026-02-01' },
+    { id: 'a10', type: 'brand', typeLabel: 'Brand Book', title: 'Logo & Lockup Usage', meta: 'PDF \u00b7 8 pages', slotId: 'asset-b2', placeholder: 'Drop cover image', src: './assets/brand-book-cover-2.png', linkLabel: 'Open in Drive', url: 'https://drive.google.com', contributor: 'Bhavin Vadodariya', description: 'Correct and incorrect usage of the EA logo across lockups and sizes.', dateAdded: '2026-02-01' },
+    { id: 'a11', type: 'template', typeLabel: 'Template', title: 'Proposal & Contract Template', meta: 'Doc \u00b7 Google Docs', slotId: 'asset-t1', placeholder: 'Drop cover image', src: './assets/01_Plan-opt.webp', linkLabel: 'Open in Drive', url: 'https://drive.google.com', contributor: 'Abdul Khan', description: 'Standard proposal and contract wording for new client engagements.', dateAdded: '2026-08-28' },
+    { id: 'a12', type: 'template', typeLabel: 'Template', title: 'Site Visit Checklist', meta: 'Doc \u00b7 Google Docs', slotId: 'asset-t2', placeholder: 'Drop cover image', src: './assets/02_1LD-SE-01-opt.webp', linkLabel: 'Open in Drive', url: 'https://drive.google.com', contributor: 'Mfon', description: 'Checklist for first site visits, covering measurements and access notes.', dateAdded: '2026-07-11' },
+    { id: 'a13', type: 'form', typeLabel: 'Form', title: 'Client Intake Form', meta: 'Form \u00b7 Google Forms', slotId: 'asset-f1', placeholder: 'Drop cover image', src: './assets/03_1LD-SE-01-opt.webp', linkLabel: 'Open Form', url: 'https://forms.google.com', contributor: 'Mehak Mehta', description: 'Collects new client details, project scope and budget range.', dateAdded: '2026-06-02' },
+    { id: 'a14', type: 'form', typeLabel: 'Form', title: 'Planning Application Checklist', meta: 'PDF \u00b7 Checklist', slotId: 'asset-f2', placeholder: 'Drop cover image', src: './assets/04_1LD-SE-01-opt.webp', linkLabel: 'Open in Drive', url: 'https://drive.google.com', contributor: 'Anzar Saleem', description: 'Document checklist required for council planning submissions.', dateAdded: '2026-05-09' },
+    { id: 'a15', type: 'guide', typeLabel: 'Guide', title: 'How Our Process Works', meta: 'PDF \u00b7 One-pager', slotId: 'asset-g1', placeholder: 'Drop cover image', src: './assets/img-step-5.webp', linkLabel: 'Open in Drive', url: 'https://drive.google.com', contributor: 'Varun Nishar', description: 'Client-facing one-pager explaining feasibility through to delivery.', dateAdded: '2026-04-20' },
+    { id: 'a16', type: 'fathom', typeLabel: 'Fathom Link', title: 'Client Kickoff Call \u2014 Tadworth', meta: 'Fathom \u00b7 Recording', slotId: 'asset-fa1', placeholder: 'Drop cover image', src: './assets/06_1LD-SE-01-opt.webp', linkLabel: 'Watch on Fathom', url: 'https://fathom.video', contributor: 'Varun Nishar', description: 'Recorded kickoff call covering scope, timeline and next steps.', dateAdded: '2026-09-18' }
+  ];
+  filters = [
+    { id: 'all', label: 'All' },
+    { id: 'video', label: 'Videos' },
+    { id: 'image', label: 'Images' },
+    { id: 'sales', label: 'Sales Decks' },
+    { id: 'brand', label: 'Brand Books' },
+    { id: 'template', label: 'Templates' },
+    { id: 'form', label: 'Forms' },
+    { id: 'guide', label: 'Guides' },
+    { id: 'fathom', label: 'Fathom Links' }
+  ];
+  staffOptions = [
+    'Eugene Kim, Founder', 'Abdul Khan, Operations Manager', 'Tirna Ghosh, HR Manager', 'Mehak Mehta, Admin & Accounts', 'A S Mythri Reddy, Admin & Accounts',
+    'Marek Cajka, ARB Architect', 'Shahram, Architectural Technologist', 'Vaishnavi Patil, Architectural Assistant', 'Latika Singh, Planning Architect', 'Siddharth Ghodke, Planning Architect', 'Aisha Sheikh, Architectural Designer', 'Anzar Saleem, Planning Manager', 'Kashfa Khalil Surme, Planning Architect',
+    'Gargi Gambir, Interior Designer Manager', 'Lamis Sandouk, Kitchen Designer', 'Uma Menon, Interior Designer', 'Naman Gupta, Interior Designer',
+    'Varun Nishar, Project Manager', 'Zhak Wadood, Project Manager', 'Mfon, Junior Project Manager',
+    'Nishanth Tripati, Head of Post Production', 'Ali Asgar, 3D Visualizer', 'Aesha Patel, UI/UX Developer', 'Bhavin Vadodariya, UI/UX Designer',
+    'Garima Batra, Sales Admin & HubSpot Admin', 'Niharika Arora (Nikki), Business Development Manager'
+  ];
+  videoIframeRefs = {};
+  customAssetSeq = 0;
+  tablePageSize = 8;
+  state = { filter: 'all', searchQuery: '', sortBy: 'recent', viewMode: 'grid', tablePage: 0, favorites: {}, hoverAsset: null, loadedVideoAssets: {}, assetMuted: {}, assetPaused: {}, customAssets: [], addModalOpen: false, newAssetType: 'image', newAssetTitle: '', newAssetMeta: '', newAssetDescription: '', newAssetContributor: '', newAssetUrl: '', newAssetFile: '', newAssetFileName: '', newAssetCover: '', newAssetError: '' };
+  componentDidMount() {
+    const persona = new URLSearchParams(window.location.search).get('persona') || 'staff';
+    this.setState({ persona });
+  }
+  componentDidUpdate() { document.body.style.overflow = this.state.addModalOpen ? 'hidden' : ''; }
+  componentWillUnmount() { document.body.style.overflow = ''; }
+  openAddModal = () => this.setState({ addModalOpen: true, newAssetType: 'image', newAssetTitle: '', newAssetMeta: '', newAssetDescription: '', newAssetContributor: '', newAssetUrl: '', newAssetFile: '', newAssetFileName: '', newAssetCover: '', newAssetError: '' });
+  closeAddModal = () => this.setState({ addModalOpen: false });
+  toggleFavorite = (id, e) => {
+    e.preventDefault(); e.stopPropagation();
+    this.setState((s) => ({ favorites: { ...s.favorites, [id]: !s.favorites[id] } }));
+  };
+  deleteAsset = (id, e) => {
+    e.preventDefault(); e.stopPropagation();
+    this.setState((s) => ({ customAssets: s.customAssets.filter(a => a.id !== id) }));
+  };
+  readFileAsDataUrl(file) {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.readAsDataURL(file);
+    });
+  }
+  onNewAssetFile = async (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const dataUrl = await this.readFileAsDataUrl(file);
+    this.setState({ newAssetFile: dataUrl, newAssetFileName: file.name });
+  };
+  onNewAssetCover = async (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const dataUrl = await this.readFileAsDataUrl(file);
+    this.setState({ newAssetCover: dataUrl });
+  };
+  extractVimeoId(url) {
+    const m = /vimeo\.com\/(?:.*\/)?(\d+)/.exec(url || '');
+    return m ? m[1] : null;
+  }
+  submitNewAsset = () => {
+    const title = this.state.newAssetTitle.trim();
+    const type = this.state.newAssetType;
+    const typeLabels = { video: 'Video', image: 'Image', sales: 'Sales Deck', brand: 'Brand Book', template: 'Template', form: 'Form', guide: 'Guide', fathom: 'Fathom Link' };
+    if (!title) { this.setState({ newAssetError: 'Title is required.' }); return; }
+    if (!this.state.newAssetDescription.trim()) { this.setState({ newAssetError: 'Description is required.' }); return; }
+    let url = this.state.newAssetUrl.trim();
+    let src = '';
+    let vimeoId = null;
+    if (type === 'video') {
+      if (!url) { this.setState({ newAssetError: 'Vimeo URL is required.' }); return; }
+      vimeoId = this.extractVimeoId(url);
+      src = this.state.newAssetFile || './assets/email-hero-opt.jpg';
+    } else if (type === 'image') {
+      if (!this.state.newAssetFile) { this.setState({ newAssetError: 'Please upload an image.' }); return; }
+      src = this.state.newAssetFile;
+      url = url || this.state.newAssetFile;
+    } else {
+      if (!url) { this.setState({ newAssetError: 'Link URL is required.' }); return; }
+      src = this.state.newAssetCover || '';
+    }
+    this.customAssetSeq += 1;
+    const asset = {
+      id: 'custom-' + this.customAssetSeq,
+      type, typeLabel: typeLabels[type] || 'Asset',
+      title, meta: this.state.newAssetMeta.trim() || '\u2014',
+      slotId: 'asset-custom-' + this.customAssetSeq, placeholder: 'Drop cover image', src,
+      linkLabel: type === 'video' ? 'Watch on Vimeo' : (type === 'image' ? 'Open Image' : 'Open Document'), url,
+      vimeoId, contributor: this.state.newAssetContributor.trim(), description: this.state.newAssetDescription.trim(),
+      dateAdded: new Date().toISOString().slice(0, 10), custom: true
+    };
+    this.setState((s) => ({ customAssets: [...s.customAssets, asset], addModalOpen: false }));
+  };
+  postToVimeo(i, method, value) {
+    const el = this.videoIframeRefs[i];
+    if (!el || !el.contentWindow) return;
+    try { el.contentWindow.postMessage(JSON.stringify(value !== undefined ? { method, value } : { method }), '*'); } catch (e) {}
+  }
+  enterAsset = (i) => {
+    if (window.matchMedia && !window.matchMedia('(hover:hover) and (pointer:fine)').matches) return;
+    this.setState((s) => ({ hoverAsset: i, loadedVideoAssets: { ...s.loadedVideoAssets, [i]: false }, assetMuted: { ...s.assetMuted, [i]: true }, assetPaused: { ...s.assetPaused, [i]: false } }));
+  };
+  leaveAsset = () => { if (this.state.hoverAsset !== null) this.setState({ hoverAsset: null }); };
+  toggleAssetMute = (i, e) => {
+    e.stopPropagation();
+    this.setState((s) => {
+      const nextMuted = !(s.assetMuted[i] ?? true);
+      this.postToVimeo(i, 'setMuted', nextMuted);
+      return { assetMuted: { ...s.assetMuted, [i]: nextMuted } };
+    });
+  };
+  toggleAssetPlay = (i, e) => {
+    e.stopPropagation();
+    this.setState((s) => {
+      const nextPaused = !(s.assetPaused[i] ?? false);
+      this.postToVimeo(i, nextPaused ? 'pause' : 'play');
+      return { assetPaused: { ...s.assetPaused, [i]: nextPaused } };
+    });
+  };
+  renderVals() {
+    const active = 'font-family:\'Montserrat\',sans-serif;font-size:12.5px;font-weight:600;padding:8px 16px;border-radius:100px;background:#191919;color:#FFFFFF;cursor:pointer;';
+    const inactive = 'font-family:\'Montserrat\',sans-serif;font-size:12.5px;font-weight:600;padding:8px 16px;border-radius:100px;background:#FFFFFF;border:1px solid #D1D1D1;color:#474747;cursor:pointer;';
+    const isGridView = this.state.viewMode === 'grid';
+    const viewBtn = (active) => 'display:flex;align-items:center;justify-content:center;width:34px;height:33px;border:none;cursor:pointer;background:' + (active ? '#191919' : '#FFFFFF') + ';color:' + (active ? '#FFFFFF' : '#6B6B6B') + ';';
+    const allAssets = [...this.assetData, ...this.state.customAssets];
+    const q = this.state.searchQuery.trim().toLowerCase();
+    let visible = allAssets.filter(a => (this.state.filter === 'all' || a.type === this.state.filter) && (!q || a.title.toLowerCase().includes(q) || (a.description || '').toLowerCase().includes(q)));
+    if (this.state.sortBy === 'az') visible = [...visible].sort((a, b) => a.title.localeCompare(b.title));
+    else if (this.state.sortBy === 'favorites') visible = [...visible].sort((a, b) => (this.state.favorites[b.id] ? 1 : 0) - (this.state.favorites[a.id] ? 1 : 0));
+    else visible = [...visible].sort((a, b) => (b.dateAdded || '').localeCompare(a.dateAdded || ''));
+    const mappedVisibleAssets = visible.map((a, i) => {
+      const contributorInitials = a.contributor ? a.contributor.split(/[\s(]/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase() : '';
+      const isFavorite = !!this.state.favorites[a.id];
+      const dateAddedLabel = a.dateAdded ? new Date(a.dateAdded + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '\u2014';
+      const common = { contributorInitials, isFavorite, isNotFavorite: !isFavorite, toggleFavoriteClick: (e) => this.toggleFavorite(a.id, e), favoriteAriaLabel: isFavorite ? 'Remove from favorites' : 'Add to favorites', dateAddedLabel, canDelete: !!a.custom, deleteClick: (e) => this.deleteAsset(a.id, e) };
+      if (a.type !== 'video') return { ...a, isVideo: false, ...common };
+      const muted = this.state.assetMuted[i] ?? true;
+      const paused = this.state.assetPaused[i] ?? false;
+      return {
+        ...a, isVideo: true, ...common,
+        showVideo: this.state.hoverAsset === i,
+        showCenterPlay: this.state.hoverAsset !== i,
+        videoOpacity: this.state.loadedVideoAssets[i] ? 1 : 0,
+        onVideoLoad: () => this.setState((s) => ({ loadedVideoAssets: { ...s.loadedVideoAssets, [i]: true } })),
+        videoRef: (el) => { this.videoIframeRefs[i] = el; },
+        videoSrc: 'https://player.vimeo.com/video/' + (a.vimeoId || '1135745545') + '?autoplay=1&muted=1&loop=1&controls=0&playsinline=1&api=1&player_id=jasset' + i,
+        isMuted: muted, isNotMuted: !muted, isPaused: paused, isNotPaused: !paused,
+        muteAriaLabel: muted ? 'Unmute preview' : 'Mute preview',
+        playAriaLabel: paused ? 'Play preview' : 'Pause preview',
+        toggleMuteClick: (e) => this.toggleAssetMute(i, e),
+        togglePlayClick: (e) => this.toggleAssetPlay(i, e),
+        onEnter: () => this.enterAsset(i),
+        onLeave: this.leaveAsset
+      };
+    });
+    return {
+      canAddAsset: this.state.persona !== 'client',
+      isGridView, isTableView: !isGridView,
+      setGridView: () => this.setState({ viewMode: 'grid' }),
+      setTableView: () => this.setState({ viewMode: 'table', tablePage: 0 }),
+      gridViewBtnStyle: viewBtn(isGridView),
+      tableViewBtnStyle: viewBtn(!isGridView),
+      sortBy: this.state.sortBy,
+      onSortChange: (e) => this.setState({ sortBy: e.target.value, tablePage: 0 }),
+      searchQuery: this.state.searchQuery,
+      onSearchChange: (e) => this.setState({ searchQuery: e.target.value, tablePage: 0 }),
+      addModalOpen: this.state.addModalOpen,
+      openAddModal: this.openAddModal,
+      closeAddModal: this.closeAddModal,
+      stopClickPropagation: (e) => e.stopPropagation(),
+      addableTypes: this.filters.filter(f => f.id !== 'all'),
+      staffOptions: this.staffOptions,
+      newAssetType: this.state.newAssetType,
+      onNewAssetTypeChange: (e) => this.setState({ newAssetType: e.target.value }),
+      newAssetTitle: this.state.newAssetTitle,
+      onNewAssetTitleChange: (e) => this.setState({ newAssetTitle: e.target.value }),
+      newAssetMeta: this.state.newAssetMeta,
+      onNewAssetMetaChange: (e) => this.setState({ newAssetMeta: e.target.value }),
+      newAssetDescription: this.state.newAssetDescription,
+      onNewAssetDescriptionChange: (e) => this.setState({ newAssetDescription: e.target.value }),
+      newAssetContributor: this.state.newAssetContributor,
+      onNewAssetContributorChange: (e) => this.setState({ newAssetContributor: e.target.value }),
+      newAssetUrl: this.state.newAssetUrl,
+      onNewAssetUrlChange: (e) => this.setState({ newAssetUrl: e.target.value }),
+      onNewAssetFileChange: this.onNewAssetFile,
+      onNewAssetCoverChange: this.onNewAssetCover,
+      newAssetFileName: this.state.newAssetFileName,
+      isVideoType: this.state.newAssetType === 'video',
+      isImageType: this.state.newAssetType === 'image',
+      isDocType: this.state.newAssetType !== 'video' && this.state.newAssetType !== 'image',
+      newAssetError: this.state.newAssetError,
+      submitNewAsset: this.submitNewAsset,
+      assetFilters: this.filters.map(f => ({ label: f.label, style: this.state.filter === f.id ? active : inactive, select: () => this.setState({ filter: f.id, tablePage: 0 }) })),
+      visibleAssets: mappedVisibleAssets,
+      hasNoVisibleAssets: visible.length === 0,
+      tablePageAssets: mappedVisibleAssets.slice(this.state.tablePage * this.tablePageSize, (this.state.tablePage + 1) * this.tablePageSize),
+      tableHasPages: visible.length > this.tablePageSize,
+      tablePageLabel: (this.state.tablePage + 1) + ' of ' + Math.max(1, Math.ceil(visible.length / this.tablePageSize)),
+      tableOnFirstPage: this.state.tablePage === 0,
+      tableOnLastPage: (this.state.tablePage + 1) * this.tablePageSize >= visible.length,
+      tablePrevPage: () => this.setState((s) => ({ tablePage: Math.max(0, s.tablePage - 1) })),
+      tableNextPage: () => this.setState((s) => ({ tablePage: s.tablePage + 1 }))
+    };
+  }
+}
+</script>
+</body>
+</html>

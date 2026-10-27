@@ -1,0 +1,5 @@
+/* ============================================================
+   Extension Architecture Design System — root stylesheet
+   Import this single file to get all brand tokens + base styles.
+   ============================================================ */
+@import url('./colors_and_type.css');

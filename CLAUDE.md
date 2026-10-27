@@ -1,0 +1,1 @@
+- Use small buttons throughout the EA Portal (compact padding, 12px text; icon buttons 30px).
