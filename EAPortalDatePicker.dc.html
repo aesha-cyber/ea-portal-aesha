@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EA Date and Time Picker</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    @font-face{font-family:'Montserrat';src:url('./fonts/Montserrat-VariableFont_wght.ttf') format('truetype-variations');font-weight:100 900}
+    .dp-trig{box-sizing:border-box;width:100%;cursor:pointer;display:flex;align-items:center;gap:10px;background:#FFFFFF;font-family:'Montserrat',ui-sans-serif,system-ui,sans-serif;padding:10px 12px;border:1px solid #D1D1D1;border-radius:6px;font-size:14px;font-weight:500;text-align:left;color:#191919}
+    .dp-trig:hover{border-color:#A3A3A3}
+    .dp-trig:focus-visible{outline:none;border-color:#8E1B18;box-shadow:0 0 0 3px rgba(142,27,24,0.18)}
+    .dp-nav{width:32px;height:32px;border-radius:100px;border:1px solid #E2E2E2;background:#FFFFFF;color:#191919;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0}
+    .dp-nav:hover{background:#F3F3F3}
+    .dp-day{width:36px;height:36px;border:0;background:transparent;border-radius:100px;font-family:'Montserrat',ui-sans-serif,system-ui,sans-serif;font-size:12.5px;font-weight:600;cursor:pointer;padding:0;display:inline-flex;align-items:center;justify-content:center;color:#191919}
+    .dp-day:hover{background:#F3F3F3}
+    .dp-link{border:0;background:transparent;cursor:pointer;font-family:'Montserrat',ui-sans-serif,system-ui,sans-serif;font-size:12.5px;font-weight:600;color:#8E1B18;padding:6px 8px}
+    .dp-time{box-sizing:border-box;width:100%;text-align:left;border:0;background:#FFFFFF;cursor:pointer;font-family:'Montserrat',ui-sans-serif,system-ui,sans-serif;font-size:13px;color:#191919;padding:9px 14px;border-bottom:1px solid #F3F3F3}
+    .dp-time:hover{background:#F3F3F3 !important}
+  </style>
+</helmet>
+<div style="position:relative;display:block;width:100%;min-width:0;">
+  <button type="button" ref="{{ trigRef }}" class="dp-trig" onClick="{{ toggle }}" aria-haspopup="dialog" aria-expanded="{{ open }}" aria-label="{{ ariaLabel }}">
+    <sc-if value="{{ isDate }}" hint-placeholder-val="{{ true }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#474747" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"></path></svg></sc-if>
+    <sc-if value="{{ isTime }}" hint-placeholder-val="{{ false }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#474747" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg></sc-if>
+    <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:{{ textColor }};">{{ display }}</span>
+  </button>
+  <sc-if value="{{ open }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ close }}" style="position:fixed;inset:0;z-index:80;"></div>
+    <div ref="{{ panelRef }}" role="dialog" style="{{ panelStyle }}background:#FFFFFF;border:1px solid #D1D1D1;border-radius:10px;box-shadow:0 12px 28px rgba(25,25,25,0.16);z-index:81;font-family:'Montserrat',ui-sans-serif,system-ui,sans-serif;box-sizing:border-box;">
+      <sc-if value="{{ isDate }}" hint-placeholder-val="{{ true }}">
+        <div style="padding:12px 12px 6px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;">
+            <button type="button" class="dp-nav" onClick="{{ prevMonth }}" aria-label="Previous month"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></button>
+            <span style="font-family:'Fraunces',ui-serif,Georgia,serif;font-optical-sizing:auto;font-weight:500;font-size:16px;color:#191919;">{{ monthTitle }}</span>
+            <button type="button" class="dp-nav" onClick="{{ nextMonth }}" aria-label="Next month"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg></button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(7,36px);justify-content:center;">
+            <sc-for list="{{ dows }}" as="w" hint-placeholder-count="7"><span style="height:28px;display:inline-flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#8C8C8C;">{{ w }}</span></sc-for>
+            <sc-for list="{{ cells }}" as="c" hint-placeholder-count="35"><button type="button" class="dp-day" onClick="{{ c.select }}" aria-label="{{ c.aria }}" aria-pressed="{{ c.on }}" style="{{ c.style }}">{{ c.label }}</button></sc-for>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 10px 10px;">
+          <button type="button" class="dp-link" onClick="{{ pickToday }}">Today</button>
+          <button type="button" class="dp-link" onClick="{{ clearValue }}" style="color:#6B6B6B;">Clear</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ isTime }}" hint-placeholder-val="{{ false }}">
+        <div ref="{{ listRef }}" style="max-height:240px;overflow-y:auto;border-radius:10px;">
+          <sc-for list="{{ times }}" as="t" hint-placeholder-count="8"><button type="button" class="dp-time" onClick="{{ t.select }}" aria-pressed="{{ t.on }}" style="{{ t.style }}">{{ t.label }}</button></sc-for>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+
+<script type="text/x-dc" data-dc-script data-props='{"value":{"editor":null},"pick":{"editor":null},"mode":{"editor":null},"label":{"editor":null},"placeholder":{"editor":null}}'>
+class Component extends DCLogic {
+  state = { open: false, panelStyle: '', vy: 0, vm: 0 };
+  trigRef = React.createRef();
+  panelRef = React.createRef();
+  listRef = React.createRef();
+  MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  componentWillUnmount() { this.detach(); }
+  detach() {
+    if (this._cl) {
+      window.removeEventListener('scroll', this._cl, true);
+      window.removeEventListener('resize', this._cl);
+      document.removeEventListener('keydown', this._esc, true);
+      this._cl = null;
+    }
+  }
+  close = () => { this.detach(); this.setState({ open: false }); };
+  parse(v) { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v || ''); return m ? { y: +m[1], m: +m[2] - 1, d: +m[3] } : null; }
+  iso(y, m, d) { return y + '-' + String(m + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0'); }
+  toggle = () => {
+    if (this.state.open) { this.close(); return; }
+    const el = this.trigRef.current;
+    if (!el) return;
+    const isDate = (this.props.mode || 'date') === 'date';
+    const r = el.getBoundingClientRect();
+    const w = isDate ? 292 : Math.max(r.width, 150), h = isDate ? 372 : 242;
+    const vh = window.innerHeight, vw = window.innerWidth;
+    const below = vh - r.bottom, above = r.top;
+    const up = below < h + 12 && above > below;
+    const left = Math.max(8, Math.min(r.left, vw - w - 8));
+    const st = 'position:fixed;left:' + left + 'px;width:' + w + 'px;' + (up ? 'bottom:' + (vh - r.top + 4) + 'px;' : 'top:' + (r.bottom + 4) + 'px;');
+    this._cl = (e) => { if (e && e.type === 'scroll' && this.panelRef.current && this.panelRef.current.contains(e.target)) return; this.close(); };
+    this._esc = (e) => { if (e.key === 'Escape') { e.stopPropagation(); this.close(); } };
+    window.addEventListener('scroll', this._cl, true);
+    window.addEventListener('resize', this._cl);
+    document.addEventListener('keydown', this._esc, true);
+    const cur = this.parse(this.props.value) || (() => { const t = new Date(); return { y: t.getFullYear(), m: t.getMonth(), d: t.getDate() }; })();
+    this.setState({ open: true, panelStyle: st, vy: cur.y, vm: cur.m }, () => {
+      if (!isDate && this.listRef.current) {
+        const i = this.times().indexOf(this.props.value);
+        this.listRef.current.scrollTop = Math.max(0, (i < 0 ? 36 : i) * 36 - 80);
+      }
+    });
+  };
+  times() { const out = []; for (let h = 0; h < 24; h++) for (let m = 0; m < 60; m += 15) out.push(String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0')); return out; }
+  pick(v) { this.close(); if (typeof this.props.pick === 'function') this.props.pick(v); }
+  shift(n) { this.setState((s) => { let m = s.vm + n, y = s.vy; if (m < 0) { m = 11; y -= 1; } if (m > 11) { m = 0; y += 1; } return { vm: m, vy: y }; }); }
+
+  renderVals() {
+    const p = this.props, mode = p.mode || 'date', isDate = mode === 'date';
+    const cur = this.parse(p.value);
+    const now = new Date(), tY = now.getFullYear(), tM = now.getMonth(), tD = now.getDate();
+    let display, empty = false;
+    if (isDate) { display = cur ? cur.d + ' ' + this.MON[cur.m] + ' ' + cur.y : (p.placeholder || 'Select date'); empty = !cur; }
+    else { display = p.value || (p.placeholder || 'Select time'); empty = !p.value; }
+    const { vy, vm } = this.state;
+    const first = new Date(Date.UTC(vy, vm, 1)), lead = (first.getUTCDay() + 6) % 7;
+    const dim = new Date(Date.UTC(vy, vm + 1, 0)).getUTCDate();
+    const cells = [];
+    for (let i = 0; i < 42; i++) {
+      const dt = new Date(Date.UTC(vy, vm, 1 - lead + i));
+      const y = dt.getUTCFullYear(), m = dt.getUTCMonth(), d = dt.getUTCDate();
+      const inMonth = m === vm, on = !!cur && cur.y === y && cur.m === m && cur.d === d, today = y === tY && m === tM && d === tD;
+      cells.push({ label: d, on, aria: d + ' ' + this.MONTHS[m] + ' ' + y, select: () => this.pick(this.iso(y, m, d)),
+        style: 'margin:0 auto;' + (on ? 'background:#8E1B18;color:#FFFFFF;' : today ? 'box-shadow:inset 0 0 0 1.5px #8E1B18;color:#8E1B18;' : inMonth ? '' : 'color:#BABABA;') });
+    }
+    return {
+      isDate, isTime: !isDate, ariaLabel: p.label || (isDate ? 'Date' : 'Time'),
+      display, textColor: empty ? '#A3A3A3' : '#191919',
+      open: this.state.open, panelStyle: this.state.panelStyle,
+      trigRef: this.trigRef, panelRef: this.panelRef, listRef: this.listRef, toggle: this.toggle, close: this.close,
+      monthTitle: this.MONTHS[vm] + ' ' + vy, dows: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'], cells,
+      prevMonth: () => this.shift(-1), nextMonth: () => this.shift(1),
+      pickToday: () => this.pick(this.iso(tY, tM, tD)), clearValue: () => this.pick(''),
+      times: this.times().map((t) => ({ label: t, on: t === p.value, select: () => this.pick(t), style: t === p.value ? 'background:#FCEAEA;font-weight:600;' : 'font-weight:500;' }))
+    };
+  }
+}
+</script>
+</body>
+</html>

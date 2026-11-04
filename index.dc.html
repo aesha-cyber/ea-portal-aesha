@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <script src="./image-slot.js"></script>
+  <style>@font-face { font-family: 'Montserrat'; src: url('./fonts/Montserrat-VariableFont_wght.ttf') format('truetype-variations'); font-weight: 100 900; }@font-face { font-family: 'Fraunces'; src: url('./fonts/Fraunces-VariableFont_SOFT_WONK_opsz_wght.ttf') format('truetype-variations'); font-weight: 100 900; }html, body { margin: 0; padding: 0; font-family: 'Montserrat', ui-sans-serif, system-ui, sans-serif; }* { box-sizing: border-box; }.ea-overlay-img { background-image: url('./assets/overlay-desktop.png'); }@media (max-width: 640px){.ea-overlay-img { background-image: url('./assets/overlay-mobile.png'); }}@keyframes eaFadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }.ea-fade-1 { animation: eaFadeUp 400ms ease-out both; }.ea-fade-4 { animation: eaFadeUp 400ms ease-out 180ms both; }.ea-fade-5 { animation: eaFadeUp 400ms ease-out 240ms both; }input { transition: border-color 150ms ease-out; }a:focus-visible, button:focus-visible, [onclick]:focus-visible { outline: 2px solid #8E1B18; outline-offset: 2px; border-radius: 4px; }.ea-subtab { transition: background-color 150ms ease-out, color 150ms ease-out; }.ea-video-desktop { display: block; }.ea-video-mobile { display: none; }@media (max-width: 640px){.ea-video-desktop { display: none; }.ea-video-mobile { display: block; }}.ea-email-overlay { background: rgba(25,25,25,0.75) !important; }</style>
+</helmet>
+
+<div style="position:relative;min-height:100vh;overflow:hidden;background:#191919;color:#191919;">
+
+  <div class="ea-video-desktop" style="position:fixed;top:0;left:0;width:100vw;height:100vh;overflow:hidden;z-index:1;">
+    <iframe id="vimeoPlayer" src="{{ vimeoSrc }}" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" title="Extension Architecture project film" style="position:absolute;top:50%;left:50%;width:100vw;height:56.25vw;min-height:100vh;min-width:177.78vh;transform:translate(-50%,-50%);pointer-events:none;"></iframe>
+  </div>
+  <div class="ea-video-mobile" style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:1;">
+    <image-slot id="mobile-hero-bg" shape="rect" src="./assets/mobile-hero-opt.jpg" placeholder="Drop a mobile hero image"></image-slot>
+  </div>
+
+  <div class="ea-overlay-img" style="position:fixed;inset:0;background-size:100% 100%;background-repeat:no-repeat;mix-blend-mode:multiply;z-index:2;"></div>
+
+  <img class="ea-fade-1" src="./assets/logo-white.png" alt="Extension Architecture" style="position:absolute;bottom:24px;left:24px;z-index:4;height:48px;width:auto;">
+
+  <sc-if value="{{ showChangelog }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:10;background:rgba(25,25,25,0.75);display:flex;align-items:center;justify-content:center;padding:20px;" onClick="{{ closeChangelog }}">
+      <div style="width:100%;max-width:420px;background:#FFFFFF;border-radius:10px;border-top:3px solid #8E1B18;padding:28px 28px 24px;" onClick="{{ stopPropagation }}">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin:0 0 16px;">
+          <h2 style="margin:0;font-family:'Fraunces', ui-serif, Georgia, serif;font-weight:500;font-size:18px;color:#191919;">What's New</h2>
+          <span onClick="{{ closeChangelog }}" style="cursor:pointer;color:#6B6B6B;font-size:20px;line-height:1;">×</span>
+        </div>
+        <div style="margin-bottom:16px;">
+          <p style="margin:0 0 4px;font-weight:600;font-size:13px;color:#8E1B18;">v1.2 — September 2026</p>
+          <p style="margin:0;font-size:14px;color:#474747;line-height:1.6;">Added passwordless sign-in via emailed link, and a walkthrough video on the sign-in screen.</p>
+        </div>
+        <div>
+          <p style="margin:0 0 4px;font-weight:600;font-size:13px;color:#8E1B18;">v1.1 — June 2026</p>
+          <p style="margin:0;font-size:14px;color:#474747;line-height:1.6;">Introduced self-service password reset.</p>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <div class="ea-fade-1" style="position:absolute;top:24px;left:24px;z-index:4;display:flex;align-items:center;gap:20px;">
+    <a href="{{ portalLinkUrl }}" style="display:flex;align-items:center;gap:12px;font-weight:500;font-size:13px;color:rgba(254,254,254,0.72);text-decoration:none;transition:color 150ms ease-out;" style-hover="color:#FEFEFE;">
+      <svg width="26" height="14" viewBox="0 0 32 16" fill="none"><path d="M32 8H2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M8 2L2 8L8 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      Back to Site
+    </a>
+  </div>
+
+  <a class="ea-fade-1" href="#" onClick="{{ openHelpVideo }}" style="position:absolute;top:24px;right:24px;z-index:4;display:flex;align-items:center;gap:8px;text-decoration:none;font-weight:500;font-size:13px;color:rgba(254,254,254,0.72);transition:color 150ms ease-out;" style-hover="color:#FEFEFE;">
+    <span style="width:20px;height:20px;border-radius:100px;border:1px solid rgba(254,254,254,0.6);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:rgba(254,254,254,0.85);flex-shrink:0;">?</span>
+    Need help signing in?
+  </a>
+
+  <sc-if value="{{ showEmailPreview }}" hint-placeholder-val="{{ false }}">
+    <div class="ea-email-overlay" style="position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;padding:20px;" onClick="{{ closeEmailPreview }}">
+      <div style="width:100%;max-width:1280px;max-height:90vh;background:#191919;border-radius:10px;border-top:3px solid #8E1B18;overflow:hidden;display:flex;flex-direction:column;" onClick="{{ stopPropagation }}">
+
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 24px;flex-shrink:0;">
+          <p style="margin:0;font-family:'Fraunces', ui-serif, Georgia, serif;font-weight:500;font-size:18px;color:#FEFEFE;">Your sign-in link — Extension Architecture Portal</p>
+          <span onClick="{{ closeEmailPreview }}" style="cursor:pointer;color:rgba(254,254,254,0.6);font-size:20px;line-height:1;">×</span>
+        </div>
+
+        <div ref="{{ emailScrollRef }}" style="margin:0 24px 24px;border-radius:6px;overflow-y:auto;overflow-x:hidden;display:grid;grid-template-columns:1fr min(640px,100%) 1fr;background:#E5E5E5;padding:24px 0;align-content:start;flex:1;min-height:0;">
+          <div style="background:#E5E5E5;"></div>
+          <div style="background:#FFFFFF;border-radius:10px;overflow:hidden;position:relative;z-index:1;align-self:start;max-width:100%;">
+          <div style="padding:12px 20px;border-bottom:1px solid #F3F3F3;font-size:12px;color:#6B6B6B;">
+            <p style="margin:0 0 2px;">From: EA Portal &lt;no-reply@extensionarchitecture.co.uk&gt;</p>
+            <p style="margin:0 0 8px;">To: {{ previewEmailAddress }}</p>
+            <p style="margin:0;font-size:14px;font-weight:600;color:#191919;">Subject: You're invited to join the EA Portal</p>
+          </div>
+
+          <div style="position:relative;">
+            <img src="./assets/email-hero-opt.jpg" alt="Extension Architecture project" style="width:100%;aspect-ratio:16/9;height:auto;object-fit:cover;display:block;">
+            <img src="./assets/logo-white.png" alt="Extension Architecture" style="position:absolute;bottom:26px;left:20px;height:40px;width:auto;">
+            <div style="position:absolute;bottom:0;left:0;right:0;height:10px;background:#FFFFFF;border-radius:10px 10px 0 0;"></div>
+            <span onClick="{{ scrollEmailPreviewDown }}" style="position:absolute;bottom:16px;right:20px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+              <svg width="12" height="18" viewBox="0 0 16 24" fill="none"><rect x="1" y="1" width="14" height="22" rx="7" stroke="#FFFFFF" stroke-width="1.5"></rect><rect x="7" y="6" width="2" height="6" rx="1" fill="#FFFFFF"></rect></svg>
+            </span>
+          </div>
+
+          <div style="padding: 32px 32px 8px; margin-top: -10px">
+          <p style="margin:0 0 16px;font-size:14px;color:#191919;line-height:1.6;">Hi <strong>{{ previewEmailAddress }}</strong>,</p>
+          <p style="margin:0 0 16px;font-size:14px;color:#191919;line-height:1.6;">You've been invited to join the EA Portal.</p>
+          <p style="margin:0 0 16px;font-size:14px;color:#191919;line-height:1.6;">Your account is ready to be set up. The EA Portal gives you a secure place to access the information, projects, and resources available to you.</p>
+          <p style="margin:0 0 24px;font-size:14px;color:#191919;line-height:1.6;">Click below to accept your invitation and create your password.</p>
+
+          <button onClick="{{ onAcceptEmailLink }}" type="button" style="font-family:'Montserrat',sans-serif;font-weight:600;font-size:14px;letter-spacing:0.016em;padding:12px 28px;border-radius:100px;background:#8E1B18;color:#FEFEFE;border:none;cursor:pointer;margin-bottom:12px;display:block;" style-hover="background:#7A1714;">Accept Invitation</button>
+          <a href="#" onClick="{{ onAcceptEmailLinkExpired }}" style="display:block;font-size:12px;font-weight:600;color:#6B6B6B;text-decoration:none;border-bottom:1px solid #D1D1D1;width:fit-content;padding-bottom:1px;margin:0 0 24px;">Demo: click as if this link was already used →</a>
+
+          <p style="margin:0 0 16px;font-size:14px;color:#191919;line-height:1.6;"><strong style="color:#191919;">Important:</strong> This invitation link can only be used once. Please click the link only when you're ready to complete your account setup. If the link has already been used or is no longer valid, you can request a new one.</p>
+          <p style="margin:0 0 16px;font-size:14px;color:#191919;line-height:1.6;">Once your account is set up, you'll be able to sign in and access the EA Portal.</p>
+          <p style="margin:0 0 24px;font-size:14px;color:#191919;line-height:1.6;">Welcome to the EA Portal. See you inside.</p>
+
+          <p style="margin:0;font-size:14px;color:#191919;line-height:1.5;">Thanks,</p>
+          <p style="margin:0;font-size:14px;color:#191919;font-weight:600;line-height:1.5;">Garima Batra</p>
+          <p style="margin:0 0 32px;font-size:13px;color:#474747;line-height:1.5;">Client Liaison · EA Portal Team<br>(T): +44 020 3409 4215</p>
+        </div>
+
+        <div style="background:#8E1B18;padding:36px 32px;text-align:center;">
+          <p style="margin:0 0 20px;font-size:14px;color:#FFFFFF;line-height:1.55;">We would be honoured to have the opportunity to work with you and to help bring your vision to life.</p>
+          <a href="{{ portalLinkUrl }}" style="display:inline-block;font-family:'Montserrat',sans-serif;font-weight:600;font-size:13px;padding:11px 26px;border-radius:100px;background:#FFFFFF;color:#191919;text-decoration:none;">Visit Our Website</a>
+        </div>
+
+        <div style="background:#191919;padding:32px;">
+          <p style="margin:0 0 20px;font-size:11px;font-weight:600;letter-spacing:0.16em;color:rgba(254,254,254,0.9);text-align:center;">BRINGING YOUR VISIONS TO LIFE</p>
+          <p style="margin:0 0 24px;font-size:12px;color:rgba(254,254,254,0.7);text-align:center;display:flex;align-items:center;justify-content:center;gap:8px;">M&ndash; F: 9.00am &ndash; 6:00pm &nbsp;|&nbsp; <span style="width:20px;height:20px;border-radius:100px;background:#FFFFFF;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="11" height="11" viewBox="0 0 24 24" fill="#8E1B18"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.2.5 2.5.8 3.9.8.6 0 1 .4 1 1v3.4c0 .6-.4 1-1 1C10.6 21.2 2.8 13.4 2.8 3.7c0-.6.4-1 1-1H7.2c.6 0 1 .4 1 1 0 1.4.3 2.7.8 3.9.1.4 0 .8-.2 1L6.6 10.8z"></path></svg></span> 020 3409 4215</p>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:16px;">
+            <img src="./assets/logo-white.png" alt="Extension Architecture" style="height:44px;width:auto;">
+            <div style="text-align:right;">
+              <p style="margin:0 0 8px;font-size:13px;font-weight:600;color:#FEFEFE;">Follow</p>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="width:28px;height:28px;border-radius:100px;background:#FFFFFF;display:flex;align-items:center;justify-content:center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="#8E1B18"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></span>
+                <span style="width:28px;height:28px;border-radius:100px;background:#FFFFFF;display:flex;align-items:center;justify-content:center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="#8E1B18"><path d="M21.5 7a4 4 0 0 0-2.8-2.8Q15.15 3.5 12 3.5q-3.15 0-6.7.7A4 4 0 0 0 2.5 7a24 24 0 0 0 0 10 4 4 0 0 0 2.8 2.8q3.55.7 6.7.7 3.15 0 6.7-.7A4 4 0 0 0 21.5 17a24 24 0 0 0 0-10ZM10 15V9l5 3z"></path></svg></span>
+                <span style="width:28px;height:28px;border-radius:100px;background:#FFFFFF;display:flex;align-items:center;justify-content:center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="#8E1B18"><path d="M4.98 3.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM3 9.98h4v11H3v-11zm7 0h3.8v1.5h.05c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.78 2.65 4.78 6.1v6.45h-4v-5.72c0-1.37-.02-3.13-1.9-3.13-1.9 0-2.2 1.5-2.2 3.03v5.82h-4v-11z"></path></svg></span>
+                <span style="width:28px;height:28px;border-radius:100px;background:#FFFFFF;display:flex;align-items:center;justify-content:center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="#8E1B18"><path d="M12 2c2.7 0 3.06.01 4.12.06 1.06.05 1.79.22 2.43.46a4.9 4.9 0 0 1 1.77 1.15 4.9 4.9 0 0 1 1.15 1.77c.24.64.41 1.37.46 2.43.05 1.06.06 1.42.06 4.13s-.01 3.06-.06 4.12c-.05 1.06-.22 1.79-.46 2.43a4.9 4.9 0 0 1-1.15 1.77 4.9 4.9 0 0 1-1.77 1.15c-.64.24-1.37.41-2.43.46-1.06.05-1.42.06-4.12.06s-3.06-.01-4.13-.06c-1.06-.05-1.79-.22-2.43-.46a4.9 4.9 0 0 1-1.77-1.15 4.9 4.9 0 0 1-1.15-1.77c-.24-.64-.41-1.37-.46-2.43C2.01 15.06 2 14.7 2 12s.01-3.06.06-4.13c.05-1.06.22-1.79.46-2.43a4.9 4.9 0 0 1 1.15-1.77A4.9 4.9 0 0 1 5.44 2.52c.64-.24 1.37-.41 2.43-.46C8.94 2.01 9.3 2 12 2zm0 3.35a6.65 6.65 0 1 0 0 13.3 6.65 6.65 0 0 0 0-13.3zm0 2a4.65 4.65 0 1 1 0 9.3 4.65 4.65 0 0 1 0-9.3zm6.9-3.5a1.55 1.55 0 1 1-3.1 0 1.55 1.55 0 0 1 3.1 0z"></path></svg></span>
+              </div>
+            </div>
+          </div>
+          <div style="border-top:1px solid rgba(254,254,254,0.15);padding-top:24px;text-align:center;">
+            <p style="margin:0 0 4px;font-size:12px;color:rgba(254,254,254,0.5);">Cobden House, 231 Roehampton Lane, Roehampton,</p>
+            <p style="margin:0 0 16px;font-size:12px;color:rgba(254,254,254,0.5);">London SW15 4LB, United Kingdom</p>
+            <p style="margin:0;font-size:11px;font-weight:600;color:rgba(254,254,254,0.6);">Unsubscribe | Privacy Statement</p>
+          </div>
+        </div>
+
+          </div>
+          <div style="background:#E5E5E5;"></div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ showHelpVideo }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:10;background:rgba(25,25,25,0.75);display:flex;align-items:center;justify-content:center;padding:20px;" onClick="{{ closeHelpVideo }}">
+      <div style="width:100%;max-width:960px;background:#191919;border-radius:10px;border-top:3px solid #8E1B18;overflow:hidden;" onClick="{{ stopPropagation }}">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 24px 0;">
+          <p style="margin:0;font-family:'Fraunces', ui-serif, Georgia, serif;font-weight:500;font-size:18px;color:#FEFEFE;">How to sign in to the EA Portal</p>
+          <span onClick="{{ closeHelpVideo }}" style="cursor:pointer;color:rgba(254,254,254,0.6);font-size:20px;line-height:1;">×</span>
+        </div>
+        <div style="margin:20px 24px 24px;aspect-ratio:16/9;background:#0f0f0f;border-radius:6px;overflow:hidden;border:1px solid rgba(255,255,255,0.1);">
+          <iframe src="https://player.vimeo.com/video/1212038126?title=0&amp;byline=0&amp;portrait=0" width="100%" height="100%" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" title="How to sign in to the EA Portal" style="display:block;"></iframe>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <button class="ea-fade-1" aria-label="{{ muteAriaLabel }}" aria-pressed="{{ muteAriaPressed }}" onClick="{{ toggleMute }}" style="position:absolute;bottom:24px;right:24px;z-index:4;width:48px;height:48px;border-radius:100px;border:1.5px solid rgba(255,255,255,0.5);background:rgba(25,25,25,0.4);color:#FFFFFF;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background-color 150ms ease-out, border-color 150ms ease-out;" style-hover="background:rgba(255,255,255,0.25);border-color:rgba(255,255,255,0.9);">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="display:{{ mutedIconDisplay }}">
+      <path d="M11 5L6 9H2V15H6L11 19V5Z" fill="currentColor"></path>
+      <path d="M23 9L17 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+      <path d="M17 9L23 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="display:{{ unmutedIconDisplay }}">
+      <path d="M11 5L6 9H2V15H6L11 19V5Z" fill="currentColor"></path>
+      <path d="M15.5 8.5C16.5 9.5 17 10.7 17 12C17 13.3 16.5 14.5 15.5 15.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+      <path d="M18.5 5.5C20.5 7.5 21.5 9.7 21.5 12C21.5 14.3 20.5 16.5 18.5 18.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+  </button>
+
+  <div style="position:relative;z-index:3;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:96px 20px 40px;">
+    <div style="width:100%;max-width:560px;display:flex;flex-direction:column;align-items:center;">
+
+
+      <div class="ea-fade-4" style="width:100%;background:#FFFFFF;border-radius:10px;box-shadow:0 12px 32px rgba(25,25,25,0.18);border-top:3px solid #8E1B18;padding:32px 32px 24px;">
+
+
+
+        <sc-if value="{{ showForgotPassword }}" hint-placeholder-val="{{ false }}">
+          <div>
+            <p style="font-weight:600;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:#8E1B18;text-align:center;margin:0 0 8px;">Reset Password</p>
+            <h2 style="font-family:'Fraunces', ui-serif, Georgia, serif;font-weight:500;font-size:28px;color:#191919;text-align:center;margin:0 0 8px;">We'll Email You a Link</h2>
+            <p style="font-weight:500;font-size:14px;color:#474747;text-align:center;margin:0 0 24px;line-height:1.5;">Enter your account email and follow the link to choose a new password.</p>
+
+            <sc-if value="{{ resetSent }}" hint-placeholder-val="{{ false }}">
+              <p style="font-weight:500;font-size:14px;color:#191919;text-align:center;margin:0 0 24px;line-height:1.5;">If that email has portal access, a reset link is on its way. Check your inbox.</p>
+            </sc-if>
+            <sc-if value="{{ resetFormVisible }}" hint-placeholder-val="{{ true }}">
+              <div>
+                <div style="margin-bottom:8px;">
+                  <label for="ea-reset-email" style="display:block;font-weight:600;font-size:13px;color:#191919;margin:0 0 8px;">Email Address</label>
+                  <input id="ea-reset-email" type="email" value="{{ resetEmailValue }}" onInput="{{ onResetEmailInput }}" onBlur="{{ onResetEmailBlur }}" placeholder="you@example.com" style="width:100%;font-family:'Montserrat',sans-serif;font-weight:500;font-size:15px;padding:12px 16px;border-radius:6px;border:1px solid {{ resetEmailBorderColor }};background:#FFFFFF;color:#191919;outline:none;" style-focus="border-color:#8E1B18;box-shadow:0 0 0 3px rgba(142,27,24,0.18);">
+                </div>
+                <p style="margin:0 0 20px;font-size:12px;color:#8E1B18;visibility:{{ resetEmailErrorVisibility }};">Enter a valid email address.</p>
+
+                <button onClick="{{ onSendResetClick }}" type="button" style="width:100%;font-family:'Montserrat',sans-serif;font-weight:600;font-size:16px;letter-spacing:0.016em;padding:14px 30px;border-radius:100px;background:#8E1B18;color:#FEFEFE;border:none;cursor:pointer;margin-bottom:16px;" style-hover="background:#7A1714;">Send Reset Link</button>
+              </div>
+            </sc-if>
+            <a href="#" onClick="{{ closeForgotPassword }}" style="display:block;text-align:center;font-weight:500;font-size:13px;color:#474747;text-decoration:none;border-bottom:1px solid #D1D1D1;padding-bottom:1px;width:fit-content;margin:0 auto;">← Back to sign in</a>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ showChoosePassword }}" hint-placeholder-val="{{ false }}">
+          <div>
+            <p style="font-weight:600;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:#8E1B18;text-align:center;margin:0 0 8px;">Almost There</p>
+            <h2 style="font-family:'Fraunces', ui-serif, Georgia, serif;font-weight:500;font-size:28px;color:#191919;text-align:center;margin:0 0 8px;">Welcome to the Portal</h2>
+            <p style="font-weight:500;font-size:14px;color:#474747;text-align:center;margin:0 0 24px;line-height:1.5;">Choose a password for your portal account. You can also sign in with an emailed link any time.</p>
+
+            <div style="margin-bottom:4px;">
+              <label for="ea-new-password" style="display:block;font-weight:600;font-size:13px;color:#191919;margin:0 0 8px;">New Password</label>
+              <div style="position:relative;">
+                <input id="ea-new-password" type="{{ pwType3 }}" value="{{ newPasswordValue }}" onInput="{{ onNewPasswordInput }}" onBlur="{{ onNewPasswordBlur }}" placeholder="At Least 10 Characters" style="width:100%;font-family:'Montserrat',sans-serif;font-weight:500;font-size:15px;padding:12px 60px 12px 16px;border-radius:6px;border:1px solid {{ newPasswordBorderColor }};background:#FFFFFF;color:#191919;outline:none;" style-focus="border-color:#8E1B18;box-shadow:0 0 0 3px rgba(142,27,24,0.18);">
+                <span role="button" tabindex="0" aria-label="{{ pwAriaLabel3 }}" aria-pressed="{{ pwAriaPressed3 }}" onClick="{{ togglePw3 }}" onKeyDown="{{ togglePw3KeyDown }}" style="position:absolute;right:16px;top:50%;transform:translateY(-50%);font-weight:600;font-size:12px;letter-spacing:0.06em;color:#6B6B6B;cursor:pointer;">{{ pwLabel3 }}</span>
+              </div>
+            </div>
+            <p style="margin:0 0 16px;font-size:12px;color:#8E1B18;visibility:{{ newPasswordErrorVisibility }};">Password must be at least 10 characters.</p>
+
+            <div style="margin-bottom:4px;">
+              <label for="ea-repeat-password" style="display:block;font-weight:600;font-size:13px;color:#191919;margin:0 0 8px;">Repeat Password</label>
+              <div style="position:relative;">
+                <input id="ea-repeat-password" type="{{ pwType4 }}" value="{{ repeatPasswordValue }}" onInput="{{ onRepeatPasswordInput }}" onBlur="{{ onRepeatPasswordBlur }}" placeholder="Same Again" style="width:100%;font-family:'Montserrat',sans-serif;font-weight:500;font-size:15px;padding:12px 60px 12px 16px;border-radius:6px;border:1px solid {{ repeatPasswordBorderColor }};background:#FFFFFF;color:#191919;outline:none;" style-focus="border-color:#8E1B18;box-shadow:0 0 0 3px rgba(142,27,24,0.18);">
+                <span role="button" tabindex="0" aria-label="{{ pwAriaLabel4 }}" aria-pressed="{{ pwAriaPressed4 }}" onClick="{{ togglePw4 }}" onKeyDown="{{ togglePw4KeyDown }}" style="position:absolute;right:16px;top:50%;transform:translateY(-50%);font-weight:600;font-size:12px;letter-spacing:0.06em;color:#6B6B6B;cursor:pointer;">{{ pwLabel4 }}</span>
+              </div>
+            </div>
+            <p style="margin:0 0 16px;font-size:12px;color:#8E1B18;visibility:{{ repeatPasswordErrorVisibility }};">Passwords don't match.</p>
+
+            <button onClick="{{ onChoosePasswordSubmit }}" type="button" style="width:100%;font-family:'Montserrat',sans-serif;font-weight:600;font-size:16px;letter-spacing:0.016em;padding:14px 30px;border-radius:100px;background:#8E1B18;color:#FEFEFE;border:none;cursor:pointer;margin-bottom:12px;" style-hover="background:#7A1714;">Save &amp; Enter Portal</button>
+            <p style="margin:0 0 16px;font-size:12px;color:#6B6B6B;text-align:center;line-height:1.5;">By creating a password, you agree to our <a href="#" style="color:#474747;text-decoration:none;border-bottom:1px solid #D1D1D1;">Terms</a> and <a href="#" style="color:#474747;text-decoration:none;border-bottom:1px solid #D1D1D1;">Privacy Policy</a>.</p>
+            <a href="#" onClick="{{ closeChoosePassword }}" style="display:block;text-align:center;font-weight:500;font-size:13px;color:#474747;text-decoration:none;border-bottom:1px solid #D1D1D1;padding-bottom:1px;width:fit-content;margin:0 auto;">← Back to sign in</a>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isMainPanel2 }}" hint-placeholder-val="{{ true }}">
+        <div>
+        <sc-if value="{{ isSignin }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;">
+            <p style="font-weight:600;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:#8E1B18;text-align:center;margin:0 0 8px;">Sign In</p>
+            <h2 style="font-family:'Fraunces', ui-serif, Georgia, serif;font-weight:500;font-size:28px;color:#191919;text-align:center;margin:0 0 24px;">Welcome Back</h2>
+
+            <div style="display:{{ linkMethodDisplay }};margin:0 0 20px;">
+              <p style="font-weight:500;font-size:14px;color:#474747;text-align:center;margin:0;line-height:1.5;">No password needed. We'll email you a secure one-time sign-in link.</p>
+            </div>
+            <div style="display:{{ passwordMethodDisplay }};margin:0 0 20px;">
+              <p style="font-weight:500;font-size:14px;color:#474747;text-align:center;margin:0;line-height:1.5;">Sign in with the password linked to your portal account.</p>
+            </div>
+
+            <div style="display:flex;background:#F3F3F3;border-radius:100px;padding:3px;margin:0 0 20px;">
+              <div class="ea-subtab" style="{{ subtab1Style }}" onClick="{{ setMethodPassword }}">Password</div>
+              <div class="ea-subtab" style="{{ subtab2Style }}" onClick="{{ setMethodLink }}">Email Me a Link</div>
+            </div>
+
+            <div style="margin-bottom:8px;">
+              <label for="ea-signin-email" style="display:block;font-weight:600;font-size:13px;color:#191919;margin:0 0 8px;">Email Address</label>
+              <input id="ea-signin-email" type="email" value="{{ emailValue }}" onInput="{{ onEmailInput }}" onBlur="{{ onEmailBlur }}" placeholder="you@example.com" style="width:100%;font-family:'Montserrat',sans-serif;font-weight:500;font-size:15px;padding:12px 16px;border-radius:6px;border:1px solid {{ emailBorderColor }};background:#FFFFFF;color:#191919;outline:none;" style-focus="border-color:#8E1B18;box-shadow:0 0 0 3px rgba(142,27,24,0.18);">
+            </div>
+            <p style="margin:0 0 20px;font-size:12px;color:#8E1B18;visibility:{{ emailErrorVisibility }};">Enter a valid email address.</p>
+
+            <sc-if value="{{ isPasswordMethod }}" hint-placeholder-val="{{ true }}">
+              <div style="margin-bottom:8px;">
+                <label for="ea-signin-password" style="display:block;font-weight:600;font-size:13px;color:#191919;margin:0 0 8px;">Password</label>
+                <div style="position:relative;">
+                  <input id="ea-signin-password" type="{{ pwType1 }}" value="{{ signinPwValue }}" onInput="{{ onSigninPwInput }}" onBlur="{{ onSigninPwBlur }}" placeholder="Type Password" style="width:100%;font-family:'Montserrat',sans-serif;font-weight:500;font-size:15px;padding:12px 60px 12px 16px;border-radius:6px;border:1px solid {{ signinPwBorderColor }};background:#FFFFFF;color:#191919;outline:none;" style-focus="border-color:#8E1B18;box-shadow:0 0 0 3px rgba(142,27,24,0.18);">
+                  <span role="button" tabindex="0" aria-label="{{ pwAriaLabel1 }}" aria-pressed="{{ pwAriaPressed1 }}" onClick="{{ togglePw1 }}" onKeyDown="{{ togglePw1KeyDown }}" style="position:absolute;right:16px;top:50%;transform:translateY(-50%);font-weight:600;font-size:12px;letter-spacing:0.06em;color:#6B6B6B;cursor:pointer;">{{ pwLabel1 }}</span>
+                </div>
+              </div>
+              <p style="margin:0 0 20px;font-size:12px;color:#8E1B18;visibility:{{ signinPwErrorVisibility }};">Password is required.</p>
+            </sc-if>
+            <sc-if value="{{ isLinkMethod }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;align-items:center;background:#FFFFFF;margin-bottom:20px;box-sizing:border-box;">
+                <div style="width:100%;display:flex;align-items:flex-start;gap:10px;background:var(--info-bg, #FFEDED);border:1px solid var(--info-wash, #EBC6A3);border-left:4px solid var(--info-accent, #8E1B18);border-radius:10px;padding:14px 16px;box-sizing:border-box;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="9" stroke="var(--info-accent, #8E1B18)" stroke-width="1.5"></circle><path d="M12 8V13" stroke="var(--info-accent, #8E1B18)" stroke-width="1.5" stroke-linecap="round"></path><circle cx="12" cy="16" r="0.75" fill="var(--info-accent, #8E1B18)"></circle></svg>
+                  <div style="min-width:0;">
+                    <p style="margin:0;font-size:14px;color:var(--info-ink, #8E1B18);font-weight:700;line-height:1.5;">{{ linkStatusMessage }}</p>
+                    <sc-if value="{{ linkSent }}" hint-placeholder-val="{{ false }}">
+                      <div style="display:flex;gap:16px;margin-top:6px;">
+                        <a href="#" onClick="{{ openEmailPreview }}" style="display:inline-block;font-size:12px;font-weight:600;color:#8E1B18;text-decoration:none;border-bottom:1px solid rgba(142,27,24,0.35);">Preview the email →</a>
+                        <a href="#" onClick="{{ onResendLink }}" style="display:inline-block;font-size:12px;font-weight:600;color:#474747;text-decoration:none;border-bottom:1px solid #D1D1D1;">Notify EA team to resend</a>
+                      </div>
+                      <p style="margin:8px 0 0;font-size:12px;color:#2D7438;font-weight:600;visibility:{{ resendConfirmVisibility }};">Your Admin and Manager have been notified to send a new link.</p>
+                    </sc-if>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ showInviteExpired }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;align-items:flex-start;gap:10px;background:var(--warning-bg, #FEF6E7);border:1px solid var(--warning-wash, #F0D48A);border-left:4px solid var(--warning-accent, #B8860B);border-radius:10px;padding:14px 16px;margin-bottom:20px;box-sizing:border-box;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;margin-top:2px;"><path d="M12 3L22 20H2L12 3Z" stroke="var(--warning-accent, #B8860B)" stroke-width="1.5" stroke-linejoin="round"></path><path d="M12 9.5V14" stroke="var(--warning-accent, #B8860B)" stroke-width="1.5" stroke-linecap="round"></path><circle cx="12" cy="17" r="0.75" fill="var(--warning-accent, #B8860B)"></circle></svg>
+                <div style="min-width:0;flex:1;">
+                  <p style="margin:0;font-size:14px;color:var(--warning-ink, #7A5A00);font-weight:700;line-height:1.5;">This invitation link is no longer valid. Contact your Manager or the Super Admin for a new one.</p>
+                </div>
+                <span role="button" tabindex="0" aria-label="Dismiss" onClick="{{ closeInviteExpired }}" style="cursor:pointer;color:var(--warning-ink, #7A5A00);font-size:16px;line-height:1;flex-shrink:0;">×</span>
+              </div>
+            </sc-if>
+
+            <button onClick="{{ onSigninMainAction }}" type="button" style="display:block;box-sizing:border-box;text-align:center;width:100%;font-family:'Montserrat',sans-serif;font-weight:600;font-size:16px;letter-spacing:0.016em;padding:14px 30px;border-radius:100px;background:#8E1B18;color:#FEFEFE;border:none;cursor:pointer;margin-bottom:20px;transition:background-color 150ms ease-out, transform 100ms ease-out;" style-hover="background:#7A1714;" style-active="transform:scale(0.98);">{{ signinButtonLabel }}</button>
+            <a href="#" onClick="{{ openForgotPassword }}" style="display:block;text-align:center;font-weight:500;font-size:13px;color:#474747;text-decoration:none;border-bottom:1px solid #D1D1D1;padding-bottom:1px;width:fit-content;margin:0 auto 20px;visibility:{{ forgotLinkVisibility }};">Forgotten your password?</a>
+            <a href="#" onClick="{{ openChangelog }}" style="display:block;text-align:center;font-weight:500;font-size:12px;color:#6B6B6B;text-decoration:none;margin:0 auto;width:fit-content;">Portal v1.2</a>
+
+            <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:20px;padding-top:16px;border-top:1px dashed #D1D1D1;">
+              <span style="font-size:11px;font-weight:600;letter-spacing:0.04em;color:#6B6B6B;text-transform:uppercase;">Dev</span>
+              <span role="button" tabindex="0" aria-label="Mock: skip to dashboard" aria-pressed="{{ mockSkipOn }}" onClick="{{ onMockSkip }}" style="width:36px;height:20px;border-radius:100px;background:{{ mockSkipBg }};position:relative;cursor:pointer;flex-shrink:0;transition:background-color 150ms ease-out;">
+                <span style="position:absolute;top:2px;left:{{ mockSkipThumbLeft }};width:16px;height:16px;border-radius:100px;background:#FFFFFF;box-shadow:0 1px 2px rgba(0,0,0,0.2);transition:left 150ms ease-out;"></span>
+              </span>
+              <span style="font-size:11px;color:#6B6B6B;">Mock: skip to dashboard</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px;">
+              <span style="font-size:11px;font-weight:600;letter-spacing:0.04em;color:#6B6B6B;text-transform:uppercase;">Dev</span>
+              <span role="button" tabindex="0" aria-label="Dev: simulate expired invite link" aria-pressed="{{ showInviteExpired }}" onClick="{{ toggleInviteExpired }}" style="width:36px;height:20px;border-radius:100px;background:{{ inviteExpiredMockBg }};position:relative;cursor:pointer;flex-shrink:0;transition:background-color 150ms ease-out;">
+                <span style="position:absolute;top:2px;left:{{ inviteExpiredMockThumbLeft }};width:16px;height:16px;border-radius:100px;background:#FFFFFF;box-shadow:0 1px 2px rgba(0,0,0,0.2);transition:left 150ms ease-out;"></span>
+              </span>
+              <span style="font-size:11px;color:#6B6B6B;">Mock: expired invite link banner</span>
+            </div>
+          </div>
+        </sc-if>
+
+        </div>
+        </sc-if>
+
+      </div>
+
+      <p class="ea-fade-5" style="width:100%;box-sizing:border-box;margin:32px 0 0;background:rgba(25,25,25,0.28);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(254,254,254,0.18);border-radius:16px;padding:14px 24px;font-size:13px;color:rgba(254,254,254,0.72);text-align:center;line-height:1.6;">
+        Access is by invitation - <a href="mailto:info@extensionarchitecture.co.uk" style="color:#EBC6A3;text-decoration:none;border-bottom:1px solid rgba(235,198,163,0.5);">ask your EA project lead</a> if you need an account.
+      </p>
+
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;vimeoVideoId&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;1099666719&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Video&quot;}, &quot;portalLinkUrl&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;https://extensionarchitecture.co.uk&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Links&quot;}}">
+class Component extends DCLogic {
+  state = { tab: 'signin', signinMethod: 'password', showPw1: false, showPw3: false, showPw4: false, muted: true, showHelpVideo: false, showForgotPassword: false, showChoosePassword: false, showChangelog: false,
+    email: '', emailTouched: false, resetEmail: '', resetEmailTouched: false,
+    signinPw: '', signinPwTouched: false, newPassword: '', newPasswordTouched: false, repeatPassword: '', repeatPasswordTouched: false,
+    resetSent: false, linkSent: false, showEmailPreview: false, mockSkipOn: false, showInviteExpired: false, resendConfirm: false, inviteUsed: false };
+
+  componentDidMount() {
+    const s = document.createElement('script');
+    s.src = 'https://player.vimeo.com/api/player.js';
+    s.onload = () => {
+      const iframe = document.getElementById('vimeoPlayer');
+      if (iframe && window.Vimeo) this.player = new window.Vimeo.Player(iframe);
+    };
+    document.head.appendChild(s);
+    this.handleEscape = (e) => {
+      if (e.key === 'Escape') this.setState({ showChangelog: false, showHelpVideo: false, showEmailPreview: false });
+    };
+    window.addEventListener('keydown', this.handleEscape);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.handleEscape);
+  }
+
+  emailScrollRef = React.createRef();
+
+
+  toggleMute = () => {
+    if (!this.player) return;
+    const next = !this.state.muted;
+    this.player.setMuted(next).then(() => {
+      this.setState({ muted: next });
+      if (!next) this.player.play().catch(() => {});
+    });
+  };
+
+  renderVals() {
+    const videoId = this.props.vimeoVideoId || '1099666719';
+    const isSignin = this.state.tab === 'signin';
+    const isPasswordMethod = this.state.signinMethod === 'password';
+    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const isEmailValid = emailRe.test(this.state.email);
+    const isResetEmailValid = emailRe.test(this.state.resetEmail);
+    const isNewPasswordValid = this.state.newPassword.length >= 10;
+    const isRepeatPasswordValid = this.state.repeatPassword.length > 0 && this.state.repeatPassword === this.state.newPassword;
+    const activeTabStyle = "flex:1;text-align:center;font-weight:600;font-size:13px;letter-spacing:0.04em;padding:10px 12px;border-radius:100px;cursor:pointer;background:#191919;color:#FEFEFE;";
+    const inactiveTabStyle = "flex:1;text-align:center;font-weight:600;font-size:13px;letter-spacing:0.04em;padding:10px 12px;border-radius:100px;cursor:pointer;color:#474747;";
+    return {
+      isPasswordMethod: isPasswordMethod,
+      isLinkMethod: !isPasswordMethod,
+      signinButtonLabel: isPasswordMethod ? 'Sign In' : 'Send Sign-In Link',
+      forgotLinkVisibility: isPasswordMethod ? 'visible' : 'hidden',
+      linkMethodDisplay: isPasswordMethod ? 'none' : 'block',
+      passwordMethodDisplay: isPasswordMethod ? 'block' : 'none',
+      linkIconDisplay: isPasswordMethod ? 'none' : 'flex',
+      passwordIconDisplay: isPasswordMethod ? 'flex' : 'none',
+      showChangelog: this.state.showChangelog,
+      emailValue: this.state.email,
+      onEmailInput: (e) => this.setState({ email: e.target.value }),
+      onEmailBlur: () => this.setState({ emailTouched: true }),
+      emailBorderColor: (this.state.emailTouched && !isEmailValid) ? '#8E1B18' : '#D1D1D1',
+      emailErrorVisibility: (this.state.emailTouched && !isEmailValid) ? 'visible' : 'hidden',
+      resetEmailValue: this.state.resetEmail,
+      onResetEmailInput: (e) => this.setState({ resetEmail: e.target.value }),
+      onResetEmailBlur: () => this.setState({ resetEmailTouched: true }),
+      resetEmailBorderColor: (this.state.resetEmailTouched && !isResetEmailValid) ? '#8E1B18' : '#D1D1D1',
+      resetEmailErrorVisibility: (this.state.resetEmailTouched && !isResetEmailValid) ? 'visible' : 'hidden',
+      signinPwValue: this.state.signinPw,
+      onSigninPwInput: (e) => this.setState({ signinPw: e.target.value }),
+      onSigninPwBlur: () => this.setState({ signinPwTouched: true }),
+      signinPwBorderColor: (this.state.signinPwTouched && this.state.signinPw.length === 0) ? '#8E1B18' : '#D1D1D1',
+      signinPwErrorVisibility: (this.state.signinPwTouched && this.state.signinPw.length === 0) ? 'visible' : 'hidden',
+      newPasswordValue: this.state.newPassword,
+      onNewPasswordInput: (e) => this.setState({ newPassword: e.target.value }),
+      onNewPasswordBlur: () => this.setState({ newPasswordTouched: true }),
+      newPasswordBorderColor: (this.state.newPasswordTouched && !isNewPasswordValid) ? '#8E1B18' : '#D1D1D1',
+      newPasswordErrorVisibility: (this.state.newPasswordTouched && !isNewPasswordValid) ? 'visible' : 'hidden',
+      repeatPasswordValue: this.state.repeatPassword,
+      onRepeatPasswordInput: (e) => this.setState({ repeatPassword: e.target.value }),
+      onRepeatPasswordBlur: () => this.setState({ repeatPasswordTouched: true }),
+      repeatPasswordBorderColor: (this.state.repeatPasswordTouched && !isRepeatPasswordValid) ? '#8E1B18' : '#D1D1D1',
+      repeatPasswordErrorVisibility: (this.state.repeatPasswordTouched && !isRepeatPasswordValid) ? 'visible' : 'hidden',
+      openChangelog: () => this.setState({ showChangelog: true }),
+      closeChangelog: () => this.setState({ showChangelog: false }),
+      resetSent: this.state.resetSent,
+      resetFormVisible: !this.state.resetSent,
+      onSendResetClick: () => {
+        this.setState({ resetEmailTouched: true });
+        if (isResetEmailValid) this.setState({ resetSent: true });
+      },
+      linkSent: this.state.linkSent,
+      linkStatusMessage: this.state.linkSent
+        ? `Check your inbox — we've sent a sign-in link to ${this.state.email}.`
+        : "We'll only ever email you a secure sign-in link — never your password.",
+      onResendLink: () => {
+        this.setState({ linkSent: false }, () => this.setState({ linkSent: true, resendConfirm: true }));
+        setTimeout(() => this.setState({ resendConfirm: false }), 2500);
+      },
+      resendConfirmVisibility: this.state.resendConfirm ? 'visible' : 'hidden',
+      showEmailPreview: this.state.showEmailPreview,
+      mockSkipOn: this.state.mockSkipOn,
+      mockSkipBg: this.state.mockSkipOn ? '#8E1B18' : '#D1D1D1',
+      mockSkipThumbLeft: this.state.mockSkipOn ? '18px' : '2px',
+      showInviteExpired: this.state.showInviteExpired,
+      closeInviteExpired: () => this.setState({ showInviteExpired: false }),
+      toggleInviteExpired: () => this.setState(s => ({ showInviteExpired: !s.showInviteExpired })),
+      inviteExpiredMockBg: this.state.showInviteExpired ? '#B8860B' : '#D1D1D1',
+      inviteExpiredMockThumbLeft: this.state.showInviteExpired ? '18px' : '2px',
+      onMockSkip: () => {
+        this.setState({ mockSkipOn: true });
+        setTimeout(() => { window.location.href = './EAPortalDashboardClient.dc.html'; }, 200);
+      },
+      openEmailPreview: () => this.setState({ showEmailPreview: true }),
+      emailScrollRef: this.emailScrollRef,
+      scrollEmailPreviewDown: () => {
+        const el = this.emailScrollRef.current;
+        if (el) el.scrollBy({ top: 400, behavior: 'smooth' });
+      },
+      closeEmailPreview: () => this.setState({ showEmailPreview: false }),
+      previewEmailAddress: this.state.email || 'you@example.com',
+      onAcceptEmailLink: () => {
+        if (this.state.inviteUsed) { this.setState({ showEmailPreview: false, showInviteExpired: true }); }
+        else { this.setState({ showEmailPreview: false, showChoosePassword: true }); }
+      },
+      onAcceptEmailLinkExpired: () => this.setState({ showEmailPreview: false, showChoosePassword: false, showForgotPassword: false, showInviteExpired: true }),
+      pwAriaLabel1: this.state.showPw1 ? 'Hide password' : 'Show password',
+      pwAriaPressed1: String(this.state.showPw1),
+      togglePw1KeyDown: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.setState(s => ({ showPw1: !s.showPw1 })); } },
+      pwAriaLabel3: this.state.showPw3 ? 'Hide password' : 'Show password',
+      pwAriaPressed3: String(this.state.showPw3),
+      togglePw3KeyDown: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.setState(s => ({ showPw3: !s.showPw3 })); } },
+      pwAriaLabel4: this.state.showPw4 ? 'Hide password' : 'Show password',
+      pwAriaPressed4: String(this.state.showPw4),
+      togglePw4KeyDown: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.setState(s => ({ showPw4: !s.showPw4 })); } },
+      onSigninMainAction: (e) => {
+        e.preventDefault();
+        if (isPasswordMethod) {
+          this.setState({ emailTouched: true, signinPwTouched: true });
+          if (isEmailValid && this.state.signinPw.length > 0) {
+            window.location.href = './EAPortalDashboardClient.dc.html';
+          }
+        } else {
+          this.setState({ emailTouched: true });
+          if (isEmailValid) this.setState({ linkSent: true });
+        }
+      },
+      onChoosePasswordSubmit: () => {
+        this.setState({ newPasswordTouched: true, repeatPasswordTouched: true });
+        if (isNewPasswordValid && isRepeatPasswordValid) {
+          this.setState({ inviteUsed: true });
+          window.location.href = './EAPortalDashboardClient.dc.html';
+        }
+      },
+      subtab1Style: isPasswordMethod ? activeTabStyle : inactiveTabStyle,
+      subtab2Style: isPasswordMethod ? inactiveTabStyle : activeTabStyle,
+      setMethodPassword: () => this.setState({ signinMethod: 'password' }),
+      setMethodLink: () => this.setState({ signinMethod: 'link' }),
+      vimeoSrc: `https://player.vimeo.com/video/${videoId}?background=1&autoplay=1&loop=1&muted=1&controls=0`,
+      portalLinkUrl: this.props.portalLinkUrl || 'https://extensionarchitecture.co.uk',
+      isSignin: isSignin,
+      pwType1: this.state.showPw1 ? 'text' : 'password',
+      pwLabel1: this.state.showPw1 ? 'HIDE' : 'SHOW',
+      togglePw1: () => this.setState(s => ({ showPw1: !s.showPw1 })),
+      muteAriaLabel: this.state.muted ? 'Unmute video' : 'Mute video',
+      muteAriaPressed: String(!this.state.muted),
+      mutedIconDisplay: this.state.muted ? 'block' : 'none',
+      unmutedIconDisplay: this.state.muted ? 'none' : 'block',
+      toggleMute: this.toggleMute,
+      showHelpVideo: this.state.showHelpVideo,
+      openHelpVideo: () => this.setState({ showHelpVideo: true }),
+      closeHelpVideo: () => this.setState({ showHelpVideo: false }),
+      stopPropagation: (e) => e.stopPropagation(),
+      showForgotPassword: this.state.showForgotPassword,
+      isMainPanel: !this.state.showForgotPassword,
+      openForgotPassword: () => this.setState({ showForgotPassword: true }),
+      closeForgotPassword: () => this.setState({ showForgotPassword: false, resetSent: false, resetEmailTouched: false }),
+      showChoosePassword: this.state.showChoosePassword,
+      isMainPanel2: !this.state.showForgotPassword && !this.state.showChoosePassword,
+      openChoosePassword: () => this.setState({ showChoosePassword: true }),
+      closeChoosePassword: () => this.setState({ showChoosePassword: false, newPasswordTouched: false, repeatPasswordTouched: false }),
+      pwType3: this.state.showPw3 ? 'text' : 'password',
+      pwLabel3: this.state.showPw3 ? 'HIDE' : 'SHOW',
+      togglePw3: () => this.setState(s => ({ showPw3: !s.showPw3 })),
+      pwType4: this.state.showPw4 ? 'text' : 'password',
+      pwLabel4: this.state.showPw4 ? 'HIDE' : 'SHOW',
+      togglePw4: () => this.setState(s => ({ showPw4: !s.showPw4 })),
+      handleToggleKeyDown: (fn) => (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn(); } }
+    };
+  }
+
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Staff Applications</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/extension-architecture-design-system-0124207d-8759-4968-8e99-e143fec3b79f/colors_and_type.css">
+  <style>/*ea-focus*/input:focus-visible,textarea:focus-visible,select:focus-visible{outline:none !important;border-color:#8E1B18 !important;box-shadow:0 0 0 3px rgba(142,27,24,0.22) !important}[role="button"]:focus-visible,a:focus-visible,button:focus-visible,[tabindex]:not([tabindex="-1"]):focus-visible,summary:focus-visible,label:has(input[type=file]:focus-visible){outline:2px solid #8E1B18 !important;outline-offset:2px}header [role="button"]:focus-visible,header button:focus-visible,header a:focus-visible,header [tabindex]:focus-visible{outline-color:#FFFFFF !important}header div[style*="background:#FFFFFF"] [role="button"]:focus-visible,header div[style*="background:#FFFFFF"] button:focus-visible,header div[style*="background:#FFFFFF"] [tabindex]:focus-visible{outline-color:#8E1B18 !important}[role="dialog"] [role="button"]:focus-visible,[role="dialog"] button:focus-visible,[role="dialog"] [tabindex]:not([tabindex="-1"]):focus-visible{outline-offset:-2px}
+  @font-face{font-family:'Montserrat';src:url('./fonts/Montserrat-VariableFont_wght.ttf') format('truetype-variations');font-weight:100 900}
+  @font-face{font-family:'Fraunces';src:url('./fonts/Fraunces-VariableFont_SOFT_WONK_opsz_wght.ttf') format('truetype-variations');font-weight:100 900}
+  html,body{margin:0;font-family:'Montserrat',ui-sans-serif,system-ui,sans-serif}
+  *{box-sizing:border-box}
+  button,input,select,textarea{font-family:'Montserrat',ui-sans-serif,system-ui,sans-serif}
+  .ea-dash-row{display:flex;align-items:center;cursor:pointer;transition:background 120ms ease-out}
+  .ea-dash-row:hover{background:#FAFAFA}
+  </style>
+</helmet>
+<sc-if value="{{ isFull }}" hint-placeholder-val="{{ true }}">
+<div style="width:100%;">
+      <div class="ea-fade-1" style="width:100%;">
+        <h3 style="margin:0 0 18px;font-family:'Fraunces', ui-serif, Georgia, serif;font-optical-sizing:auto;font-weight:500;font-size:22px;color:#191919;">Application Pipeline</h3>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:1px;background:#EAEAEA;border:1px solid #EAEAEA;border-radius:10px;overflow:hidden;margin-bottom:28px;">
+          <sc-for list="{{ pipelineDefs }}" as="p" hint-placeholder-count="4">
+            <div style="background:#FFFFFF;padding:18px;">
+              <p style="margin:0 0 4px;font-family:'Fraunces', ui-serif, Georgia, serif;font-optical-sizing:auto;font-size:30px;line-height:1;color:#191919;">{{ p.count }}</p>
+              <p style="margin:0;font-size:11.5px;font-weight:600;color:{{ p.color }};">{{ p.label }}</p>
+            </div>
+          </sc-for>
+        </div>
+        <div style="border:1px solid #EAEAEA;border-radius:10px;overflow:hidden;background:#FFFFFF;">
+          <sc-for list="{{ applicationsRows }}" as="a" hint-placeholder-count="6">
+            <div class="ea-dash-row" onClick="{{ a.open }}" onKeyDown="{{ a.openKeyDown }}" role="button" tabindex="0" style="justify-content:space-between;gap:16px;padding:16px 20px;border-bottom:1px solid #F3F3F3;flex-wrap:wrap;">
+              <div style="min-width:0;flex:1 1 220px;">
+                <p style="margin:0 0 3px;font-size:13.5px;font-weight:600;color:#191919;">{{ a.project }}</p>
+                <p style="margin:0;font-size:12px;color:#6B6B6B;">{{ a.ref }} &middot; {{ a.type }}</p>
+              </div>
+              <span style="font-size:12px;color:#6B6B6B;flex:0 0 auto;">{{ a.note }}</span>
+              <sc-if value="{{ a.showNext }}" hint-placeholder-val="{{ true }}"><span title="Next check of the council portal" style="{{ a.nextStyle }}">{{ a.nextLabel }}</span></sc-if>
+              <span style="display:inline-flex;align-items:center;gap:6px;flex:0 0 auto;">
+                <button type="button" onClick="{{ a.goPortal }}" title="{{ a.portalTitle }}" aria-label="Council portal" style="{{ a.lnkStyle }}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 01-1 1H5a1 1 0 01-1-1V7a1 1 0 011-1h5"></path></svg></button>
+                <button type="button" onClick="{{ a.goMail }}" title="{{ a.mailTitle }}" aria-label="Email case officer" style="{{ a.lnkStyle }}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18v12H3zM3 7l9 7 9-7"></path></svg></button>
+                <button type="button" onClick="{{ a.goDocs }}" title="Submitted documents" aria-label="Submitted documents" style="{{ a.lnkStyle }}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8zM14 3v5h5M9 13h6M9 17h6"></path></svg></button>
+                <button type="button" onClick="{{ a.goProject }}" title="Project and tasks" aria-label="Project and tasks" style="{{ a.lnkStyle }}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path></svg></button>
+              </span>
+              <span aria-hidden="true" style="font-size:11px;font-weight:700;padding:5px 13px;border-radius:100px;background:{{ a.bg }};color:{{ a.color }};white-space:nowrap;">{{ a.status }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <sc-if value="{{ appPanelOpen }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ closeApp }}" style="position:fixed;inset:0;z-index:70;background:rgba(25,25,25,0.45);display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box;">
+        <div onClick="{{ docStop }}" role="dialog" aria-modal="true" aria-label="Application" style="width:100%;max-width:680px;max-height:calc(100vh - 48px);background:#FFFFFF;border-top:3px solid #8E1B18;border-radius:10px;overflow:hidden;box-shadow:0 24px 60px rgba(25,25,25,0.3);display:flex;flex-direction:column;">
+          <div style="padding:18px 22px 14px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;border-bottom:1px solid #EAEAEA;">
+            <div style="min-width:0;">
+              <h4 style="margin:0 0 4px;font-family:'Fraunces', ui-serif, Georgia, serif;font-optical-sizing:auto;font-weight:500;font-size:18px;color:#191919;">{{ appP.name }}</h4>
+              <p style="margin:0;font-size:12px;color:#6B6B6B;">{{ appP.ref }} &middot; {{ appP.type }} &middot; <span style="{{ appP.statusStyle }}">{{ appP.status }}</span></p>
+            </div>
+            <button type="button" onClick="{{ closeApp }}" aria-label="Close" style="width:32px;height:32px;border-radius:100px;border:1px solid #E2E2E2;background:#FFFFFF;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"></path></svg></button>
+          </div>
+          <div style="flex:1;min-height:0;overflow:auto;padding:18px 22px;display:flex;flex-direction:column;gap:18px;">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+              <button type="button" onClick="{{ appP.goPortal }}" style="display:inline-flex;align-items:center;gap:6px;border:1.5px solid #191919;background:#FFFFFF;color:#191919;border-radius:100px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;text-decoration:none;">Council portal</button>
+              <button type="button" onClick="{{ appP.copyPortal }}" style="display:inline-flex;align-items:center;gap:6px;border:1.5px solid #191919;background:#FFFFFF;color:#191919;border-radius:100px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;text-decoration:none;">{{ appP.copyLabel }}</button>
+              <button type="button" onClick="{{ appP.goMail }}" style="display:inline-flex;align-items:center;gap:6px;border:1.5px solid #191919;background:#FFFFFF;color:#191919;border-radius:100px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;text-decoration:none;">Email case officer</button>
+              <button type="button" onClick="{{ appP.goDocs }}" style="display:inline-flex;align-items:center;gap:6px;border:1.5px solid #191919;background:#FFFFFF;color:#191919;border-radius:100px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;text-decoration:none;">Documents</button>
+              <button type="button" onClick="{{ appP.goProject }}" style="display:inline-flex;align-items:center;gap:6px;border:1.5px solid #191919;background:#FFFFFF;color:#191919;border-radius:100px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;text-decoration:none;">Project</button>
+              <button type="button" onClick="{{ appP.goTasks }}" style="display:inline-flex;align-items:center;gap:6px;border:1.5px solid #191919;background:#FFFFFF;color:#191919;border-radius:100px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;text-decoration:none;">Tasks</button>
+            </div>
+            <div>
+              <label style="display:block;margin:0 0 5px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6B6B6B;">Council application reference</label>
+              <input type="text" value="{{ appP.councilRef }}" onChange="{{ appP.setCouncilRef }}" placeholder="e.g. 26/01234/HOU" aria-label="Council application reference" style="width:100%;box-sizing:border-box;font-family:inherit;font-size:13.5px;color:#191919;padding:9px 11px;border:1px solid #D1D1D1;border-radius:8px;background:#FFFFFF;">
+            </div>
+            <div>
+              <label style="display:block;margin:0 0 5px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6B6B6B;">Council portal link</label>
+              <input type="url" value="{{ appP.portalUrl }}" onChange="{{ appP.setPortalUrl }}" placeholder="Paste the application page from the council's planning portal" aria-label="Council portal link" style="width:100%;box-sizing:border-box;font-family:inherit;font-size:13.5px;color:#191919;padding:9px 11px;border:1px solid #D1D1D1;border-radius:8px;background:#FFFFFF;">
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div><label style="display:block;margin:0 0 5px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6B6B6B;">Case officer</label><input type="text" value="{{ appP.officer }}" onChange="{{ appP.setOfficer }}" placeholder="Name" aria-label="Case officer" style="width:100%;box-sizing:border-box;font-family:inherit;font-size:13.5px;color:#191919;padding:9px 11px;border:1px solid #D1D1D1;border-radius:8px;background:#FFFFFF;"></div>
+              <div><label style="display:block;margin:0 0 5px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6B6B6B;">Officer email</label><input type="email" value="{{ appP.officerEmail }}" onChange="{{ appP.setOfficerEmail }}" placeholder="name@council.gov.uk" aria-label="Officer email" style="width:100%;box-sizing:border-box;font-family:inherit;font-size:13.5px;color:#191919;padding:9px 11px;border:1px solid #D1D1D1;border-radius:8px;background:#FFFFFF;"></div>
+            </div>
+            <div>
+              <label style="display:block;margin:0 0 5px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6B6B6B;">Status</label>
+              <div style="display:inline-flex;flex-wrap:wrap;gap:2px;padding:3px;border-radius:100px;background:#FFFFFF;border:1px solid #E2E2E2;" role="group" aria-label="Application status">
+                <sc-for list="{{ appP.statusOpts }}" as="o" hint-placeholder-count="4"><button type="button" onClick="{{ o.select }}" aria-pressed="{{ o.on }}" style="{{ o.style }}">{{ o.label }}</button></sc-for>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <sc-if value="{{ appP.showSubmitted }}" hint-placeholder-val="{{ true }}"><div><label style="display:block;margin:0 0 5px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6B6B6B;">Submitted</label><dc-import name="EAPortalDatePicker" mode="date" label="Submitted" value="{{ appP.submittedIso }}" pick="{{ appP.setSubmitted }}" hint-size="100%,42px"></dc-import></div></sc-if>
+              <sc-if value="{{ appP.showTarget }}" hint-placeholder-val="{{ true }}"><div><label style="display:block;margin:0 0 5px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6B6B6B;">Target decision date</label><dc-import name="EAPortalDatePicker" mode="date" label="Target decision date" value="{{ appP.targetIso }}" pick="{{ appP.setTarget }}" hint-size="100%,42px"></dc-import></div></sc-if>
+              <sc-if value="{{ appP.showDecision }}" hint-placeholder-val="{{ false }}"><div><label style="display:block;margin:0 0 5px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6B6B6B;">{{ appP.decisionLabel }}</label><dc-import name="EAPortalDatePicker" mode="date" label="Decision date" value="{{ appP.decisionIso }}" pick="{{ appP.setDecision }}" hint-size="100%,42px"></dc-import></div></sc-if>
+            </div>
+            <sc-if value="{{ appPx.showExpiry }}" hint-placeholder-val="{{ false }}"><span style="{{ appPx.expiryStyle }}">{{ appPx.expiryText }}</span></sc-if>
+            <sc-if value="{{ appPx.showRefusal }}" hint-placeholder-val="{{ false }}">
+            <div style="border:1px solid #EAEAEA;border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:14px;background:#FBFBFB;">
+              <span style="font-family:'Fraunces', ui-serif, Georgia, serif;font-size:16px;font-weight:500;color:#191919;">Refusal follow-up</span>
+              <div>
+                <label style="display:block;margin:0 0 5px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6B6B6B;">Reasons for refusal</label>
+                <textarea rows="3" value="{{ appPx.refusalReason }}" onChange="{{ appPx.setRefusalReason }}" placeholder="Paste or summarise the reasons from the decision notice" aria-label="Reasons for refusal" style="width:100%;box-sizing:border-box;font-family:inherit;font-size:13.5px;color:#191919;padding:9px 11px;border:1px solid #D1D1D1;border-radius:8px;background:#FFFFFF;resize:vertical;"></textarea>
+              </div>
+              <div>
+                <label style="display:block;margin:0 0 5px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6B6B6B;">Next step</label>
+                <div style="display:inline-flex;flex-wrap:wrap;gap:2px;padding:3px;border-radius:100px;background:#FFFFFF;border:1px solid #E2E2E2;" role="group" aria-label="Next step">
+                  <sc-for list="{{ appPx.nextSteps }}" as="o" hint-placeholder-count="4"><button type="button" onClick="{{ o.select }}" style="{{ o.style }}">{{ o.label }}</button></sc-for>
+                </div>
+                <sc-if value="{{ appPx.hasNextHint }}" hint-placeholder-val="{{ false }}"><p style="margin:8px 0 0;font-size:12px;line-height:1.5;color:#474747;">{{ appPx.nextHint }}</p></sc-if>
+              </div>
+              <div>
+                <label style="display:block;margin:0 0 5px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6B6B6B;">Appeal deadline</label>
+                <dc-import name="EAPortalDatePicker" mode="date" label="Appeal deadline" value="{{ appPx.appealIso }}" pick="{{ appPx.setAppeal }}" hint-size="100%,42px"></dc-import>
+                <sc-if value="{{ appPx.hasAppealHint }}" hint-placeholder-val="{{ false }}"><p style="{{ appPx.appealHintStyle }}">{{ appPx.appealHint }}</p></sc-if>
+                <p style="margin:6px 0 0;font-size:11.5px;color:#6B6B6B;">Starts at 6 months from the decision. Shown on the task calendar.</p>
+              </div>
+            </div>
+            </sc-if>
+            <sc-if value="{{ appP.showConditions }}" hint-placeholder-val="{{ false }}">
+            <div style="border:1px solid #EAEAEA;border-radius:10px;padding:14px 16px;background:#FBFBFB;">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:8px;"><span style="font-family:'Fraunces', ui-serif, Georgia, serif;font-size:16px;font-weight:500;color:#191919;">Conditions</span><span style="font-size:11.5px;color:#6B6B6B;">{{ appP.condSummary }}</span></div>
+              <sc-for list="{{ appPx.conditions }}" as="c" hint-placeholder-count="2">
+                <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid #F3F3F3;">
+                  <button type="button" onClick="{{ c.toggle }}" aria-label="Toggle discharged" style="{{ c.check }}">{{ c.mark }}</button>
+                  <span style="{{ c.textStyle }}">{{ c.text }}</span>
+                  <sc-if value="{{ c.hasDue }}" hint-placeholder-val="{{ false }}"><span style="{{ c.dueStyle }}">{{ c.dueLabel }}</span></sc-if>
+                  <button type="button" onClick="{{ c.remove }}" aria-label="Remove condition" style="border:0;background:none;padding:0;font-size:12px;font-weight:600;color:#6B6B6B;cursor:pointer;font-family:inherit;">Remove</button>
+                </div>
+              </sc-for>
+              <div style="display:flex;gap:8px;margin-top:10px;"><input type="text" value="{{ appP.condDraft }}" onChange="{{ appP.setCondDraft }}" placeholder="e.g. Materials sample approved" aria-label="Add a condition" style="width:100%;box-sizing:border-box;font-family:inherit;font-size:13.5px;color:#191919;padding:9px 11px;border:1px solid #D1D1D1;border-radius:8px;background:#FFFFFF;"><button type="button" onClick="{{ appPx.addCondition }}" style="border:1.5px solid #191919;background:#FFFFFF;color:#191919;border-radius:100px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">Add</button></div>
+              <div style="margin-top:10px;"><label style="display:block;margin:0 0 5px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6B6B6B;">Due date (optional)</label><dc-import name="EAPortalDatePicker" mode="date" label="Condition due date" value="{{ appPx.condDueIso }}" pick="{{ appPx.setCondDue }}" hint-size="100%,42px"></dc-import><p style="margin:6px 0 0;font-size:11.5px;color:#6B6B6B;">Conditions with a due date appear on the task calendar.</p></div>
+            </div>
+            </sc-if>
+            <sc-if value="{{ appP.showReminder }}" hint-placeholder-val="{{ true }}">
+            <div style="border:1px solid #EAEAEA;border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:14px;background:#FBFBFB;">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;"><span style="font-family:'Fraunces', ui-serif, Georgia, serif;font-size:16px;font-weight:500;color:#191919;">Check reminders</span><span style="font-size:11.5px;color:#6B6B6B;">{{ appP.lastLabel }}</span></div>
+              <div>
+                <label style="display:block;margin:0 0 5px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6B6B6B;">Remind me every</label>
+                <div style="display:inline-flex;gap:2px;padding:3px;border-radius:100px;background:#FFFFFF;border:1px solid #E2E2E2;" role="group" aria-label="Reminder cadence">
+                  <sc-for list="{{ appP.cadenceOpts }}" as="c" hint-placeholder-count="5"><button type="button" onClick="{{ c.select }}" aria-pressed="{{ c.on }}" style="{{ c.style }}">{{ c.label }}</button></sc-for>
+                </div>
+              </div>
+              <div>
+                <label style="display:block;margin:0 0 5px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6B6B6B;">Next check</label>
+                <dc-import name="EAPortalDatePicker" mode="date" label="Next check" value="{{ appP.nextCheck }}" pick="{{ appP.setNext }}" hint-size="100%,42px"></dc-import>
+                <p style="margin:6px 0 0;font-size:11.5px;color:#6B6B6B;">Each check also appears on the task calendar.</p>
+              </div>
+              <div>
+                <label style="display:block;margin:0 0 5px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6B6B6B;">Note for the log (optional)</label>
+                <input type="text" value="{{ appP.note }}" onChange="{{ appP.setNote }}" placeholder="e.g. Consultation open until 30 Nov" aria-label="Note" style="width:100%;box-sizing:border-box;font-family:inherit;font-size:13.5px;color:#191919;padding:9px 11px;border:1px solid #D1D1D1;border-radius:8px;background:#FFFFFF;">
+                <div style="margin-top:10px;"><button type="button" onClick="{{ appP.markChecked }}" style="display:inline-flex;align-items:center;gap:6px;border:1.5px solid #8E1B18;background:#8E1B18;color:#FFFFFF;border-radius:100px;padding:8px 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">Mark checked today</button></div>
+              </div>
+            </div>
+            </sc-if>
+            <div style="border:1px solid #EAEAEA;border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:12px;background:#FBFBFB;">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;"><span style="font-family:'Fraunces', ui-serif, Georgia, serif;font-size:16px;font-weight:500;color:#191919;">Correspondence</span><span style="font-size:11.5px;color:#6B6B6B;">{{ appPx.corrCount }}</span></div>
+              <div style="display:inline-flex;flex-wrap:wrap;gap:2px;padding:3px;border-radius:100px;background:#FFFFFF;border:1px solid #E2E2E2;align-self:flex-start;" role="group" aria-label="Type">
+                <sc-for list="{{ appPx.corrTypes }}" as="o" hint-placeholder-count="4"><button type="button" onClick="{{ o.select }}" style="{{ o.style }}">{{ o.label }}</button></sc-for>
+              </div>
+              <input type="text" value="{{ appPx.corrSubject }}" onChange="{{ appPx.setCorrSubject }}" placeholder="Subject, e.g. Request for revised site plan" aria-label="Subject" style="width:100%;box-sizing:border-box;font-family:inherit;font-size:13.5px;color:#191919;padding:9px 11px;border:1px solid #D1D1D1;border-radius:8px;background:#FFFFFF;">
+              <textarea rows="2" value="{{ appPx.corrNote }}" onChange="{{ appPx.setCorrNote }}" placeholder="What was said or agreed" aria-label="Notes" style="width:100%;box-sizing:border-box;font-family:inherit;font-size:13.5px;color:#191919;padding:9px 11px;border:1px solid #D1D1D1;border-radius:8px;background:#FFFFFF;resize:vertical;"></textarea>
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                <label style="display:inline-flex;align-items:center;gap:6px;border:1.5px solid #191919;background:#FFFFFF;color:#191919;border-radius:100px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">Attach file<input type="file" onChange="{{ appPx.pickCorrFile }}" style="display:none;"></label>
+                <sc-if value="{{ appPx.hasCorrFile }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#474747;">{{ appPx.corrFile }}</span></sc-if>
+                <button type="button" onClick="{{ appPx.addCorr }}" style="margin-left:auto;border:1.5px solid #8E1B18;background:#8E1B18;color:#FFFFFF;border-radius:100px;padding:8px 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">Log entry</button>
+              </div>
+              <sc-if value="{{ appPx.hasCorr }}" hint-placeholder-val="{{ true }}">
+              <div>
+                <sc-for list="{{ appPx.corr }}" as="m" hint-placeholder-count="2">
+                  <div style="padding:10px 0;border-top:1px solid #EFEFEF;">
+                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><span style="{{ m.typeStyle }}">{{ m.type }}</span><span style="font-size:12px;color:#6B6B6B;">{{ m.when }}</span><button type="button" onClick="{{ m.remove }}" aria-label="Remove entry" style="margin-left:auto;border:0;background:none;padding:0;font-size:12px;font-weight:600;color:#6B6B6B;cursor:pointer;font-family:inherit;">Remove</button></div>
+                    <p style="margin:6px 0 0;font-size:13.5px;font-weight:600;color:#191919;">{{ m.subject }}</p>
+                    <sc-if value="{{ m.hasNote }}" hint-placeholder-val="{{ true }}"><p style="margin:3px 0 0;font-size:12.5px;line-height:1.5;color:#474747;">{{ m.note }}</p></sc-if>
+                    <sc-if value="{{ m.hasFile }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;gap:6px;margin-top:6px;font-size:11.5px;font-weight:600;color:#474747;border:1px solid #E2E2E2;border-radius:100px;padding:3px 10px;background:#FFFFFF;">{{ m.file }}</span></sc-if>
+                  </div>
+                </sc-for>
+              </div>
+              </sc-if>
+            </div>
+            <sc-if value="{{ appP.hasLog }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <label style="display:block;margin:0 0 5px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6B6B6B;">Check history</label>
+              <sc-for list="{{ appP.log }}" as="l" hint-placeholder-count="3">
+                <div style="display:flex;gap:12px;padding:8px 0;border-bottom:1px solid #F3F3F3;font-size:12.5px;"><span style="width:92px;flex-shrink:0;color:#6B6B6B;">{{ l.when }}</span><span style="color:#191919;">{{ l.text }}</span></div>
+              </sc-for>
+            </div>
+            </sc-if>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+</div>
+</sc-if>
+<sc-if value="{{ isOverview }}" hint-placeholder-val="{{ false }}">
+<div style="width:100%;display:flex;flex-direction:column;gap:20px;">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;">
+    <sc-for list="{{ tiles }}" as="t" hint-placeholder-count="5">
+      <div style="{{ t.style }}">
+        <span aria-hidden="true" style="{{ t.icoStyle }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{ t.ico }}"></path></svg></span>
+        <p style="margin:14px 0 2px;font-family:'Fraunces', ui-serif, Georgia, serif;font-size:36px;line-height:1;color:#191919;">{{ t.value }}</p>
+        <p style="margin:0;font-size:12px;font-weight:600;color:#474747;">{{ t.label }}</p>
+      </div>
+    </sc-for>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:20px;">
+    <div style="background:#FFFFFF;border:1px solid #EAEAEA;border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:18px;">
+      <h3 style="margin:0;font-family:'Fraunces', ui-serif, Georgia, serif;font-weight:500;font-size:19px;color:#191919;">Applications</h3>
+      <div style="display:flex;align-items:center;gap:26px;flex-wrap:wrap;">
+        <div style="{{ donutStyle }}"><div style="width:96px;height:96px;border-radius:100px;background:#FFFFFF;display:flex;flex-direction:column;align-items:center;justify-content:center;"><span style="font-family:'Fraunces', ui-serif, Georgia, serif;font-size:30px;line-height:1;color:#191919;">{{ donutTotal }}</span><span style="font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6B6B6B;margin-top:2px;">total</span></div></div>
+        <div style="display:flex;flex-direction:column;gap:10px;flex:1;min-width:150px;">
+          <sc-for list="{{ legend }}" as="l" hint-placeholder-count="4"><div style="display:flex;align-items:center;gap:10px;"><span style="{{ l.dot }}"></span><span style="font-size:13px;color:#474747;flex:1;">{{ l.label }}</span><span style="font-family:'Fraunces', ui-serif, Georgia, serif;font-size:18px;color:#191919;">{{ l.count }}</span></div></sc-for>
+        </div>
+      </div>
+    </div>
+    <div style="background:#FFFFFF;border:1px solid #EAEAEA;border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:6px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;"><h3 style="margin:0;font-family:'Fraunces', ui-serif, Georgia, serif;font-weight:500;font-size:19px;color:#191919;">Needs attention</h3><span style="{{ riskBadge }}">{{ riskCount }}</span></div>
+      <sc-for list="{{ riskRows }}" as="r" hint-placeholder-count="4">
+        <div class="ea-dash-row" onClick="{{ r.open }}" onKeyDown="{{ r.openKeyDown }}" role="button" tabindex="0" style="gap:12px;padding:10px;border-radius:10px;">
+          <span aria-hidden="true" style="{{ r.icoStyle }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{ r.ico }}"></path></svg></span>
+          <div style="min-width:0;flex:1;"><p style="margin:0;font-size:13.5px;font-weight:600;color:#191919;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ r.proj }}</p><p style="margin:1px 0 0;font-size:11.5px;color:#6B6B6B;">{{ r.kind }}</p></div>
+          <span style="{{ r.chipStyle }}">{{ r.time }}</span>
+        </div>
+      </sc-for>
+      <sc-if value="{{ noRisk }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:22px 0;"><span style="width:44px;height:44px;border-radius:100px;background:rgba(45,116,56,0.10);color:#2D7438;display:flex;align-items:center;justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"></path></svg></span><span style="font-size:13px;font-weight:600;color:#474747;">All clear</span></div></sc-if>
+    </div>
+  </div>
+</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"view":{"editor":null},"detailPage":{"editor":null}}'>
+class Component extends DCLogic {
+  state = { appCond: '', appCondDue: '', appCorr: { type: 'Email in', subject: '', note: '', file: '' }, appData: {}, appOpen: null, appNote: '', appCopied: false };
+  PROJECTS = [
+    { id: 1, name: '1 Lambourne Drive, Cobham', ref: 'EA-2026-033' },
+    { id: 3, name: '26 Tadorne Road, Tadworth', ref: 'EA-2025-118' },
+    { id: 2, name: 'Bossiney, The Leigh, Kingston upon Thames', ref: 'EA-2026-041' },
+    { id: 4, name: '14 Pinewood Close, Esher', ref: 'EA-2026-057' },
+    { id: 5, name: '3 Elm Grove, Weybridge', ref: 'EA-2025-096' },
+    { id: 6, name: '9 Meadow Bank, Guildford', ref: 'EA-2026-072' },
+    { id: 7, name: '5 Chestnut Walk, Reigate', ref: 'EA-2026-081' },
+    { id: 9, name: '8 Larkspur Drive, Epsom', ref: 'EA-2026-089' },
+    { id: 10, name: '17 Windmill Rise, Dorking', ref: 'EA-2025-104' },
+    { id: 11, name: '2 Orchard End, Leatherhead', ref: 'EA-2026-094' },
+    { id: 12, name: '30 Beacon Hill, Godalming', ref: 'EA-2025-132' }
+  ];
+  keyActivate(fn) { return (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn(e); } }; }
+  gotoTab = (t) => { try { window.dispatchEvent(new CustomEvent('ea-goto-tab', { detail: { tab: t } })); } catch (e) {} };
+  appPad = (n) => (n < 10 ? '0' : '') + n;
+  appIso = (d) => d.getFullYear() + '-' + this.appPad(d.getMonth() + 1) + '-' + this.appPad(d.getDate());
+  appParse = (v) => { if (!v) return null; const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v); const d = m ? new Date(+m[1], +m[2] - 1, +m[3]) : new Date(v); return isNaN(d) ? null : new Date(d.getFullYear(), d.getMonth(), d.getDate()); };
+  appAdd = (iso, days) => { const d = this.appParse(iso); if (!d) return ''; d.setDate(d.getDate() + days); return this.appIso(d); };
+  appAddYM = (iso, y, m) => { const d = this.appParse(iso); if (!d) return ''; d.setFullYear(d.getFullYear() + y); d.setMonth(d.getMonth() + m); return this.appIso(d); };
+  appCorrSeed = { 2: [{ id: 's2a', at: '2026-08-24', type: 'Email in', subject: 'Application validated', note: 'Case officer confirmed validation. Target decision date set.', file: 'Validation-letter.pdf' }, { id: 's2b', at: '2026-09-15', type: 'Call', subject: 'Chased on neighbour comments', note: 'Two neighbour comments received, no objections from the highways consultee.', file: '' }],
+    9: [{ id: 's9a', at: '2026-09-08', type: 'Email out', subject: 'Building regs drawings sent', note: 'Sent structural layout and U-value calcs to building control.', file: 'BR-pack-v2.pdf' }] };
+  appFmt = (iso) => { const d = this.appParse(iso); return d ? d.getDate() + ' ' + ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][d.getMonth()] + ' ' + d.getFullYear() : ''; };
+  setApp = (pid, fn) => this.setState((st) => { const cur = Object.assign({}, st.appData[pid]); const patch = typeof fn === 'function' ? fn(cur) : fn; const appData = Object.assign({}, st.appData, { [pid]: Object.assign(cur, patch) }); try { localStorage.setItem('ea_app_pipeline', JSON.stringify(appData)); } catch (e) {} return { appData }; });
+  closeApp = () => this.setState({ appOpen: null, appNote: '', appCopied: false });
+  componentDidMount() {
+    try { const ad = JSON.parse(localStorage.getItem('ea_app_pipeline') || 'null'); if (ad && typeof ad === 'object') this.setState({ appData: ad }); } catch (e) {}
+    try { if (window.__eaPendingApp != null) { this.setState({ appOpen: window.__eaPendingApp }); window.__eaPendingApp = null; } } catch (e) {}
+    this._onOpenApp = (e) => { const id = e && e.detail && e.detail.id; if (id != null) { try { window.__eaPendingApp = null; } catch (x) {} this.setState({ appOpen: id, appNote: '', appCopied: false }); } };
+    window.addEventListener('ea-open-application', this._onOpenApp);
+  }
+  componentWillUnmount() { window.removeEventListener('ea-open-application', this._onOpenApp); }
+  renderVals() {
+    const findProj = (id) => this.PROJECTS.find(p => p.id === id);
+    const openProj = (id) => () => { window.location.href = (this.props.detailPage || 'EAPortalProjectDetailManager.dc.html') + '?project=' + id; };
+    const appBase = [
+      { projectId: 2, type: 'Planning Permission', status: 'Waiting', submitted: '18 Aug 2026', note: 'Decision due 18 Oct 2026' },
+      { projectId: 9, type: 'Building Regulations', status: 'Waiting', submitted: '02 Sep 2026', note: 'Decision due 30 Oct 2026' },
+      { projectId: 4, type: 'Building Regulations', status: 'Not Submitted', submitted: '\u2014', note: 'Pending structural calculations' },
+      { projectId: 1, type: 'Planning Permission', status: 'Granted', submitted: '14 Jan 2026', note: 'Granted 11 Mar 2026' },
+      { projectId: 3, type: 'Planning Permission', status: 'Granted', submitted: '09 Feb 2025', note: 'Granted 02 May 2025' },
+      { projectId: 5, type: 'Planning Permission', status: 'Granted', submitted: '21 Sep 2025', note: 'Granted 16 Dec 2025' },
+      { projectId: 6, type: 'Building Regulations', status: 'Granted', submitted: '03 Apr 2026', note: 'Granted 29 May 2026' },
+      { projectId: 7, type: 'Planning Permission', status: 'Granted', submitted: '30 May 2026', note: 'Granted 25 Jul 2026' }
+    ];
+    const appDefs = appBase.map(a => {
+      const u = this.state.appData[a.projectId] || {};
+      const status = u.status || a.status, changed = !!u.status && u.status !== a.status;
+      let note = a.note;
+      if (status === 'Waiting') note = u.target ? 'Decision due ' + this.appFmt(u.target) : (changed ? 'Awaiting decision' : a.note);
+      else if (status === 'Granted' || status === 'Rejected') note = u.decisionDate ? status + ' ' + this.appFmt(u.decisionDate) : (changed ? status : a.note);
+      else if (changed) note = 'Not yet submitted';
+      return { ...a, status, note, submitted: u.submitted ? this.appFmt(u.submitted) : a.submitted };
+    });
+    const appStatusColor = { 'Not Submitted': '#6B6B6B', Waiting: '#8B5D00', Granted: '#2D7438', Rejected: '#8E1B18' };
+    const appStatusBg = { 'Not Submitted': '#F3F3F3', Waiting: 'rgba(139,93,0,0.10)', Granted: 'rgba(45,116,56,0.10)', Rejected: 'rgba(142,27,24,0.08)' };
+    const appTodayIso = this.appIso(new Date());
+    const appCadenceOpts = [[1, 'Weekly'], [2, '2 wks'], [3, '3 wks'], [4, '4 wks'], [0, 'Off']];
+    const appFor = (a) => {
+      const u = this.state.appData[a.projectId] || {};
+      const cadence = u.cadence != null ? u.cadence : 2;
+      let next = u.nextCheck;
+      if (next === undefined) { const base = this.appParse(a.submitted); let n = base ? this.appIso(base) : appTodayIso; if (cadence) { let guard = 0; while (n < appTodayIso && guard++ < 200) n = this.appAdd(n, cadence * 7); } next = a.status === 'Waiting' && cadence ? n : ''; }
+      return { councilRef: u.councilRef || '', officer: u.officer || '', officerEmail: u.officerEmail || '', portalUrl: u.portalUrl || '', cadence, lastChecked: u.lastChecked || '', nextCheck: next || '', log: u.log || [] };
+    };
+    const appMail = (a, d) => 'mailto:' + (d.officerEmail || '') + '?subject=' + encodeURIComponent('Planning application ' + (d.councilRef || findProj(a.projectId).ref || ''));
+    const lnkStyle = 'width:30px;height:30px;border-radius:100px;border:1px solid #E2E2E2;background:#FFFFFF;color:#474747;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0;';
+    const appEvents = [];
+    const applicationsRows = appDefs.map(a => {
+      const proj = findProj(a.projectId);
+      const open = () => this.setState({ appOpen: a.projectId, appNote: '', appCopied: false });
+      const d = appFor(a);
+      const stop = (fn) => (e) => { if (e && e.stopPropagation) e.stopPropagation(); fn(); };
+      const showNext = a.status === 'Waiting' && !!d.nextCheck;
+      const diff = showNext ? Math.round((this.appParse(d.nextCheck) - this.appParse(appTodayIso)) / 86400000) : 0;
+      const overdue = showNext && diff < 0, soon = showNext && diff >= 0 && diff <= 3;
+      if (a.status === 'Waiting' && d.cadence && d.nextCheck) for (let i = 0; i < 4; i++) appEvents.push({ id: 'app-' + a.projectId + '-' + i, appId: a.projectId, title: 'Council check \u00b7 ' + proj.name, type: 'deadline', date: this.appAdd(d.nextCheck, i * d.cadence * 7), allDay: true, start: '', end: '', link: d.portalUrl, color: '#8B5D00', project: proj.name, attendees: '', guests: '', notes: 'Check the application on the council portal' + (d.councilRef ? ' (' + d.councilRef + ')' : ''), files: [], readonly: true });
+      return { ...a, project: proj.name, ref: proj.ref, open, openKeyDown: this.keyActivate(open), color: appStatusColor[a.status], bg: appStatusBg[a.status],
+        councilRef: d.councilRef, nextIso: d.nextCheck, diff, cadence: d.cadence,
+        quickCheck: stop(() => this.setApp(a.projectId, (cur) => ({ lastChecked: appTodayIso, nextCheck: d.cadence ? this.appAdd(appTodayIso, d.cadence * 7) : '', log: [{ at: appTodayIso, text: 'Checked the council portal, no change' }].concat(cur.log || []) }))),
+        showNext, nextLabel: (overdue ? 'Check overdue \u00b7 ' : 'Next check \u00b7 ') + this.appFmt(d.nextCheck).replace(/ \d{4}$/, ''),
+        nextStyle: 'font-size:11px;font-weight:700;padding:4px 10px;border-radius:100px;white-space:nowrap;' + (overdue ? 'background:rgba(142,27,24,0.10);color:#8E1B18;' : soon ? 'background:rgba(139,93,0,0.12);color:#8B5D00;' : 'background:#F3F3F3;color:#474747;'),
+        lnkStyle, portalTitle: d.portalUrl ? 'Open council portal' : 'Add the council portal link', mailTitle: d.officerEmail ? 'Email ' + (d.officer || 'case officer') : 'Add the case officer email',
+        goPortal: stop(() => { if (d.portalUrl) window.open(d.portalUrl, '_blank', 'noopener'); else open(); }),
+        goMail: stop(() => { if (d.officerEmail) window.location.href = appMail(a, d); else open(); }),
+        goDocs: stop(() => this.gotoTab('documents')), goProject: stop(openProj(a.projectId)) };
+    });
+    const appAlerts = [], appExpiry = {}, appAppeal = {};
+    const appTodayD = this.appParse(appTodayIso);
+    const dayDiff = (iso) => Math.round((this.appParse(iso) - appTodayD) / 86400000);
+    const decOf = (a) => { const u = this.state.appData[a.projectId] || {}; if (u.decisionDate) return u.decisionDate; const m = /(\d{1,2} \w{3} \d{4})/.exec(a.note || ''); const pd = m && this.appParse(m[1]); return pd ? this.appIso(pd) : ''; };
+    appDefs.forEach(a => {
+      const proj = findProj(a.projectId), au = this.state.appData[a.projectId] || {}, d = appFor(a), pid = a.projectId;
+      const mkEv = (suffix, title, date, color, notes) => appEvents.push({ id: 'app-' + pid + '-' + suffix, appId: pid, title: title + ' · ' + proj.name, type: 'deadline', date, allDay: true, start: '', end: '', link: '', color, project: proj.name, attendees: '', guests: '', notes, files: [], readonly: true });
+      const dayTxt = (df) => df < 0 ? Math.abs(df) + 'd overdue' : df === 0 ? 'Today' : 'In ' + df + 'd';
+      if (a.status === 'Waiting' && d.nextCheck) { const df = dayDiff(d.nextCheck); if (df <= 7) appAlerts.push({ key: 'chk-' + pid + '-' + d.nextCheck, pid, sev: df < 0 ? 0 : 1, title: df < 0 ? 'Council check overdue' : df === 0 ? 'Council check due today' : 'Council check in ' + df + ' day' + (df === 1 ? '' : 's'), detail: proj.name + (d.councilRef ? ' · ' + d.councilRef : '') + ' · ' + a.type, time: dayTxt(df) }); }
+      if (a.status === 'Granted') {
+        const dec = decOf(a);
+        if (dec) { const exp = this.appAdd(this.appAddYM(dec, 3, 0), -1); appExpiry[pid] = exp; const lapses = a.type === 'Planning Permission' ? 'Permission expires' : 'Approval lapses'; mkEv('exp', lapses, exp, '#2D7438', (a.type === 'Planning Permission' ? 'Work must start within 3 years of the decision date.' : 'Building regulations approval lapses after 3 years if work has not started.') + ' Granted ' + this.appFmt(dec) + '.'); const df = dayDiff(exp); if (df <= 180) appAlerts.push({ key: 'exp-' + pid + '-' + exp, pid, sev: 1, title: df < 0 ? lapses.replace('expires', 'expired').replace('lapses', 'lapsed') : lapses + ' in ' + df + ' days', detail: proj.name + ' · ' + a.type, time: dayTxt(df) }); }
+        (au.conditions || []).forEach(c => { if (c.due && !c.done) { mkEv('c' + c.id, 'Condition due', c.due, '#8B5D00', c.text); const df = dayDiff(c.due); if (df <= 14) appAlerts.push({ key: 'cond-' + pid + '-' + c.id + '-' + c.due, pid, sev: df < 0 ? 0 : 1, title: df < 0 ? 'Condition overdue' : 'Condition due ' + (df === 0 ? 'today' : 'in ' + df + ' days'), detail: proj.name + ' · ' + c.text, time: dayTxt(df) }); } });
+      }
+      if (a.status === 'Rejected') {
+        const dec = decOf(a), ap = au.appealBy || (dec ? this.appAdd(this.appAddYM(dec, 0, 6), -1) : '');
+        if (ap) { appAppeal[pid] = ap; mkEv('appeal', 'Appeal deadline', ap, '#8E1B18', 'Last day to appeal the refusal for ' + proj.name + '.'); const df = dayDiff(ap); if (df <= 60 && df >= 0) appAlerts.push({ key: 'apl-' + pid + '-' + ap, pid, sev: df <= 14 ? 0 : 1, title: 'Appeal window closes in ' + df + ' days', detail: proj.name + ' · ' + a.type, time: dayTxt(df) }); }
+        if (!au.nextStep) appAlerts.push({ key: 'nxt-' + pid, pid, sev: 1, title: 'Refused: decide next step', detail: proj.name + ' · appeal, resubmit or amend', time: 'Open' });
+      }
+    });
+    try { window.__eaAppEvents = appEvents; } catch (e) {}
+    const appSel = appDefs.find(a => a.projectId === this.state.appOpen) || null;
+    let appP = { statusOpts: [], showSubmitted: false, submittedIso: '', setSubmitted: () => {}, showTarget: false, targetIso: '', setTarget: () => {}, showDecision: false, decisionIso: '', setDecision: () => {}, decisionLabel: '', showConditions: false, conditions: [], hasConditions: false, condSummary: '', condDraft: '', setCondDraft: () => {}, addCondition: () => {}, name: '', ref: '', type: '', status: '', statusStyle: '', councilRef: '', setCouncilRef: () => {}, portalUrl: '', setPortalUrl: () => {}, officer: '', setOfficer: () => {}, officerEmail: '', setOfficerEmail: () => {}, showReminder: false, cadenceOpts: [], nextCheck: '', setNext: () => {}, lastLabel: '', note: '', setNote: () => {}, markChecked: () => {}, hasLog: false, log: [], goPortal: () => {}, copyPortal: () => {}, copyLabel: 'Copy link', goMail: () => {}, goDocs: () => {}, goProject: () => {}, goTasks: () => {} };
+    if (appSel) {
+      const pid = appSel.projectId, proj = findProj(pid), d = appFor(appSel), self = this;
+      const au = this.state.appData[pid] || {}, base = appBase.find(x => x.projectId === pid) || {};
+      const bm = /Decision due (\d{1,2} \w{3} \d{4})/.exec(base.note || ''), baseTarget = bm && this.appParse(bm[1]) ? this.appIso(this.appParse(bm[1])) : '';
+      const bs = this.appParse(base.submitted), baseSub = bs ? this.appIso(bs) : '';
+      const conds = au.conditions || [], doneN = conds.filter(c => c.done).length, stNow = appSel.status;
+      const segBtn = (on) => 'border:0;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;line-height:1;padding:8px 13px;border-radius:100px;white-space:nowrap;' + (on ? 'background:#F0E4E3;color:#8E1B18;' : 'background:transparent;color:#6B6B6B;');
+      appP = { statusOpts: ['Not Submitted', 'Waiting', 'Granted', 'Rejected'].map(st => ({ label: st, on: stNow === st, style: segBtn(stNow === st), select: () => { if (st === stNow) return; this.setApp(pid, (cur) => ({ status: st, nextCheck: st === 'Waiting' ? undefined : '', decisionDate: (st === 'Granted' || st === 'Rejected') ? (cur.decisionDate || appTodayIso) : cur.decisionDate, submitted: st !== 'Not Submitted' ? (cur.submitted || baseSub || appTodayIso) : cur.submitted, log: [{ at: appTodayIso, text: 'Status changed to ' + st }].concat(cur.log || []) })); } })),
+        showSubmitted: stNow !== 'Not Submitted', submittedIso: au.submitted || baseSub, setSubmitted: (v) => this.setApp(pid, { submitted: v }),
+        showTarget: stNow === 'Waiting', targetIso: au.target || baseTarget, setTarget: (v) => this.setApp(pid, { target: v }),
+        showDecision: stNow === 'Granted' || stNow === 'Rejected', decisionIso: au.decisionDate || '', setDecision: (v) => this.setApp(pid, { decisionDate: v }), decisionLabel: stNow === 'Granted' ? 'Date granted' : 'Date refused',
+        showConditions: stNow === 'Granted', hasConditions: conds.length > 0, condSummary: conds.length ? doneN + ' of ' + conds.length + ' discharged' : 'No conditions added',
+        conditions: conds.map(c => ({ text: c.text, mark: c.done ? '\u2713' : '', textStyle: 'flex:1;min-width:0;font-size:13px;line-height:1.4;' + (c.done ? 'color:#9A9A9A;text-decoration:line-through;' : 'color:#191919;'), check: 'width:20px;height:20px;border-radius:5px;flex-shrink:0;cursor:pointer;padding:0;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#FFFFFF;border:1.5px solid ' + (c.done ? '#2D7438' : '#BDBDBD') + ';background:' + (c.done ? '#2D7438' : '#FFFFFF') + ';', toggle: () => this.setApp(pid, (cur) => ({ conditions: (cur.conditions || []).map(x => x.id === c.id ? { ...x, done: !x.done } : x) })), remove: () => this.setApp(pid, (cur) => ({ conditions: (cur.conditions || []).filter(x => x.id !== c.id) })) })),
+        condDraft: this.state.appCond || '', setCondDraft: (e) => this.setState({ appCond: e.target.value }),
+        addCondition: () => { const t = (this.state.appCond || '').trim(); if (!t) return; this.setApp(pid, (cur) => ({ conditions: (cur.conditions || []).concat([{ id: 'c' + Date.now(), text: t, done: false }]) })); this.setState({ appCond: '' }); },
+        name: proj.name, ref: proj.ref, type: appSel.type, status: appSel.status, statusStyle: 'font-weight:700;color:' + appStatusColor[appSel.status] + ';',
+        councilRef: d.councilRef, setCouncilRef: (e) => this.setApp(pid, { councilRef: e.target.value }),
+        portalUrl: d.portalUrl, setPortalUrl: (e) => this.setApp(pid, { portalUrl: e.target.value.trim() }),
+        officer: d.officer, setOfficer: (e) => this.setApp(pid, { officer: e.target.value }),
+        officerEmail: d.officerEmail, setOfficerEmail: (e) => this.setApp(pid, { officerEmail: e.target.value.trim() }),
+        showReminder: appSel.status === 'Waiting',
+        cadenceOpts: appCadenceOpts.map((c) => { const on = d.cadence === c[0]; return { label: c[1], on, select: () => this.setApp(pid, (cur) => ({ cadence: c[0], nextCheck: c[0] ? (d.nextCheck || this.appAdd(d.lastChecked || appTodayIso, c[0] * 7)) : '' })), style: 'border:0;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;line-height:1;padding:8px 13px;border-radius:100px;white-space:nowrap;' + (on ? 'background:#F0E4E3;color:#8E1B18;' : 'background:transparent;color:#6B6B6B;') }; }),
+        nextCheck: d.nextCheck, setNext: (v) => this.setApp(pid, { nextCheck: v }),
+        lastLabel: d.lastChecked ? 'Last checked ' + this.appFmt(d.lastChecked) : 'Not checked yet',
+        note: this.state.appNote, setNote: (e) => this.setState({ appNote: e.target.value }),
+        markChecked: () => { const note = (this.state.appNote || '').trim(); this.setApp(pid, (cur) => ({ lastChecked: appTodayIso, nextCheck: d.cadence ? this.appAdd(appTodayIso, d.cadence * 7) : '', log: [{ at: appTodayIso, text: note || 'Checked the council portal, no change' }].concat(cur.log || []) })); this.setState({ appNote: '' }); },
+        hasLog: d.log.length > 0, log: d.log.slice(0, 8).map((l) => ({ when: this.appFmt(l.at), text: l.text })),
+        goPortal: () => { if (d.portalUrl) window.open(d.portalUrl, '_blank', 'noopener'); },
+        copyPortal: () => { if (!d.portalUrl) return; try { navigator.clipboard.writeText(d.portalUrl); } catch (e) {} this.setState({ appCopied: true }); setTimeout(() => this.setState({ appCopied: false }), 1600); }, copyLabel: this.state.appCopied ? 'Copied' : 'Copy link',
+        goMail: () => { if (d.officerEmail) window.location.href = appMail(appSel, d); },
+        goDocs: () => { this.closeApp(); this.gotoTab('documents'); }, goProject: openProj(pid), goTasks: () => { this.closeApp(); this.gotoTab('tasks'); } };
+    }
+    const seg2 = (on) => 'border:0;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;line-height:1;padding:8px 13px;border-radius:100px;white-space:nowrap;' + (on ? 'background:#F0E4E3;color:#8E1B18;' : 'background:transparent;color:#6B6B6B;');
+    let appPx = { showExpiry: false, expiryText: '', expiryStyle: '', conditions: [], condDueIso: '', setCondDue: () => {}, addCondition: () => {}, showRefusal: false, refusalReason: '', setRefusalReason: () => {}, nextSteps: [], hasNextHint: false, nextHint: '', appealIso: '', setAppeal: () => {}, appealHint: '', hasAppealHint: false, appealHintStyle: '', corrTypes: [], corrSubject: '', setCorrSubject: () => {}, corrNote: '', setCorrNote: () => {}, pickCorrFile: () => {}, corrFile: '', hasCorrFile: false, addCorr: () => {}, corr: [], hasCorr: false, corrCount: '' };
+    if (appSel) {
+      const pid2 = appSel.projectId, au2 = this.state.appData[pid2] || {}, st2 = appSel.status;
+      const stopE = (e) => { if (e && e.stopPropagation) e.stopPropagation(); };
+      if (st2 === 'Granted' && appExpiry[pid2]) { const df = dayDiff(appExpiry[pid2]); appPx.showExpiry = true; appPx.expiryText = (appSel.type === 'Planning Permission' ? 'Permission expires ' : 'Approval lapses ') + this.appFmt(appExpiry[pid2]) + ' · ' + (df < 0 ? 'expired' : df < 60 ? df + ' days left' : Math.round(df / 30.4) + ' months left'); appPx.expiryStyle = 'display:inline-flex;align-self:flex-start;font-size:12px;font-weight:700;padding:6px 12px;border-radius:100px;' + (df < 180 ? 'background:rgba(142,27,24,0.10);color:#8E1B18;' : df < 365 ? 'background:rgba(139,93,0,0.12);color:#8B5D00;' : 'background:rgba(45,116,56,0.10);color:#2D7438;'); }
+      appPx.conditions = (au2.conditions || []).map(c => { const df = c.due ? dayDiff(c.due) : 0, late = !!c.due && !c.done && df < 0; return { text: c.text, mark: c.done ? '✓' : '', hasDue: !!c.due && !c.done, dueLabel: (late ? 'Overdue · ' : 'Due ') + this.appFmt(c.due).replace(/ \d{4}$/, ''), dueStyle: 'flex-shrink:0;font-size:11px;font-weight:700;padding:3px 9px;border-radius:100px;white-space:nowrap;' + (late ? 'background:rgba(142,27,24,0.10);color:#8E1B18;' : 'background:#F3F3F3;color:#474747;'), textStyle: 'flex:1;min-width:0;font-size:13px;line-height:1.4;' + (c.done ? 'color:#9A9A9A;text-decoration:line-through;' : 'color:#191919;'), check: 'width:20px;height:20px;border-radius:5px;flex-shrink:0;cursor:pointer;padding:0;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#FFFFFF;border:1.5px solid ' + (c.done ? '#2D7438' : '#BDBDBD') + ';background:' + (c.done ? '#2D7438' : '#FFFFFF') + ';', toggle: () => this.setApp(pid2, (cur) => ({ conditions: (cur.conditions || []).map(x => x.id === c.id ? { ...x, done: !x.done } : x) })), remove: () => this.setApp(pid2, (cur) => ({ conditions: (cur.conditions || []).filter(x => x.id !== c.id) })) }; });
+      appPx.condDueIso = this.state.appCondDue || ''; appPx.setCondDue = (v) => this.setState({ appCondDue: v || '' });
+      appPx.addCondition = () => { const t = (this.state.appCond || '').trim(); if (!t) return; const due = this.state.appCondDue || ''; this.setApp(pid2, (cur) => ({ conditions: (cur.conditions || []).concat([{ id: 'c' + Date.now(), text: t, done: false, due }]) })); this.setState({ appCond: '', appCondDue: '' }); };
+      if (st2 === 'Rejected') {
+        const ap = appAppeal[pid2] || '', step = au2.nextStep || '';
+        const hints = { 'Appeal': 'Appeals go to the Planning Inspectorate. Householder appeals have a shorter window than most, so confirm the deadline before relying on this date.', 'Resubmit': 'A revised application for the same site may qualify for a free resubmission within 12 months of the decision. Check with the council.', 'Amend and resubmit': 'Update the drawings to answer each refusal reason, then log the new submission date here.', 'Withdraw': 'Tell the client and the council, then archive the project tasks.' };
+        appPx.showRefusal = true; appPx.refusalReason = au2.refusalReason || ''; appPx.setRefusalReason = (e) => this.setApp(pid2, { refusalReason: e.target.value });
+        appPx.nextSteps = ['Appeal', 'Resubmit', 'Amend and resubmit', 'Withdraw'].map(o => ({ label: o, style: seg2(step === o), select: () => { if (o === step) return; this.setApp(pid2, (cur) => ({ nextStep: o, log: [{ at: appTodayIso, text: 'Next step chosen: ' + o }].concat(cur.log || []) })); } }));
+        appPx.hasNextHint = !!step; appPx.nextHint = hints[step] || '';
+        appPx.appealIso = ap; appPx.setAppeal = (v) => this.setApp(pid2, { appealBy: v });
+        if (ap) { const df = dayDiff(ap); appPx.hasAppealHint = true; appPx.appealHint = df < 0 ? 'Appeal window has closed' : df + ' days left to appeal'; appPx.appealHintStyle = 'margin:6px 0 0;font-size:11.5px;font-weight:600;color:' + (df < 0 || df <= 14 ? '#8E1B18' : '#474747') + ';'; }
+      }
+      const cs = this.state.appCorr || {}, typeCol = { 'Email in': ['#2D7438', 'rgba(45,116,56,0.10)'], 'Email out': ['#5B6B7B', 'rgba(91,107,123,0.12)'], 'Call': ['#8B5D00', 'rgba(139,93,0,0.12)'], 'Letter': ['#474747', '#F3F3F3'] };
+      const corrAll = au2.corr || this.appCorrSeed[pid2] || [];
+      appPx.corrTypes = ['Email in', 'Email out', 'Call', 'Letter'].map(o => ({ label: o, style: seg2(cs.type === o), select: () => this.setState(st => ({ appCorr: { ...st.appCorr, type: o } })) }));
+      appPx.corrSubject = cs.subject || ''; appPx.setCorrSubject = (e) => { const v = e.target.value; this.setState(st => ({ appCorr: { ...st.appCorr, subject: v } })); };
+      appPx.corrNote = cs.note || ''; appPx.setCorrNote = (e) => { const v = e.target.value; this.setState(st => ({ appCorr: { ...st.appCorr, note: v } })); };
+      appPx.pickCorrFile = (e) => { const f = e.target.files && e.target.files[0]; const v = f ? f.name : ''; this.setState(st => ({ appCorr: { ...st.appCorr, file: v } })); };
+      appPx.corrFile = cs.file || ''; appPx.hasCorrFile = !!cs.file;
+      appPx.addCorr = () => { const sub = (cs.subject || '').trim(), note = (cs.note || '').trim(); if (!sub && !note) return; this.setApp(pid2, (cur) => ({ corr: [{ id: 'm' + Date.now(), at: appTodayIso, type: cs.type || 'Email in', subject: sub || cs.type, note, file: cs.file || '' }].concat(cur.corr || this.appCorrSeed[pid2] || []) })); this.setState({ appCorr: { type: cs.type || 'Email in', subject: '', note: '', file: '' } }); };
+      appPx.corr = corrAll.map(m => { const tc = typeCol[m.type] || typeCol.Letter; return { when: this.appFmt(m.at), type: m.type, typeStyle: 'font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 9px;border-radius:100px;white-space:nowrap;color:' + tc[0] + ';background:' + tc[1] + ';', subject: m.subject, note: m.note, hasNote: !!m.note, file: m.file, hasFile: !!m.file, remove: () => this.setApp(pid2, (cur) => ({ corr: (cur.corr || this.appCorrSeed[pid2] || []).filter(x => x.id !== m.id) })) }; });
+      appPx.hasCorr = corrAll.length > 0; appPx.corrCount = corrAll.length + (corrAll.length === 1 ? ' entry' : ' entries');
+    }
+    const pipelineDefs = ['Not Submitted', 'Waiting', 'Granted', 'Rejected'].map(label => ({ label, count: appDefs.filter(a => a.status === label).length, color: appStatusColor[label] }));
+
+    const isOverview = this.props.view === 'overview';
+    const wCount = appDefs.filter(a => a.status === 'Waiting').length, gCount = appDefs.filter(a => a.status === 'Granted').length;
+    const late = appAlerts.filter(a => a.sev === 0).length;
+    const tint = (c, al) => c + al;
+    const tile = (label, value, ico, c) => ({ label, value, ico, style: 'background:linear-gradient(160deg,#FFFFFF 0%,' + c + '14 100%);border:1px solid ' + c + '33;border-radius:14px;padding:18px;', icoStyle: 'width:38px;height:38px;border-radius:100px;display:flex;align-items:center;justify-content:center;color:#FFFFFF;background:' + c + ';' });
+    const tiles = [tile('Live projects', 12, 'M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z', '#191919'), tile('Awaiting decision', wCount, 'M12 7v5l3 2M21 12a9 9 0 11-18 0 9 9 0 0118 0z', '#C98A1B'), tile('Granted', gCount, 'M22 11.1V12a10 10 0 11-5.9-9.1M22 4L12 14l-3-3', '#2D7438'), tile('Need attention', appAlerts.length, 'M12 9v4M12 17h.01M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z', '#8E1B18'), tile('Overdue', late, 'M12 8v4l2 2M3 12a9 9 0 1018 0 9 9 0 00-18 0', late ? '#8E1B18' : '#5B6B7B')];
+    const total = Math.max(1, appDefs.length); let acc = 0;
+    const segs = pipelineDefs.map(d => { const from = acc / total * 100; acc += d.count; return d.color + ' ' + from + '% ' + (acc / total * 100) + '%'; });
+    const donutStyle = 'width:132px;height:132px;border-radius:100px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:conic-gradient(' + (acc ? segs.join(',') : '#EAEAEA 0 100%') + ');';
+    const legend = pipelineDefs.map(d => ({ label: d.label, count: d.count, dot: 'width:10px;height:10px;border-radius:100px;background:' + d.color + ';' }));
+    const kindMap = { chk: ['Council check', 'M12 7v5l3 2M21 12a9 9 0 11-18 0 9 9 0 0118 0z'], exp: ['Approval expiry', 'M8 2v4M16 2v4M3 8h18M5 4h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z'], cond: ['Condition due', 'M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11'], apl: ['Appeal window', 'M12 9v4M12 17h.01M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z'], nxt: ['Refused', 'M12 9v4M12 17h.01M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z'] };
+    const riskRows = appAlerts.slice().sort((a, b) => a.sev - b.sev).map(a => { const open = () => { try { window.dispatchEvent(new CustomEvent('ea-open-application', { detail: { id: a.pid } })); } catch (e) {} }; const km = kindMap[(a.key || '').split('-')[0]] || kindMap.chk, red = a.sev === 0; return { proj: (a.detail || '').split(' · ')[0].split(',')[0], kind: km[0], ico: km[1], time: a.time, open, openKeyDown: this.keyActivate(open), icoStyle: 'width:34px;height:34px;border-radius:100px;flex-shrink:0;display:flex;align-items:center;justify-content:center;' + (red ? 'background:rgba(142,27,24,0.10);color:#8E1B18;' : 'background:rgba(201,138,27,0.14);color:#B07412;'), chipStyle: 'font-size:11px;font-weight:700;padding:4px 10px;border-radius:100px;white-space:nowrap;' + (red ? 'background:rgba(142,27,24,0.10);color:#8E1B18;' : 'background:rgba(139,93,0,0.12);color:#8B5D00;') }; });
+    return { isOverview, isFull: !isOverview, tiles, riskRows, noRisk: riskRows.length === 0, riskCount: riskRows.length, riskBadge: 'font-size:12px;font-weight:700;min-width:26px;text-align:center;padding:4px 9px;border-radius:100px;' + (riskRows.length ? 'background:#8E1B18;color:#FFFFFF;' : 'background:rgba(45,116,56,0.10);color:#2D7438;'), donutStyle, donutTotal: appDefs.length, legend, applicationsRows, pipelineDefs, appPanelOpen: !!appSel, appP, appPx, closeApp: this.closeApp, docStop: (e) => e.stopPropagation() };
+  }
+}
+</script>
+</body>
+</html>
