@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EA Dropdown</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    @font-face{font-family:'Montserrat';src:url('./fonts/Montserrat-VariableFont_wght.ttf') format('truetype-variations');font-weight:100 900}
+    .dd-trig{box-sizing:border-box;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;background:#FFFFFF;font-family:'Montserrat',ui-sans-serif,system-ui,sans-serif;transition:border-color 150ms ease-out,box-shadow 150ms ease-out,background 150ms ease-out}
+    .dd-trig:focus-visible{outline:none;border-color:#8E1B18 !important;box-shadow:0 0 0 3px rgba(142,27,24,0.18)}
+    .dd-field{width:100%;padding:10px 12px;border:1px solid #D1D1D1;border-radius:6px;font-size:14px}
+    .dd-field:hover{border-color:#A3A3A3}
+    .dd-filter{padding:7px 10px;border:1px solid #D1D1D1;border-radius:6px;font-size:12px;gap:8px}
+    .dd-filter:hover{border-color:#A3A3A3}
+    .dd-inline{width:100%;padding:5px 6px;border:1px solid transparent;border-radius:6px;font-size:12px;background:transparent}
+    .dd-inline:hover{border-color:#D1D1D1;background:#FFFFFF}
+    .dd-box{width:100%;padding:5px 8px;border:1px solid #EAEAEA;border-radius:6px;font-size:12px}
+    .dd-box:hover{border-color:#D1D1D1}
+    .dd-item{box-sizing:border-box;padding:9px 14px;font-size:13px;color:#191919;cursor:pointer;border-bottom:1px solid #F3F3F3;font-family:'Montserrat',ui-sans-serif,system-ui,sans-serif}
+    .dd-item:last-child{border-bottom:0}
+    .dd-item:hover{background:#F3F3F3 !important}
+  </style>
+</helmet>
+<div style="{{ rootStyle }}">
+  <div ref="{{ trigRef }}" class="dd-trig {{ trigClass }}" onClick="{{ toggle }}" onKeyDown="{{ keyDown }}" role="button" tabindex="0" aria-haspopup="listbox" aria-expanded="{{ open }}" aria-label="{{ ariaLabel }}">
+    <sc-if value="{{ hasPrefix }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;font-weight:600;color:#6B6B6B;white-space:nowrap;">{{ prefix }}</span></sc-if>
+    <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:{{ weight }};color:{{ color }};">{{ display }}</span>
+    <svg width="{{ chevSize }}" height="{{ chevSize }}" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;{{ chevStyle }}"><path d="M6 9l6 6 6-6" stroke="#474747" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+  </div>
+  <sc-if value="{{ open }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ close }}" style="position:fixed;inset:0;z-index:80;"></div>
+    <div ref="{{ panelRef }}" role="listbox" style="{{ panelStyle }}background:#FFFFFF;border:1px solid #D1D1D1;border-radius:6px;box-shadow:0 12px 28px rgba(25,25,25,0.14);z-index:81;overflow-y:auto;">
+      <sc-for list="{{ items }}" as="it" hint-placeholder-count="4">
+        <div class="dd-item" onClick="{{ it.select }}" role="option" aria-selected="{{ it.selected }}" style="background:{{ it.bg }};display:flex;align-items:center;gap:10px;">
+          <sc-if value="{{ it.showBox }}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" style="{{ it.boxStyle }}"><sc-if value="{{ it.selected }}" hint-placeholder-val="{{ false }}"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></sc-if></span></sc-if>
+          <div style="min-width:0;flex:1;">
+            <span style="display:block;font-weight:{{ it.weight }};">{{ it.label }}</span>
+            <sc-if value="{{ it.hasSub }}" hint-placeholder-val="{{ false }}"><span style="display:block;margin-top:1px;font-size:11px;font-weight:500;color:#8C8C8C;">{{ it.sub }}</span></sc-if>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"value":{"editor":null},"options":{"editor":null},"pick":{"editor":null},"variant":{"editor":null},"multi":{"editor":null},"label":{"editor":null},"prefix":{"editor":null},"color":{"editor":null}}'>
+class Component extends DCLogic {
+  state = { open: false, panelStyle: '' };
+  trigRef = React.createRef();
+  panelRef = React.createRef();
+
+  componentWillUnmount() { this.detach(); }
+  detach() {
+    if (this._cl) {
+      window.removeEventListener('scroll', this._cl, true);
+      window.removeEventListener('resize', this._cl);
+      document.removeEventListener('keydown', this._esc, true);
+      this._cl = null;
+    }
+  }
+  close = () => { this.detach(); this.setState({ open: false }); };
+  toggle = () => {
+    if (this.state.open) { this.close(); return; }
+    const el = this.trigRef.current;
+    if (!el) return;
+    const v = this.props.variant || 'field';
+    const r = el.getBoundingClientRect();
+    const n = (this.props.options || []).length;
+    const minW = Math.max(r.width, v === 'field' ? 160 : 180);
+    const vh = window.innerHeight, vw = window.innerWidth;
+    const below = vh - r.bottom, above = r.top;
+    const want = Math.min(280, n * 40 + 4);
+    const up = below < want + 12 && above > below;
+    const left = Math.max(8, Math.min(r.left, vw - minW - 8));
+    const maxH = Math.max(120, Math.min(280, (up ? above : below) - 12));
+    const st = 'position:fixed;left:' + left + 'px;min-width:' + minW + 'px;max-width:340px;max-height:' + maxH + 'px;' + (up ? 'bottom:' + (vh - r.top + 4) + 'px;' : 'top:' + (r.bottom + 4) + 'px;');
+    this._cl = (e) => { if (e && e.type === 'scroll' && this.panelRef.current && this.panelRef.current.contains(e.target)) return; this.close(); };
+    this._esc = (e) => { if (e.key === 'Escape') { e.stopPropagation(); this.close(); } };
+    window.addEventListener('scroll', this._cl, true);
+    window.addEventListener('resize', this._cl);
+    document.addEventListener('keydown', this._esc, true);
+    this.setState({ open: true, panelStyle: st });
+  };
+
+  renderVals() {
+    const p = this.props;
+    const v = p.variant || 'field';
+    const opts = p.options || [];
+    const cur = opts.find((o) => String(o.value) === String(p.value == null ? '' : p.value));
+    const filter = v === 'filter';
+    const multi = !!p.multi;
+    const vals = multi && Array.isArray(p.value) ? p.value.map(String) : [];
+    const labelOf = (val) => { const o = opts.find((x) => String(x.value) === val); return o ? o.label : val; };
+    return {
+      rootStyle: (filter ? 'display:inline-block;' : 'display:block;width:100%;') + 'position:relative;min-width:0;',
+      trigClass: v === 'inline' ? 'dd-inline' : v === 'box' ? 'dd-box' : filter ? 'dd-filter' : 'dd-field',
+      ariaLabel: p.label || p.prefix || 'Select',
+      hasPrefix: !!p.prefix, prefix: p.prefix || '',
+      display: multi ? (vals.length === 0 ? (opts[0] ? opts[0].label : '') : vals.length === 1 ? labelOf(vals[0]) : vals.length + ' selected') : (cur ? cur.label : (opts[0] ? opts[0].label : '')),
+      weight: v === 'inline' || v === 'box' ? 500 : 500,
+      color: p.color || '#191919',
+      chevSize: v === 'field' ? 14 : 12,
+      chevStyle: 'transition:transform 150ms ease-out;transform:rotate(' + (this.state.open ? 180 : 0) + 'deg);',
+      open: this.state.open, panelStyle: this.state.panelStyle,
+      trigRef: this.trigRef, panelRef: this.panelRef,
+      toggle: this.toggle, close: this.close,
+      keyDown: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.toggle(); } },
+      items: opts.map((o) => {
+        const sel = multi ? (o.value === '' ? vals.length === 0 : vals.includes(String(o.value))) : cur && o.value === cur.value;
+        const select = multi
+          ? () => {
+              if (typeof p.pick !== 'function') return;
+              if (o.value === '') { this.close(); p.pick([]); return; }
+              const k = String(o.value);
+              p.pick(vals.includes(k) ? vals.filter((x) => x !== k) : vals.concat([k]));
+            }
+          : () => { this.close(); if (typeof p.pick === 'function') p.pick(o.value); };
+        return {
+          label: o.label, sub: o.sub || '', hasSub: !!o.sub, selected: !!sel, bg: sel ? '#FCEAEA' : '#FFFFFF', weight: sel ? 600 : 500,
+          showBox: multi && o.value !== '', boxStyle: 'width:16px;height:16px;border-radius:4px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;border:1.5px solid ' + (sel ? '#8E1B18' : '#BABABA') + ';background:' + (sel ? '#8E1B18' : '#FFFFFF') + ';',
+          select
+        };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

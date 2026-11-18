@@ -1,0 +1,240 @@
+{
+  "v": 1,
+  "mode": "omelette",
+  "root": "project/",
+  "title": "EA Portal - Aesha",
+  "entry": "EAPortalProjectDetailStaff.dc.html",
+  "pages": [
+    {
+      "path": "EAPortalProjectDetailStaff.dc.html",
+      "title": "EAPortalProjectDetailStaff",
+      "kind": "page"
+    },
+    {
+      "path": "EAPortalProjectDetailAdmin.dc.html",
+      "title": "EAPortalProjectDetailAdmin",
+      "kind": "page"
+    },
+    {
+      "path": "EAPortalProjectDetailManager.dc.html",
+      "title": "EAPortalProjectDetailManager",
+      "kind": "page"
+    },
+    {
+      "path": "EAPortalDashboardSales.dc.html",
+      "title": "EAPortalDashboardSales",
+      "kind": "page"
+    },
+    {
+      "path": "EAPortalDashboardAdmin.dc.html",
+      "title": "EAPortalDashboardAdmin",
+      "kind": "page"
+    },
+    {
+      "path": "EAPortalDashboardStaff.dc.html",
+      "title": "EAPortalDashboardStaff",
+      "kind": "page"
+    },
+    {
+      "path": "EAPortalDashboardClient.dc.html",
+      "title": "EAPortalDashboardClient",
+      "kind": "page"
+    },
+    {
+      "path": "EAPortalDashboardManager.dc.html",
+      "title": "EAPortalDashboardManager",
+      "kind": "page"
+    },
+    {
+      "path": "EAPortal404.dc.html",
+      "title": "EAPortal404",
+      "kind": "page"
+    },
+    {
+      "path": "EAPortalAssetLibrary.dc.html",
+      "title": "EAPortalAssetLibrary",
+      "kind": "page"
+    },
+    {
+      "path": "EAPortalMessages.dc.html",
+      "title": "EAPortalMessages",
+      "kind": "component"
+    },
+    {
+      "path": "EAPortalStaffTasks.dc.html",
+      "title": "EAPortalStaffTasks",
+      "kind": "component"
+    },
+    {
+      "path": "EAPortalStaffDocuments.dc.html",
+      "title": "EAPortalStaffDocuments",
+      "kind": "component"
+    },
+    {
+      "path": "EAPortalStaffApplications.dc.html",
+      "title": "EAPortalStaffApplications",
+      "kind": "component"
+    },
+    {
+      "path": "EAPortalDropdown.dc.html",
+      "title": "EAPortalDropdown",
+      "kind": "component"
+    },
+    {
+      "path": "index.dc.html",
+      "title": "index",
+      "kind": "page"
+    },
+    {
+      "path": "EAPortalDevRequirements.html",
+      "title": "EA Portal \u2014 Client-Side Dev Requirements",
+      "kind": "plain"
+    },
+    {
+      "path": "exports/EA Portal - 404.html",
+      "title": "Bundled Page",
+      "kind": "plain"
+    },
+    {
+      "path": "exports/EA Portal - Admin Dashboard.html",
+      "title": "Bundled Page",
+      "kind": "plain"
+    },
+    {
+      "path": "exports/EA Portal - Asset Library.html",
+      "title": "Bundled Page",
+      "kind": "plain"
+    },
+    {
+      "path": "exports/EA Portal - Brand & Asset Library.html",
+      "title": "Bundled Page",
+      "kind": "plain"
+    },
+    {
+      "path": "exports/EA Portal - Client Dashboard.html",
+      "title": "Bundled Page",
+      "kind": "plain"
+    },
+    {
+      "path": "exports/EA Portal - Manager Dashboard.html",
+      "title": "Bundled Page",
+      "kind": "plain"
+    },
+    {
+      "path": "exports/EA Portal - Messages.html",
+      "title": "Bundled Page",
+      "kind": "plain"
+    },
+    {
+      "path": "exports/EA Portal - Sales Dashboard.html",
+      "title": "Bundled Page",
+      "kind": "plain"
+    },
+    {
+      "path": "exports/EA Portal - Sign In.html",
+      "title": "Bundled Page",
+      "kind": "plain"
+    },
+    {
+      "path": "exports/EA Portal - Staff Dashboard.html",
+      "title": "Bundled Page",
+      "kind": "plain"
+    },
+    {
+      "path": "exports/EA Portal - Staff Project Detail.html",
+      "title": "Bundled Page",
+      "kind": "plain"
+    },
+    {
+      "path": "exports/EA Portal - Visual Roadmap.html",
+      "title": "Bundled Page",
+      "kind": "plain"
+    },
+    {
+      "path": "uploads/ea-cover-sheet-fields.html",
+      "title": "EA Portal \u2014 Cover Sheet Field Prototype",
+      "kind": "plain"
+    }
+  ],
+  "migratorVersion": "artifact-migrator (claude-design-backend a595f3769f57)",
+  "createdAt": "2026-11-02T09:08:19.652Z",
+  "source": {
+    "v": 1,
+    "app": "claude-design",
+    "url": "https://claude.ai/design/p/d32bdcac-8d0b-4253-a22b-1ae661dc5360",
+    "projectId": "d32bdcac-8d0b-4253-a22b-1ae661dc5360",
+    "exportedAt": "2026-11-02T09:08:19.652Z"
+  },
+  "report": {
+    "itemsVersion": 2,
+    "pages": {
+      "total": 23,
+      "ok": 12,
+      "partial": 11,
+      "notMigrated": 0
+    },
+    "items": [
+      {
+        "kind": "external_blocked",
+        "path": "EAPortalDashboardClient.dc.html",
+        "text": "https://player.vimeo.com/video/1135745545?h=77ce47ecf6#t=8s"
+      },
+      {
+        "kind": "external_blocked",
+        "path": "EAPortalDashboardSales.dc.html",
+        "text": "https://player.vimeo.com/video/1135745545?h=77ce47ecf6#t=8s"
+      },
+      {
+        "kind": "external_blocked",
+        "path": "EAPortalDashboardStaff.dc.html",
+        "text": "https://player.vimeo.com/video/1135745545?h=77ce47ecf6#t=8s"
+      },
+      {
+        "kind": "external_blocked",
+        "path": "EAPortalProjectDetailStaff.dc.html",
+        "text": "https://maps.google.com/maps?q="
+      },
+      {
+        "kind": "external_blocked",
+        "path": "exports/EA Portal - Client Dashboard.html",
+        "text": "https://player.vimeo.com/video/1135745545?h=77ce47ecf6#t=8s"
+      },
+      {
+        "kind": "page_partial",
+        "path": "exports/EA Portal - Sales Dashboard.html",
+        "text": "is a packed page (a single-file copy of a page, which rebuilds it in the browser), published as written and not checked: it may come up blank or without its fonts; if the project still has the page it was copied from, use that one",
+        "caveat": "packed_page_not_read"
+      },
+      {
+        "kind": "external_blocked",
+        "path": "exports/EA Portal - Sign In.html",
+        "text": "https://player.vimeo.com/video/1212038126?title=0&amp;byline=0&amp;portrait=0\nhttps://player.vimeo.com/api/player.js"
+      },
+      {
+        "kind": "page_partial",
+        "path": "exports/EA Portal - Staff Dashboard.html",
+        "text": "is a packed page (a single-file copy of a page, which rebuilds it in the browser), published as written and not checked: it may come up blank or without its fonts; if the project still has the page it was copied from, use that one",
+        "caveat": "packed_page_not_read"
+      },
+      {
+        "kind": "page_partial",
+        "path": "exports/EA Portal - Staff Project Detail.html",
+        "text": "is a packed page (a single-file copy of a page, which rebuilds it in the browser), published as written and not checked: it may come up blank or without its fonts; if the project still has the page it was copied from, use that one",
+        "caveat": "packed_page_not_read"
+      },
+      {
+        "kind": "page_partial",
+        "path": "exports/EA Portal - Visual Roadmap.html",
+        "text": "is a packed page (a single-file copy of a page, which rebuilds it in the browser), published as written and not checked: it may come up blank or without its fonts; if the project still has the page it was copied from, use that one",
+        "caveat": "packed_page_not_read"
+      },
+      {
+        "kind": "external_blocked",
+        "path": "index.dc.html",
+        "text": "https://player.vimeo.com/video/1212038126?title=0&amp;byline=0&amp;portrait=0\nhttps://player.vimeo.com/api/player.js"
+      }
+    ],
+    "truncated": 0,
+    "truncatedLeftOut": 0
+  }
+}
