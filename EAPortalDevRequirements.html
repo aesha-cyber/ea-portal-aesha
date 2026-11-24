@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>EA Portal — Client-Side Dev Requirements</title>
+<link rel="stylesheet" href="_ds/extension-architecture-design-system-0124207d-8759-4968-8e99-e143fec3b79f/colors_and_type.css">
+<style id="__om-edit-overrides"></style>
+<style>
+  doc-page:not(:defined) { visibility: hidden; }
+  body { font-family: var(--font-sans); }
+  h1, h2, h3 { font-family: var(--font-serif); font-optical-sizing: auto; font-weight: 600; }
+  h1 { font-size: 40px; letter-spacing: -0.01em; margin-bottom: 4px; }
+  .doc-sub { font-size: var(--fs-p-m); color: var(--fg-2); margin: 0 0 32px; }
+  h2 { font-size: 24px; color: var(--ea-crimson); margin: 2.2em 0 0.6em; border-bottom: 1px solid var(--border-1); padding-bottom: 8px; }
+  h2:first-of-type { margin-top: 1.6em; }
+  h3 { font-size: 17px; font-family: var(--font-sans); font-weight: 700; color: var(--fg-1); margin: 1.4em 0 0.4em; }
+  p { font-size: 14.5px; line-height: 1.65; color: var(--fg-1); }
+  ul.req { list-style: none; margin: 0 0 1em; padding: 0; }
+  ul.req li { position: relative; padding-left: 24px; margin-bottom: 8px; font-size: 14.5px; line-height: 1.55; orphans: 3; widows: 3; }
+  ul.req li::before {
+    content: "";
+    position: absolute; left: 0; top: 4px;
+    width: 13px; height: 13px;
+    border: 1.5px solid var(--ea-mist);
+    border-radius: 3px;
+    background: var(--ea-paper);
+  }
+  code {
+    font-family: 'DM Mono', ui-monospace, Menlo, monospace;
+    font-size: 13px;
+    background: var(--ea-bone);
+    border: 1px solid var(--border-1);
+    border-radius: 4px;
+    padding: 1px 6px;
+  }
+  .meta-row {
+    display: flex; gap: 32px; flex-wrap: wrap;
+    padding: 14px 0 20px; margin-bottom: 8px;
+    border-bottom: 1.5px solid var(--ea-noir);
+  }
+  .meta-row div { font-size: 12.5px; }
+  .meta-row span.label { display: block; text-transform: uppercase; letter-spacing: 0.1em; color: var(--fg-3); font-size: 10.5px; margin-bottom: 3px; font-weight: 600; }
+  table { width: 100%; border-collapse: collapse; margin: 0.6em 0 1.2em; font-size: 13.5px; }
+  thead th { text-align: left; background: var(--ea-bone); padding: 8px 10px; border-bottom: 1.5px solid var(--ea-noir); font-weight: 700; }
+  tbody td { padding: 7px 10px; border-bottom: 1px solid var(--border-1); vertical-align: top; }
+  .note {
+    background: var(--info-bg); border: 1px solid var(--info-wash);
+    border-radius: var(--radius-sm); padding: 12px 16px;
+    font-size: 13.5px; color: var(--fg-1); margin: 1em 0;
+    break-inside: avoid;
+  }
+  .note strong { color: var(--info-ink); }
+  footer.doc-footer { font-size: 11px; color: var(--fg-3); }
+</style>
+</head>
+<body>
+
+<style>doc-page:not(:defined){visibility:hidden}</style>
+<doc-page size="letter" margin="0.85in">
+
+  <header slot="header" style="font-size:11px; color:var(--fg-3); display:flex; justify-content:space-between; width:100%;">
+    <span>EA Portal — Client-Side Dev Requirements</span>
+    <span>Extension Architecture</span>
+  </header>
+  <footer slot="footer" class="doc-footer" style="display:flex; justify-content:space-between; width:100%;">
+    <span>Internal — Engineering</span>
+    <span>Confidential</span>
+  </footer>
+
+  <h1>EA Portal — Client-Side Development Requirements</h1>
+  <p class="doc-sub">Full-stack / frontend scope for a developer continuing work on the EA Portal persona dashboards.</p>
+
+  <div class="meta-row">
+    <div><span class="label">Project</span>EA Portal</div>
+    <div><span class="label">Scope</span>Auth, data model, API, frontend logic</div>
+    <div><span class="label">Status</span>Dev handoff draft</div>
+    <div><span class="label">Date</span>October 2026</div>
+  </div>
+
+  <h2>1. Auth &amp; Routing</h2>
+  <ul class="req">
+    <li>Persona-based auth/session resolving to one of: Admin, Manager, Staff, Client, Sales Prospect — plus a 404 fallback for unmatched or unauthorized routes.</li>
+    <li>Route guards per persona (a Client must not reach Sales/Admin views, and vice versa).</li>
+    <li>Deep-link support into a specific project and journey stage.</li>
+    <li>Remove any remaining references, routes, or nav entries pointing to the deleted Developer dashboard.</li>
+    <li>Confirm the 404 page catches stale/removed Developer links.</li>
+  </ul>
+
+  <h2>2. Data Model</h2>
+  <h3>Project</h3>
+  <ul class="req">
+    <li><code>id</code>, <code>title</code> (expect truncation-safe strings — UI renders titles on a fixed 2-line display).</li>
+    <li><code>currentPhaseName</code>, <code>currentPhasePercent</code> (e.g. "Interior Design — 62%").</li>
+    <li>Ordered stage/milestone list.</li>
+    <li><code>type</code> flag distinguishing real client/purchased projects from Sales Prospect (demo) projects — progress is unlocked and real for Sales Prospect, locked to true completion for Client.</li>
+  </ul>
+  <h3>Stage</h3>
+  <ul class="req">
+    <li><code>name</code>, <code>order</code>, <code>progressPercent</code>, <code>isCurrent</code> boolean.</li>
+    <li>Associated media: fullscreen preview video asset (Sales Prospect stages) vs. drawing/document links (real Client stages).</li>
+  </ul>
+  <h3>Team / Avatars</h3>
+  <ul class="req">
+    <li>API returns the full assignee list (<code>name</code>, <code>avatarUrl</code>); frontend caps display to first 2 + "+N" overflow — don't pre-truncate server-side.</li>
+  </ul>
+
+  <h2>3. API Endpoints</h2>
+  <table>
+    <thead><tr><th>Endpoint</th><th>Purpose</th><th>Access</th></tr></thead>
+    <tbody>
+      <tr><td>GET project list</td><td>Dashboard cards, scoped per persona</td><td>All personas</td></tr>
+      <tr><td>GET project detail</td><td>Stage ring + full journey</td><td>All personas</td></tr>
+      <tr><td>GET/POST progress</td><td>Update stage progress</td><td>Write: Admin/Manager/Staff · Read: Client/Sales</td></tr>
+      <tr><td>GET stage media</td><td>Fullscreen preview video (Sales) or drawing/document asset (Client)</td><td>All personas</td></tr>
+    </tbody>
+  </table>
+
+  <h2>4. Frontend Logic</h2>
+  <ul class="req">
+    <li>Conditional click handler on journey stage cards: Sales Prospect → open fullscreen video modal; Client/real project → navigate to drawing page. Branch on <code>project.type === 'prospect'</code>, not persona alone, in case Sales users ever view real projects.</li>
+    <li>Current-stage highlight (crimson) driven by <code>stage.isCurrent</code> from data — applied consistently to footer, label, status badge, and "Add Services" CTA.</li>
+    <li>Card rendering shared between Client and Sales dashboards — same title truncation, avatar cap, and phase-caption row logic. Prefer one shared component over duplicated markup.</li>
+  </ul>
+
+  <div class="note">
+    <strong>Note:</strong> the Sales dashboard's stage ring and progress values are real, unlocked data — not forced to 100% — and the listing cards must reflect each project's actual timeline, not a static demo state.
+  </div>
+
+  <h2>5. Cleanup</h2>
+  <ul class="req">
+    <li>Remove <code>EAPortalDashboardDeveloper</code> references from build config, imports, and persona switcher.</li>
+    <li>Audit nav and any hardcoded persona lists for the now six-persona set: Admin, Manager, Staff, Client, Sales Prospect, 404.</li>
+  </ul>
+
+</doc-page>
+
+<script src="./doc-page.js"></script>
+</body>
+</html>

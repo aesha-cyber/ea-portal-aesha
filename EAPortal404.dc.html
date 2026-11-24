@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <script src="./image-slot.js"></script>
+  <link rel="stylesheet" href="_ds/extension-architecture-design-system-0124207d-8759-4968-8e99-e143fec3b79f/colors_and_type.css">
+  <style>
+    @font-face{font-family:'Montserrat';src:url('./fonts/Montserrat-VariableFont_wght.ttf') format('truetype-variations');font-weight:100 900}
+    @font-face{font-family:'Fraunces';src:url('./fonts/Fraunces-VariableFont_SOFT_WONK_opsz_wght.ttf') format('truetype-variations');font-weight:100 900}
+    html,body{margin:0;padding:0;background:#191919;font-family:'Montserrat',ui-sans-serif,system-ui,sans-serif}
+    *{box-sizing:border-box}
+    a{color:#EBC6A3}a:hover{color:#FFFFFF}
+    a:focus-visible{outline:2px solid #EBC6A3;outline-offset:3px}
+    @media (max-width:640px){.ea-persona-text{display:none}header{gap:8px !important}}
+  </style>
+</helmet>
+<div style="position:relative;min-height:100vh;background:#191919;color:#FFFFFF;display:flex;flex-direction:column;overflow:hidden;">
+  <div style="position:absolute;inset:0;z-index:0;"><image-slot id="404-bg" shape="rect" src="./assets/04_1LD-SE-01-opt.webp" placeholder="Drop a background image"></image-slot></div>
+  <div style="position:absolute;inset:0;z-index:0;background:linear-gradient(180deg,rgba(25,25,25,0.55) 0%,rgba(25,25,25,0.6) 50%,rgba(25,25,25,0.8) 100%);pointer-events:none;"></div>
+  <sc-if value="{{ anyDropdownOpen }}" hint-placeholder-val="{{ false }}"><div onClick="{{ closeDropdowns }}" style="position:fixed;inset:0;z-index:15;background:transparent;"></div></sc-if>
+  <header style="position:relative;z-index:20;background:transparent;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px clamp(20px,4vw,36px);min-height:64px;">
+    <div style="display:flex;align-items:center;gap:13px;flex-shrink:0;">
+      <img src="./assets/logo-white.png" alt="Extension Architecture - home" onClick="{{ goHome }}" role="button" tabindex="0" style="height:40px;width:auto;cursor:pointer;">
+    </div>
+    <div style="flex:1;"></div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:nowrap;flex-shrink:0;">
+      <div style="position:relative;">
+        <span onClick="{{ toggleAccount }}" onKeyDown="{{ accountKeyDown }}" role="button" tabindex="0" aria-haspopup="true" aria-expanded="{{ accountOpen }}" aria-label="Account menu for {{ persona.label }}" style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+          <span class="ea-persona-text" style="text-align:right;"><span style="display:block;font-size:13px;font-weight:600;color:#FFFFFF;line-height:1.25;">{{ persona.label }}</span><span style="display:block;font-size:12px;color:rgba(255,255,255,0.8);line-height:1.25;">{{ persona.roleLabel }}</span></span>
+          <span aria-hidden="true" style="width:34px;height:34px;border-radius:100px;background:#8E1B18;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;">{{ persona.initials }}</span>
+        </span>
+        <sc-if value="{{ accountOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;top:42px;right:0;min-width:280px;width:max-content;max-width:calc(100vw - 32px);background:#FFFFFF;border-radius:10px;border:1px solid #EAEAEA;border-bottom:3px solid #8E1B18;box-shadow:0 16px 40px rgba(25,25,25,0.16);z-index:20;overflow:hidden;">
+            <div style="padding:14px 16px;border-bottom:1px solid #F3F3F3;"><p style="margin:0;font-size:13px;font-weight:600;color:#191919;">{{ persona.label }}</p><p style="margin:2px 0 0;font-size:12px;color:#6B6B6B;">{{ persona.roleLabel }}</p></div>
+            <div style="padding:8px 0;">
+              <p style="margin:0;padding:4px 16px 6px;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#6B6B6B;">View As</p>
+              <sc-for list="{{ personas }}" as="p" hint-placeholder-count="4">
+                <div onClick="{{ p.select }}" onKeyDown="{{ p.selectKeyDown }}" role="button" tabindex="0" aria-pressed="{{ p.isActive }}" style="display:flex;align-items:center;justify-content:space-between;padding:8px 16px;font-size:13px;font-weight:600;color:{{ p.textColor }};cursor:{{ p.cursor }};">
+                  {{ p.name }}
+                  <sc-if value="{{ p.disabled }}" hint-placeholder-val="{{ false }}">
+                      <span style="font-size:10px;font-weight:600;letter-spacing:0.04em;color:#8A8A8A;background:#F3F3F3;border-radius:100px;padding:2px 8px;white-space:nowrap;">Coming soon</span>
+                    </sc-if>
+                    <sc-if value="{{ p.isActive }}" hint-placeholder-val="{{ false }}">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L19 7" stroke="#8E1B18" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+            <a href="./index.dc.html" style="display:block;padding:12px 16px;border-top:1px solid #F3F3F3;font-size:13px;font-weight:600;color:#8E1B18;text-decoration:none;">Sign Out</a>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </header>
+  <main style="position:relative;z-index:1;flex:1;display:flex;align-items:center;justify-content:center;padding:32px clamp(20px,4vw,36px) 72px;">
+    <div style="max-width:560px;width:100%;text-align:center;">
+      <p style="margin:0 0 8px;font-weight:600;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:#EBC6A3;">Error 404</p>
+      <p aria-hidden="true" style="margin:0;font-family:'Fraunces',ui-serif,Georgia,serif;font-optical-sizing:auto;font-weight:400;font-size:clamp(96px,22vw,168px);line-height:1;color:#8E1B18;">404</p>
+      <h1 style="margin:8px 0 14px;font-family:'Fraunces',ui-serif,Georgia,serif;font-optical-sizing:auto;font-weight:500;font-size:clamp(26px,5vw,34px);line-height:1.2;color:#FFFFFF;">We can&rsquo;t find that page</h1>
+      <p style="margin:0 auto 32px;max-width:440px;font-size:15px;line-height:1.7;color:rgba(255,255,255,0.9);">{{ persona.message }}</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <a href="{{ persona.dest }}" style="display:inline-block;font-weight:600;font-size:14px;letter-spacing:0.016em;padding:12px 28px;border-radius:100px;background:#8E1B18;border:1.5px solid #8E1B18;color:#FFFFFF;text-decoration:none;" style-hover="background:#7A1714;border-color:#7A1714;color:#FFFFFF;">{{ persona.destLabel }}</a>
+        <a href="mailto:info@extensionarchitecture.co.uk" style="display:inline-block;font-weight:600;font-size:14px;letter-spacing:0.016em;padding:12px 28px;border-radius:100px;background:transparent;border:1.5px solid #FFFFFF;color:#FFFFFF;text-decoration:none;" style-hover="background:#FFFFFF;color:#191919;">Contact Support</a>
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { accountOpen: false };
+  keyActivate(fn) { return (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn(e); } }; }
+  renderVals() {
+    const params = new URLSearchParams(window.location.search);
+    const key = (params.get('persona') || 'client').toLowerCase();
+    const configs = {
+      client: { label: 'Client', roleLabel: 'Client Account', initials: 'CL', dest: './EAPortalDashboardClient.dc.html', destLabel: 'Back To Projects', message: 'The link may be out of date, or the page may have moved. Your projects, drawings and documents are all still in your portal.' },
+      sales: { label: 'Sales Prospect', roleLabel: 'Sales Prospect Account', initials: 'SP', dest: './EAPortalDashboardSales.dc.html', destLabel: 'Back To Preview', message: 'The link may be out of date, or the page may have moved. Your project preview is still available.' },
+      staff: { label: 'Staff', roleLabel: 'Staff Account', initials: 'ST', dest: './EAPortalDashboardStaff.dc.html', destLabel: 'Back To Dashboard', message: 'The link may be out of date, or you may not be assigned to that project. Check your dashboard for the projects assigned to you.' },
+      manager: { label: 'Manager', roleLabel: 'Manager Account', initials: 'MG', dest: './EAPortalDashboardManager.dc.html', destLabel: 'Back To Dashboard', message: 'The link may be out of date, or the page may have moved. Your approvals queue and team views are on your dashboard.' },
+      admin: { label: 'Admin', roleLabel: 'Admin Account', initials: 'AD', dest: './EAPortalDashboardAdmin.dc.html', destLabel: 'Back To Dashboard', message: 'The link may be out of date, or the page may have moved. Your org overview is on your dashboard.' }
+    };
+    const persona = configs[key === 'superadmin' ? 'admin' : key] || configs.client;
+    const personaOrder = [
+      { name: 'Admin', key: 'admin', dest: './EAPortalDashboardAdmin.dc.html' },
+      { name: 'Manager', key: 'manager', dest: './EAPortalDashboardManager.dc.html' },
+      { name: 'Staff', key: 'staff', dest: './EAPortalDashboardStaff.dc.html' },
+      { name: 'Client', key: 'client', dest: './EAPortalDashboardClient.dc.html' },
+      { name: 'Sales Prospect', key: 'sales', dest: './EAPortalDashboardSales.dc.html' },
+      { name: '404', key: '404', dest: './EAPortal404.dc.html?persona=' + key }
+    ];
+    const personas = personaOrder.map(p => {
+      const isActive = p.key === key;
+      const disabled = p.key === 'manager';
+      const select = () => { if (!disabled) window.location.href = p.dest; };
+      return { name: p.name, isActive, disabled, cursor: disabled ? 'not-allowed' : 'pointer', textColor: disabled ? '#B8B8B8' : (isActive ? '#8E1B18' : '#191919'), select, selectKeyDown: this.keyActivate(select) };
+    });
+    return {
+      persona, personas,
+      goHome: () => { window.location.href = persona.dest; },
+      accountOpen: this.state.accountOpen,
+      toggleAccount: () => this.setState(s => ({ accountOpen: !s.accountOpen })),
+      accountKeyDown: this.keyActivate(() => this.setState(s => ({ accountOpen: !s.accountOpen }))),
+      anyDropdownOpen: this.state.accountOpen,
+      closeDropdowns: () => this.setState({ accountOpen: false })
+    };
+  }
+}
+</script>
+</body>
+</html>

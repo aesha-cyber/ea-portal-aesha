@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Types</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/extension-architecture-design-system-0124207d-8759-4968-8e99-e143fec3b79f/colors_and_type.css">
+  <style>
+    @font-face{font-family:'Montserrat';src:url('./fonts/Montserrat-VariableFont_wght.ttf') format('truetype-variations');font-weight:100 900}
+    @font-face{font-family:'Fraunces';src:url('./fonts/Fraunces-VariableFont_SOFT_WONK_opsz_wght.ttf') format('truetype-variations');font-weight:100 900}
+    .tm-scroll{overflow:auto;scrollbar-width:thin}
+    .tm-row:hover{background:#FBFBFB}
+    .tm-in{box-sizing:border-box;width:100%;height:36px;padding:0 10px;border:1px solid #D1D1D1;border-radius:6px;font-family:inherit;font-size:13px;color:#191919;background:#fff;outline:none}
+    .tm-in:focus{border-color:#8E1B18;box-shadow:0 0 0 3px rgba(142,27,24,0.18)}
+    .tm-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 16px;border-radius:100px;border:1px solid #D1D1D1;background:#fff;color:#191919;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
+    .tm-btn:hover{border-color:#191919}
+    .tm-red{background:#8E1B18;border-color:#8E1B18;color:#fff}
+    .tm-red:hover{background:#7A1714;border-color:#7A1714}
+    .tm-ico{width:30px;height:30px;border-radius:100px;border:1px solid #D1D1D1;background:#fff;color:#474747;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+    .tm-ico:hover{border-color:#8E1B18;color:#8E1B18}
+  </style>
+</helmet>
+<div style="font-family:'Montserrat',ui-sans-serif,system-ui,sans-serif;color:#191919;">
+  <div style="display:flex;flex-direction:column;gap:8px;padding-top:6px;">
+    <sc-for list="{{ rows }}" as="r" hint-placeholder-count="5">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="flex:1;min-width:0;display:flex;align-items:center;gap:8px;"><sc-if value="{{ r.editName }}" hint-placeholder-val="{{ true }}"><input class="tm-in" value="{{ r.name }}" onChange="{{ r.onName }}" aria-label="Type name" /></sc-if><sc-if value="{{ r.lockName }}" hint-placeholder-val="{{ false }}"><span style="font-size:13.5px;font-weight:600;">{{ r.name }}</span><span style="font-size:10.5px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#6B6B6B;background:#F3F3F3;border-radius:100px;padding:3px 8px;">Always shown</span></sc-if></span>
+        <sc-if value="{{ r.canDelete }}" hint-placeholder-val="{{ true }}"><button type="button" class="tm-ico" onClick="{{ r.del }}" aria-label="Delete type" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"></path></svg></button></sc-if>
+      </div>
+    </sc-for>
+    <button type="button" onClick="{{ addType }}" style="display:flex;align-items:center;gap:8px;width:100%;min-height:40px;padding:6px 0;border:0;background:transparent;font-family:inherit;font-size:13px;font-weight:600;color:#8E1B18;cursor:pointer;text-align:left;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>Add type</button>
+  </div>
+</div>
+</x-dc>
+
+<script type="text/x-dc" data-dc-script data-props='{"kind":{"editor":null}}'>
+class Component extends DCLogic {
+  state = { tt: null, et: null };
+
+  TASKS = ['Site survey', 'Existing drawings', 'Proposed drawings', 'Planning application', 'Design & Access Statement', 'Pre-application', 'Council liaison', 'Condition discharge', 'Building regulations', 'Tender', 'Handover', 'Policy research', 'Sign-off'];
+  EVENTS = [['meeting', 'Zoom / Teams meeting', '#188B8E'], ['social', 'Social calendar image approval', '#C9965F'], ['video', 'Video approval', '#8E1B18'], ['web', 'Website page approval', '#3B5BA9'], ['site', 'Site visit', '#2D7438'], ['deadline', 'Deadline', '#191919'], ['other', 'Other', '#6B6B6B']];
+  COLORS = ['#7A4EA3', '#8B5D00', '#3B5BA9', '#2D7438', '#C9965F', '#188B8E'];
+
+  seedTT() { return this.TASKS.map((n, i) => ({ id: 'tt' + i, name: n, system: n === 'Sign-off' })); }
+  seedET() { return this.EVENTS.map((x) => ({ id: x[0], name: x[1], color: x[2], system: x[0] === 'other' })); }
+
+  doReset = (ev) => {
+    const isEv = this.props.kind === 'event', key = isEv ? 'et' : 'tt';
+    if (!ev || !ev.detail || ev.detail.kind !== (isEv ? 'event' : 'task')) return;
+    const list = (isEv ? this.state.et : this.state.tt) || [];
+    const seed = isEv ? this.seedET() : this.seedTT(); const ids = {}; seed.forEach((x) => { ids[x.id] = 1; });
+    this.persist({ [key]: seed.concat(list.filter((x) => !ids[x.id])) });
+  };
+  componentWillUnmount() { try { window.removeEventListener('ea-types-reset', this.doReset); } catch (e) {} }
+  componentDidMount() {
+    try { window.addEventListener('ea-types-reset', this.doReset); } catch (e) {}
+    const st = (window.__eaTypes || {});
+    this.setState({ tt: Array.isArray(st.tt) && st.tt.length ? st.tt : this.seedTT(), et: Array.isArray(st.et) && st.et.length ? st.et : this.seedET() });
+  }
+
+  persist(patch) {
+    const tt = patch.tt || this.state.tt, et = patch.et || this.state.et;
+    try { window.__eaTypes = { tt, et }; window.dispatchEvent(new CustomEvent('ea-types-changed')); } catch (e) {}
+    this.setState({ tt, et });
+  }
+
+  renderVals() {
+    const isEv = this.props.kind === 'event', key = isEv ? 'et' : 'tt';
+    const list = (isEv ? (this.state.et || this.seedET()) : (this.state.tt || this.seedTT()));
+    const rows = list.map((x) => ({
+      name: x.name, editName: !x.system, lockName: !!x.system,
+      onName: (e) => this.persist({ [key]: list.map((y) => y.id === x.id ? Object.assign({}, y, { name: String(e.target.value || '').trim() || 'Untitled' }) : y) }),
+      canDelete: !x.system, del: () => this.persist({ [key]: list.filter((y) => y.id !== x.id) })
+    }));
+    return {
+      rows, colLabel: isEv ? 'Event type' : 'Task type', countLabel: list.length + (isEv ? ' event types' : ' task types'),
+      addType: () => this.persist({ [key]: list.concat([isEv ? { id: 'ev' + Date.now().toString(36), name: 'New event type', color: this.COLORS[list.length % this.COLORS.length], system: false } : { id: 'tt' + Date.now().toString(36), name: 'New task type', system: false }]) })
+    };
+  }
+}
+</script>
+</body>
+</html>
